@@ -1,0 +1,14 @@
+# create the index
+PUT:test_index:{ "settings" : { "number_of_shards" : 1, "number_of_replicas" : 0 } }
+
+# create the mapping
+POST:test_index/test_type/_mapping:{ "test_type" : { "properties" : { "name" : { "type" : "string" }, "lastModified" : { "type" : "date" } } } }
+
+# index a document
+PUT:test_index/test_type/1:{ "name" : "alex" }
+
+# update the document
+POST:test_index/test_type/1:{ "name" : "alexc", "lastModified" : 1388000499000 }
+
+# delete the document
+DELETE:test_index/test_type/1:
