@@ -4,7 +4,7 @@
 
 	<groupId>com.pingconnect</groupId>
 	<artifactId>elasticsearch-maven-plugin</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Elasticsearch Maven Plugin</name>
@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
-			<version>0.90.7</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.apache.httpcomponents</groupId>
