@@ -32,9 +32,9 @@ The following Elasticsearch properties can be configured through the plugin conf
 Include the following in the pom.xml file and modify the configuration as needed:
 
         <plugin>
-    	    <groupId>com.pingconnect</groupId>
+    	    <groupId>com.github.alexcojocaru</groupId>
     	    <artifactId>elasticsearch-maven-plugin</artifactId>
-    	    <version>1.0</version>
+    	    <version>1.2</version>
     	    <configuration>
     			<clusterName>test</clusterName>
     			<tcpPort>9300</tcpPort>

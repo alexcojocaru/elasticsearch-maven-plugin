@@ -2,15 +2,39 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.pingconnect</groupId>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+	<groupId>com.github.alexcojocaru</groupId>
 	<artifactId>elasticsearch-maven-plugin</artifactId>
-	<version>1.1</version>
+	<version>1.2-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Elasticsearch Maven Plugin</name>
+	<description>A Maven plugin to run a single node Elasticsearch cluster during the integration test phase of a build</description>
 
-	<!-- FIXME change it to the project's website -->
-	<url>http://maven.apache.org</url>
+	<url>https://github.com/alexcojocaru/elasticsearch-maven-plugin</url>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>git@github.com:alexcojocaru/elasticsearch-maven-plugin.git</url>
+		<connection>scm:git:git@github.com:alexcojocaru/elasticsearch-maven-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:alexcojocaru/elasticsearch-maven-plugin.git</developerConnection>
+	</scm>
+	<developers>
+		<developer>
+			<id>alex</id>
+			<name>Alex Cojocaru</name>
+		</developer>
+	</developers>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -109,6 +133,32 @@
 						<id>help-goal</id>
 						<goals>
 							<goal>helpmojo</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
 						</goals>
 					</execution>
 				</executions>

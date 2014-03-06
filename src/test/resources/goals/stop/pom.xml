@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	
-	<groupId>com.pingconnect</groupId>
+	<groupId>com.github.alexcojocaru</groupId>
 	<artifactId>elasticsearch-maven-plugin-test</artifactId>
 	<version>1.1</version>
 	
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.pingconnect</groupId>
+				<groupId>com.github.alexcojocaru</groupId>
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<configuration>
 				</configuration>

@@ -1,4 +1,4 @@
-package com.pingconnect.mojo.elasticsearch;
+package com.github.alexcojocaru.mojo.elasticsearch;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
