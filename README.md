@@ -34,7 +34,7 @@ Include the following in the pom.xml file and modify the configuration as needed
         <plugin>
     	    <groupId>com.github.alexcojocaru</groupId>
     	    <artifactId>elasticsearch-maven-plugin</artifactId>
-    	    <version>1.3</version>
+    	    <version>1.4</version>
     	    <configuration>
     			<clusterName>test</clusterName>
     			<tcpPort>9300</tcpPort>
