@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.settings.Settings;
 
 /**
@@ -53,19 +54,31 @@ public class StartElasticsearchNodeMojo extends AbstractMojo
      */
     private Integer httpPort;
 
+    /**
+     * @parameter default-value=""
+     */
+    private String configPath;
+
+
     public void execute() throws MojoExecutionException
     {
         File dataDirectory = prepareDirectory(outputDirectory, dataDirname, "data directory");
         File logsDirectory = prepareDirectory(outputDirectory, logsDirname, "logs directory");
         
-        Settings settings = ImmutableSettings.settingsBuilder()
+        Builder builder = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName)
                 .put("action.auto_create_index", false)
                 .put("transport.tcp.port", tcpPort)
                 .put("http.port", httpPort)
                 .put("path.data", dataDirectory.getAbsolutePath())
-                .put("path.logs", logsDirectory.getAbsolutePath())
-                .build();
+                .put("path.logs", logsDirectory.getAbsolutePath());
+        
+        if (configPath != null && configPath.trim().length() > 0 && new File(configPath).exists())
+        {
+            builder.put("path.conf", configPath);
+        }
+        
+        Settings settings = builder.build();
         
         ElasticSearchNode.start(settings);
     }
