@@ -27,7 +27,7 @@ The following Elasticsearch properties can be configured through the plugin conf
     > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch logs will be created;
 
 *   **configPath** [optional]
-    > the path of the config directory to be used by the Elasticsearch instance; it is needed for scripting support, in which case the directory referred by the path should contains a *scripts* directory;
+    > the path of the config directory to be used by the Elasticsearch instance; it is needed for scripting support, in which case the directory referred by the path should contains only a *scripts* directory, with the required scripts;
 
 *   **scriptFile** [required by the *load* goal]
     > a list of commands to be executed to provision the Elasticsearch cluster. See the [load.script](#load.script) section for details.
@@ -37,6 +37,8 @@ Include the following in the pom.xml file and modify the configuration as needed
         <plugin>
     	    <groupId>com.github.alexcojocaru</groupId>
     	    <artifactId>elasticsearch-maven-plugin</artifactId>
+			<!-- REPLACE THE FOLLOWING WITH THE LATEST VERSION
+				OF elasticsearch-maven-plugin FROM search.maven.com -->
     	    <version>1.5</version>
     	    <configuration>
     			<clusterName>test</clusterName>
@@ -80,6 +82,8 @@ Include the following in the pom.xml file and modify the configuration as needed
         		<dependency>
         			<groupId>org.elasticsearch</groupId>
         			<artifactId>elasticsearch</artifactId>
+					<!-- REPLACE THE FOLLOWING WITH THE VERSION OF THE ELASTICSEARCH DEPENDECY
+						AS DEFINED IN pom.xml -->
         			<version>1.3.4</version>
         		</dependency>
 				<!-- the following dependency is required for groovy scripting support -->
