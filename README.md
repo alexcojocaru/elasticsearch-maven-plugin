@@ -39,7 +39,7 @@ Include the following in the pom.xml file and modify the configuration as needed
     	    <artifactId>elasticsearch-maven-plugin</artifactId>
 			<!-- REPLACE THE FOLLOWING WITH THE LATEST VERSION
 				OF elasticsearch-maven-plugin FROM search.maven.com -->
-    	    <version>1.5</version>
+    	    <version>1.7</version>
     	    <configuration>
     			<clusterName>test</clusterName>
     			<tcpPort>9300</tcpPort>
@@ -84,7 +84,7 @@ Include the following in the pom.xml file and modify the configuration as needed
         			<artifactId>elasticsearch</artifactId>
 					<!-- REPLACE THE FOLLOWING WITH THE VERSION OF THE ELASTICSEARCH DEPENDECY
 						AS DEFINED IN pom.xml -->
-        			<version>1.3.4</version>
+        			<version>1.4.0</version>
         		</dependency>
 				<!-- the following dependency is required for groovy scripting support -->
 				<dependency>
