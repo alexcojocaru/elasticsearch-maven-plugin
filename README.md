@@ -97,6 +97,11 @@ Include the following in the pom.xml file and modify the configuration as needed
         		    <artifactId>httpclient</artifactId>
         		    <version>4.3.1</version>
         		</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+					<version>1.7.5</version>
+				</dependency>
     	    </dependencies>
     	</plugin>
 
