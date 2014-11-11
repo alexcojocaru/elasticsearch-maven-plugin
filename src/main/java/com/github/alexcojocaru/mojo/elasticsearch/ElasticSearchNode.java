@@ -39,6 +39,7 @@ public class ElasticSearchNode
                 .put("network.host", "127.0.0.1")
                 .put("discovery.zen.ping.timeout", "3ms")
                 .put("discovery.zen.ping.multicast.enabled", false)
+                .put("http.cors.enabled", true)
                 .put(settings)
                 .build();
         
