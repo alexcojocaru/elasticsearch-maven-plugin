@@ -59,6 +59,10 @@ public class StartElasticsearchNodeMojo extends AbstractMojo
      */
     private String configPath;
 
+    /**
+     * @parameter default-value=""
+     */
+    private String pluginsPath;
 
     public void execute() throws MojoExecutionException
     {
@@ -76,6 +80,10 @@ public class StartElasticsearchNodeMojo extends AbstractMojo
         if (configPath != null && configPath.trim().length() > 0 && new File(configPath).exists())
         {
             builder.put("path.conf", configPath);
+        }
+        if (pluginsPath != null && pluginsPath.trim().length() > 0 && new File(pluginsPath).exists())
+        {
+            builder.put("path.plugins", pluginsPath);
         }
         
         Settings settings = builder.build();

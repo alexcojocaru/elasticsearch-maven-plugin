@@ -29,6 +29,9 @@ The following Elasticsearch properties can be configured through the plugin conf
 *   **configPath** [optional]
     > the path of the config directory to be used by the Elasticsearch instance; it is needed for scripting support, in which case the directory referred by the path should contains only a *scripts* directory, with the required scripts;
 
+*   **pluginsPath** [optional]
+    > the path of the plugins directory to be used by the Elasticsearch instance; it is needed for providing custom plugins to the ES instance, each plugin will be contained in a subdirectory;
+
 *   **scriptFile** [required by the *load* goal]
     > a list of commands to be executed to provision the Elasticsearch cluster. See the [load.script](#load.script) section for details.
 
