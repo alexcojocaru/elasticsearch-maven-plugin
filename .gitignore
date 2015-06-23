@@ -2,3 +2,5 @@
 .project
 .settings/
 target/
+elasticsearch-maven-plugin.iml
+.idea/

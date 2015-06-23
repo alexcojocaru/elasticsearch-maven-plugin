@@ -1,12 +1,12 @@
 package com.github.alexcojocaru.mojo.elasticsearch;
 
-import java.io.File;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+
+import java.io.File;
 
 /**
  * @author alexcojocaru
@@ -32,8 +32,8 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
     public void testMojoLookup() throws Exception
     {
         File testPom = new File(getBasedir(), "src/test/resources/goals/start/pom.xml");
-        
-        StartElasticsearchNodeMojo mojo = (StartElasticsearchNodeMojo)lookupMojo("start", testPom);
+
+        StartElasticSearchNodeMojo mojo = (StartElasticSearchNodeMojo) lookupMojo("start", testPom);
  
         assertNotNull(mojo);
     }
@@ -41,8 +41,8 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
     public void testMojoExecution() throws Exception
     {
         File testPom = new File(getBasedir(), "src/test/resources/goals/start/pom.xml");
-        
-        StartElasticsearchNodeMojo mojo = (StartElasticsearchNodeMojo)lookupMojo("start", testPom);
+
+        StartElasticSearchNodeMojo mojo = (StartElasticSearchNodeMojo)lookupMojo("start", testPom);
  
         assertNotNull(mojo);
         

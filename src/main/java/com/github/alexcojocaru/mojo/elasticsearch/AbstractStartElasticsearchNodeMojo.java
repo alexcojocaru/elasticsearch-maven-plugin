@@ -11,14 +11,11 @@ import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.settings.Settings;
 
 /**
- * Goal which starts a local Elasticsearch node.
+ * Abstract class to support starting a local Elasticsearch node.
  * 
  * @author alexcojocaru
- * 
- * @goal start
- * @phase pre-integration-test
  */
-public class StartElasticsearchNodeMojo extends AbstractMojo
+public class AbstractStartElasticsearchNodeMojo extends AbstractMojo
 {
     /**
      * @parameter default-value="${project.build.directory}"
@@ -68,7 +65,7 @@ public class StartElasticsearchNodeMojo extends AbstractMojo
     {
         File dataDirectory = prepareDirectory(outputDirectory, dataDirname, "data directory");
         File logsDirectory = prepareDirectory(outputDirectory, logsDirname, "logs directory");
-        
+
         Builder builder = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName)
                 .put("action.auto_create_index", false)
@@ -76,7 +73,7 @@ public class StartElasticsearchNodeMojo extends AbstractMojo
                 .put("http.port", httpPort)
                 .put("path.data", dataDirectory.getAbsolutePath())
                 .put("path.logs", logsDirectory.getAbsolutePath());
-        
+
         if (configPath != null && configPath.trim().length() > 0 && new File(configPath).exists())
         {
             builder.put("path.conf", configPath);
@@ -90,7 +87,7 @@ public class StartElasticsearchNodeMojo extends AbstractMojo
         
         ElasticSearchNode.start(settings);
     }
-    
+
     /**
      * 
      * @param parentDir
