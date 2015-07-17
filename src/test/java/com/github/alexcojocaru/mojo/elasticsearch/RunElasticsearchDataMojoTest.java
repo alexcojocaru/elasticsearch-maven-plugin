@@ -38,7 +38,14 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
  
         assertNotNull(mojo);
     }
-    
+
+    /**
+     * Test that verifies Run goal.
+     * It runs asynchronously because the goal blocks the mojo execution so
+     * the test has to invoked it in a separate thread, wait a few moments until it is started
+     * and do the assertions, finally on the final block stops (by interrupting the thread) ES.
+     * @throws Exception
+     */
     public void testMojoExecution() throws Exception
     {
         File testPom = new File(getBasedir(), "src/test/resources/goals/run/pom.xml");
