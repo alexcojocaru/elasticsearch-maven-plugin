@@ -11,6 +11,6 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @goal start
  * @phase pre-integration-test
  */
-public class StartElasticSearchNodeMojo extends AbstractStartElasticsearchNodeMojo {
+public class StartElasticsearchNodeMojo extends AbstractStartElasticsearchNodeMojo {
     // no op only mojo metadatas
 }

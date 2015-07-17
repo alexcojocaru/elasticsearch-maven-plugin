@@ -17,7 +17,7 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
         super.setUp();
         
         String dataPath = new File("target/test-harness/elasticsearch-data").getAbsolutePath();
-        ElasticSearchNode.start(dataPath);
+        ElasticsearchNode.start(dataPath);
     }
     
     @Override
@@ -25,7 +25,7 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
     {
         super.tearDown();
 
-        ElasticSearchNode.stop();
+        ElasticsearchNode.stop();
     }
     
     public void testMojoLookup() throws Exception

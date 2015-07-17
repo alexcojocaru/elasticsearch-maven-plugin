@@ -22,6 +22,6 @@ public class LoadElasticsearchDataMojo extends AbstractMojo
 
     @SuppressWarnings("unchecked")
     public void execute() throws MojoExecutionException {
-        LoadElasticSearchUtility.load(scriptFile, getLog());
+        LoadElasticsearchUtility.load(scriptFile, getLog());
     }
 }

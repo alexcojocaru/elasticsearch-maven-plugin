@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author gfernandes
  */
-public class LoadElasticSearchUtility {
+public class LoadElasticsearchUtility {
 
     public static void load(File scriptFile, Log log) throws MojoExecutionException {
         if (!scriptFile.isFile())
@@ -44,7 +44,7 @@ public class LoadElasticSearchUtility {
         {
             client = HttpClients.createDefault();
             String host = String.format(
-                    "http://%s:%d", "localhost", ElasticSearchNode.getHttpPort());
+                    "http://%s:%d", "localhost", ElasticsearchNode.getHttpPort());
 
             for (int i = 0; i < lines.size(); i++)
             {

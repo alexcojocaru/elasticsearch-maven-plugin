@@ -85,7 +85,7 @@ public class AbstractStartElasticsearchNodeMojo extends AbstractMojo
         
         Settings settings = builder.build();
         
-        ElasticSearchNode.start(settings);
+        ElasticsearchNode.start(settings);
     }
 
     /**

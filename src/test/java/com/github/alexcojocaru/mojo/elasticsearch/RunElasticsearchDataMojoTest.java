@@ -6,10 +6,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.junit.Ignore;
 
 import java.io.File;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -29,14 +27,14 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
     {
         super.tearDown();
         
-        ElasticSearchNode.stop();
+        ElasticsearchNode.stop();
     }
     
     public void testMojoLookup() throws Exception
     {
         File testPom = new File(getBasedir(), "src/test/resources/goals/run/pom.xml");
 
-        RunElasticSearchNodeMojo mojo = (RunElasticSearchNodeMojo)lookupMojo("run", testPom);
+        RunElasticsearchNodeMojo mojo = (RunElasticsearchNodeMojo)lookupMojo("run", testPom);
  
         assertNotNull(mojo);
     }
@@ -45,7 +43,7 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
     {
         File testPom = new File(getBasedir(), "src/test/resources/goals/run/pom.xml");
 
-        final RunElasticSearchNodeMojo mojo = (RunElasticSearchNodeMojo)lookupMojo("run", testPom);
+        final RunElasticsearchNodeMojo mojo = (RunElasticsearchNodeMojo)lookupMojo("run", testPom);
 
         final AtomicReference<Exception> internalRunThreadException = new AtomicReference<Exception>();
 
@@ -71,7 +69,7 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
             assertNull("MojoExecute threw an exception", internalRunThreadException.get());
 
             HttpClient client = HttpClientBuilder.create().build();
-            HttpGet get = new HttpGet("http://localhost:" + ElasticSearchNode.getHttpPort());
+            HttpGet get = new HttpGet("http://localhost:" + ElasticsearchNode.getHttpPort());
             HttpResponse response = client.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
         }

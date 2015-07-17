@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  * @execute phase="compile"
  * @requiresDependencyResolution runtime
  */
-public class RunElasticSearchNodeMojo extends AbstractStartElasticsearchNodeMojo {
+public class RunElasticsearchNodeMojo extends AbstractStartElasticsearchNodeMojo {
     /**
      * @parameter
      */
@@ -26,25 +26,25 @@ public class RunElasticSearchNodeMojo extends AbstractStartElasticsearchNodeMojo
     public void execute() throws MojoExecutionException {
         super.execute();
         if (scriptFile != null) {
-            getLog().info("RunElasticSearchNodeMojo loading data");
-            LoadElasticSearchUtility.load(scriptFile, getLog());
+            getLog().info("RunElasticsearchNodeMojo loading data");
+            LoadElasticsearchUtility.load(scriptFile, getLog());
         }
 
         //Adding shutdown hook to stop ES
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                ElasticSearchNode.stop();
+                ElasticsearchNode.stop();
                 waitES.countDown();
             }
         });
 
         waitIndefinitely();
 
-        getLog().info("RunElasticSearchNodeMojo waiting for ES to be stopped");
+        getLog().info("RunElasticsearchNodeMojo waiting for ES to be stopped");
         try {
             waitES.await(300, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            getLog().warn("RunElasticSearchNodeMojo interrupted while waiting for ES to be stopped");
+            getLog().warn("RunElasticsearchNodeMojo interrupted while waiting for ES to be stopped");
         }
     }
 
@@ -58,7 +58,7 @@ public class RunElasticSearchNodeMojo extends AbstractStartElasticsearchNodeMojo
             try {
                 lock.wait();
             } catch (InterruptedException exception) {
-                getLog().warn("RunElasticSearchNodeMojo interrupted");
+                getLog().warn("RunElasticsearchNodeMojo interrupted");
             }
         }
     }
