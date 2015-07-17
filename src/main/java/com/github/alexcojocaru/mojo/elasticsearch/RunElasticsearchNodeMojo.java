@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @requiresDependencyResolution runtime
  */
 public class RunElasticsearchNodeMojo extends AbstractStartElasticsearchNodeMojo {
+    private static final long SHUTDOWN_TIMEOUT = 300;
     /**
      * @parameter
      */
@@ -42,9 +43,10 @@ public class RunElasticsearchNodeMojo extends AbstractStartElasticsearchNodeMojo
 
         getLog().info("RunElasticsearchNodeMojo waiting for ES to be stopped");
         try {
-            waitES.await(300, TimeUnit.MILLISECONDS);
+            waitES.await(SHUTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            getLog().warn("RunElasticsearchNodeMojo interrupted while waiting for ES to be stopped");
+            getLog().warn("RunElasticsearchNodeMojo interrupted, ES instance has not stopped after " +
+                    SHUTDOWN_TIMEOUT + "ms");
         }
     }
 
