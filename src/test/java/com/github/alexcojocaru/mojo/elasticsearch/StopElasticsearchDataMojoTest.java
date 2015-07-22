@@ -21,7 +21,7 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
         super.setUp();
         
         String dataPath = new File("target/test-harness/elasticsearch-data").getAbsolutePath();
-        ElasticSearchNode.start(dataPath);
+        ElasticsearchNode.start(dataPath);
     }
     
     @Override
@@ -29,7 +29,7 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
     {
         super.tearDown();
 
-        ElasticSearchNode.stop();
+        ElasticsearchNode.stop();
     }
     
     public void testMojoLookup() throws Exception
@@ -49,7 +49,7 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
         mojo.execute();
         
         HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = new HttpGet("http://localhost:" + ElasticSearchNode.getHttpPort());
+        HttpGet get = new HttpGet("http://localhost:" + ElasticsearchNode.getHttpPort());
         try
         {
             client.execute(get);

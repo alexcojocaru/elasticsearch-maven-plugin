@@ -16,6 +16,6 @@ public class StopElasticsearchNodeMojo extends AbstractMojo
 
     public void execute() throws MojoExecutionException
     {
-        ElasticSearchNode.stop();
+        ElasticsearchNode.stop();
     }
 }

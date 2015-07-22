@@ -4,6 +4,7 @@ A Maven plugin to run a single node Elasticsearch cluster during the integration
 Although it is not a local Elasticsearch node per se
 (for it must be able to communicate to other nodes outside the JVM),
 it is as lightweight as possible (1 shard, 0 replicas, multicast discovery disabled and zen ping timeout set to 3ms).
+It also has another goal that allows you to run a single node Elasticsearch cluster (optional loading data) and keep it running until the process is killed by CTRL+C.
 
 ## Usage
 The following Elasticsearch properties can be configured through the plugin configuration section:
@@ -42,7 +43,7 @@ Include the following in the pom.xml file and modify the configuration as needed
     	    <artifactId>elasticsearch-maven-plugin</artifactId>
 			<!-- REPLACE THE FOLLOWING WITH THE LATEST VERSION
 				OF elasticsearch-maven-plugin FROM search.maven.com -->
-    	    <version>1.7</version>
+    	    <version>1.11-SNAPSHOT</version>
     	    <configuration>
     			<clusterName>test</clusterName>
     			<tcpPort>9300</tcpPort>
@@ -76,36 +77,6 @@ Include the following in the pom.xml file and modify the configuration as needed
     	            </goals>
     	        </execution>
     	    </executions>
-    	    <dependencies>
-            	<dependency>
-        			<groupId>org.apache.commons</groupId>
-        			<artifactId>commons-io</artifactId>
-        			<version>1.3.2</version>
-        		</dependency>
-        		<dependency>
-        			<groupId>org.elasticsearch</groupId>
-        			<artifactId>elasticsearch</artifactId>
-					<!-- REPLACE THE FOLLOWING WITH THE VERSION OF THE ELASTICSEARCH DEPENDECY
-						AS DEFINED IN pom.xml -->
-        			<version>1.4.0</version>
-        		</dependency>
-				<!-- the following dependency is required for groovy scripting support -->
-				<dependency>
-					<groupId>org.codehaus.groovy</groupId>
-					<artifactId>groovy-all</artifactId>
-					<version>2.3.1</version>
-				</dependency>
-        		<dependency>
-        		    <groupId>org.apache.httpcomponents</groupId>
-        		    <artifactId>httpclient</artifactId>
-        		    <version>4.3.1</version>
-        		</dependency>
-				<dependency>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-					<version>1.7.5</version>
-				</dependency>
-    	    </dependencies>
     	</plugin>
 
 ## <a name="load.script"></a>Load script
@@ -131,3 +102,7 @@ Each command has three parts, separated by colon.
 
 > DELETE:test\_index/test\_type/1:
 >> A *DELETE* request will be send to *http://localhost:9200/test\_index/test\_type/1* with no content. Note the colon at the end, for there is no JSON data in case of a DELETE.
+
+## Run Elasticsearch node
+*run* goal allows you to start the local Elastisearch cluster and keep it running until the process is killed.
+An load script file can be provided to the *run* goal of the plugin, in which case it will be executed on the local Elasticsearch cluster.

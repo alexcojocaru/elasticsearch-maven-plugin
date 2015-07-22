@@ -11,7 +11,7 @@ import org.elasticsearch.node.NodeBuilder;
  * @author alexcojocaru
  *
  */
-public class ElasticSearchNode
+public class ElasticsearchNode
 {
     private static Node node;
     private static int httpPort;
