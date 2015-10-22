@@ -1,6 +1,7 @@
 package com.github.alexcojocaru.mojo.elasticsearch;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -15,41 +16,47 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
 {
 
+    private ElasticsearchNode elasticsearchNode;
+
+    private StopElasticsearchNodeMojo mojo;
+    
     @Override
     protected void setUp() throws Exception
     {
         super.setUp();
         
         String dataPath = new File("target/test-harness/elasticsearch-data").getAbsolutePath();
-        ElasticsearchNode.start(dataPath);
+        elasticsearchNode = ElasticsearchNode.start(dataPath);
+
+        //Configure mojo with context
+        File testPom = new File(getBasedir(), "src/test/resources/goals/stop/pom.xml");
+        mojo = (StopElasticsearchNodeMojo)lookupMojo("stop", testPom);
+        mojo.setPluginContext(new HashMap());
+        mojo.getPluginContext().put("test", elasticsearchNode);
     }
     
     @Override
     protected void tearDown() throws Exception
     {
         super.tearDown();
-
-        ElasticsearchNode.stop();
+        if (elasticsearchNode != null && !elasticsearchNode.isClosed())
+        {
+            elasticsearchNode.stop();
+        }
     }
     
     public void testMojoLookup() throws Exception
     {
-        File testPom = new File(getBasedir(), "src/test/resources/goals/stop/pom.xml");
-        
-        StopElasticsearchNodeMojo mojo = (StopElasticsearchNodeMojo)lookupMojo("stop", testPom);
- 
         assertNotNull(mojo);
     }
     
     public void testMojoExecution() throws Exception
     {
-        File testPom = new File(getBasedir(), "src/test/resources/goals/stop/pom.xml");
-        StopElasticsearchNodeMojo mojo = (StopElasticsearchNodeMojo)lookupMojo("stop", testPom);
         assertNotNull(mojo);
         mojo.execute();
         
         HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = new HttpGet("http://localhost:" + ElasticsearchNode.getHttpPort());
+        HttpGet get = new HttpGet("http://localhost:" + elasticsearchNode.getHttpPort());
         try
         {
             client.execute(get);
@@ -59,6 +66,8 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
         catch (HttpHostConnectException expected)
         {
         }
+
+        assertTrue(elasticsearchNode.isClosed());
     }
 
 }

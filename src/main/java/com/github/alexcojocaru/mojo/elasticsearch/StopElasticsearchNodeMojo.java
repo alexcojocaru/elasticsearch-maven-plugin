@@ -1,6 +1,5 @@
 package com.github.alexcojocaru.mojo.elasticsearch;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
@@ -11,11 +10,10 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @goal stop
  * @phase post-integration-test
  */
-public class StopElasticsearchNodeMojo extends AbstractMojo
+public class StopElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo
 {
-
     public void execute() throws MojoExecutionException
     {
-        ElasticsearchNode.stop();
+        getNode().stop();
     }
 }

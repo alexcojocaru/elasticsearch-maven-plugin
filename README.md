@@ -1,6 +1,6 @@
 # Elasticsearch Maven Plugin [![Build Status](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin.png?branch=master)](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin)
 
-A Maven plugin to run a single node Elasticsearch cluster during the integration test phase of a build.
+A Maven plugin to run Elasticsearch instances during the integration test phase of a build.
 Although it is not a local Elasticsearch node per se
 (for it must be able to communicate to other nodes outside the JVM),
 it is as lightweight as possible (1 shard, 0 replicas, multicast discovery disabled and zen ping timeout set to 3ms).

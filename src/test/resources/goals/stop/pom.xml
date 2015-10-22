@@ -11,6 +11,7 @@
 				<groupId>com.github.alexcojocaru</groupId>
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<configuration>
+					<clusterName>test</clusterName>
 				</configuration>
 			</plugin>
 		</plugins>

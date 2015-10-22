@@ -13,8 +13,8 @@ import org.elasticsearch.node.NodeBuilder;
  */
 public class ElasticsearchNode
 {
-    private static Node node;
-    private static int httpPort;
+    private Node node;
+    private int httpPort;
     
     /**
      * Start a local ES node with the given settings.
@@ -24,13 +24,8 @@ public class ElasticsearchNode
      * @param settings
      * @throws MojoExecutionException 
      */
-    public static void start(Settings settings) throws MojoExecutionException
+    public ElasticsearchNode(Settings settings) throws MojoExecutionException
     {
-        if (node != null)
-        {
-            throw new MojoExecutionException("A local node is already running");
-        }
-
         // Set the node to be as lightweight as possible,
         // at the same time being able to be discovered from an external JVM.
         settings = ImmutableSettings.settingsBuilder()
@@ -55,8 +50,9 @@ public class ElasticsearchNode
      * an IllegalStateException will be thrown.
      * @param dataPath
      * @throws MojoExecutionException 
+     * @return an instance of an ElasticsearchNode
      */
-    public static void start(String dataPath) throws MojoExecutionException
+    public static ElasticsearchNode start(String dataPath) throws MojoExecutionException
     {
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", "test")
@@ -65,15 +61,14 @@ public class ElasticsearchNode
                 .put("http.port", 9200)
                 .put("path.data", dataPath)
                 .build();
-        
-        start(settings);
+        return new ElasticsearchNode(settings);
     }
-    
+
     /**
      * Always return a new client connected to the local ES node.
      * @return
      */
-    public static Client getClient()
+    public Client getClient()
     {
         return node.client();
     }
@@ -83,7 +78,7 @@ public class ElasticsearchNode
      * <br>
      * If the node is already stopped or closed, this method is a no-op.
      */
-    public static void stop()
+    public void stop()
     {
         if (node == null)
         {
@@ -95,10 +90,15 @@ public class ElasticsearchNode
         node = null;
     }
 
+    public boolean isClosed()
+    {
+        return (node == null || node !=null && node.isClosed());
+    }
+
     /**
      * @return the httpPort
      */
-    public static int getHttpPort()
+    public int getHttpPort()
     {
         return httpPort;
     }

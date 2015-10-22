@@ -7,6 +7,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * @author alexcojocaru
@@ -15,41 +16,40 @@ import java.io.File;
 public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
 {
 
+    private StartElasticsearchNodeMojo mojo;
+
     @Override
     protected void setUp() throws Exception
     {
         super.setUp();
+        File testPom = new File(getBasedir(), "src/test/resources/goals/start/pom.xml");
+        mojo = (StartElasticsearchNodeMojo) lookupMojo("start", testPom);
+        mojo.setPluginContext(new HashMap());
     }
     
     @Override
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        
-        ElasticsearchNode.stop();
+        if (mojo != null && mojo.getNode() != null)
+        {
+            mojo.getNode().stop();
+        }
     }
+
     
     public void testMojoLookup() throws Exception
     {
-        File testPom = new File(getBasedir(), "src/test/resources/goals/start/pom.xml");
-
-        StartElasticsearchNodeMojo mojo = (StartElasticsearchNodeMojo) lookupMojo("start", testPom);
- 
         assertNotNull(mojo);
     }
     
     public void testMojoExecution() throws Exception
     {
-        File testPom = new File(getBasedir(), "src/test/resources/goals/start/pom.xml");
-
-        StartElasticsearchNodeMojo mojo = (StartElasticsearchNodeMojo)lookupMojo("start", testPom);
- 
         assertNotNull(mojo);
-        
         mojo.execute();
-        
+
         HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = new HttpGet("http://localhost:" + ElasticsearchNode.getHttpPort());
+        HttpGet get = new HttpGet("http://localhost:" + mojo.getNode().getHttpPort());
         HttpResponse response = client.execute(get);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
