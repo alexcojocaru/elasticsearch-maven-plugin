@@ -8,6 +8,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -15,6 +16,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
 {
+
+    private ElasticsearchNode elasticsearchNode;
 
     @Override
     protected void setUp() throws Exception
@@ -26,8 +29,11 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
+        if (elasticsearchNode != null)
+        {
+            elasticsearchNode.stop();
+        }
         
-        ElasticsearchNode.stop();
     }
     
     public void testMojoLookup() throws Exception
@@ -51,6 +57,7 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
         File testPom = new File(getBasedir(), "src/test/resources/goals/run/pom.xml");
 
         final RunElasticsearchNodeMojo mojo = (RunElasticsearchNodeMojo)lookupMojo("run", testPom);
+        mojo.setPluginContext(new HashMap());
 
         final AtomicReference<Exception> internalRunThreadException = new AtomicReference<Exception>();
 
@@ -71,12 +78,13 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
 
         try {
             Thread.sleep(3000);
+            elasticsearchNode = mojo.getNode();
 
             // Asserts!
             assertNull("MojoExecute threw an exception", internalRunThreadException.get());
 
             HttpClient client = HttpClientBuilder.create().build();
-            HttpGet get = new HttpGet("http://localhost:" + ElasticsearchNode.getHttpPort());
+            HttpGet get = new HttpGet("http://localhost:" + elasticsearchNode.getHttpPort());
             HttpResponse response = client.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
         }

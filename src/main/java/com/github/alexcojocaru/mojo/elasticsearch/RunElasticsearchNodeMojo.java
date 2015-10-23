@@ -15,7 +15,8 @@ import java.util.concurrent.TimeUnit;
  * @execute phase="compile"
  * @requiresDependencyResolution runtime
  */
-public class RunElasticsearchNodeMojo extends AbstractStartElasticsearchNodeMojo {
+public class RunElasticsearchNodeMojo extends StartElasticsearchNodeMojo {
+    
     private static final long SHUTDOWN_TIMEOUT = 300;
     /**
      * @parameter
@@ -24,17 +25,20 @@ public class RunElasticsearchNodeMojo extends AbstractStartElasticsearchNodeMojo
 
     final private CountDownLatch waitES = new CountDownLatch(1);
 
+    @Override
     public void execute() throws MojoExecutionException {
         super.execute();
         if (scriptFile != null) {
             getLog().info("RunElasticsearchNodeMojo loading data");
-            LoadElasticsearchUtility.load(scriptFile, getLog());
+            LoadElasticsearchUtility.load(scriptFile, getLog(), httpPort);
         }
+
+        final ElasticsearchNode esearchNode = super.getNode();
 
         //Adding shutdown hook to stop ES
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                ElasticsearchNode.stop();
+                esearchNode.stop();
                 waitES.countDown();
             }
         });

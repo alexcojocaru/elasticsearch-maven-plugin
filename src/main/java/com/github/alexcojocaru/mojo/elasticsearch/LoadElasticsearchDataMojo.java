@@ -2,7 +2,6 @@ package com.github.alexcojocaru.mojo.elasticsearch;
 
 import java.io.File;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
@@ -12,7 +11,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @phase pre-integration-test
  *
  */
-public class LoadElasticsearchDataMojo extends AbstractMojo
+public class LoadElasticsearchDataMojo extends AbstractElasticsearchNodeMojo
 {
     /**
      * @parameter
@@ -21,7 +20,8 @@ public class LoadElasticsearchDataMojo extends AbstractMojo
     private File scriptFile;
 
     @SuppressWarnings("unchecked")
+    @Override
     public void execute() throws MojoExecutionException {
-        LoadElasticsearchUtility.load(scriptFile, getLog());
+        LoadElasticsearchUtility.load(scriptFile, getLog(),httpPort);
     }
 }
