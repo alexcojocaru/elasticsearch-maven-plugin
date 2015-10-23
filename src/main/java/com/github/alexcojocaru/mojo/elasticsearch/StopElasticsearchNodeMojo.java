@@ -12,6 +12,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public class StopElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo
 {
+    @Override
     public void execute() throws MojoExecutionException
     {
         getNode().stop();

@@ -25,6 +25,7 @@ public class RunElasticsearchNodeMojo extends StartElasticsearchNodeMojo {
 
     final private CountDownLatch waitES = new CountDownLatch(1);
 
+    @Override
     public void execute() throws MojoExecutionException {
         super.execute();
         if (scriptFile != null) {

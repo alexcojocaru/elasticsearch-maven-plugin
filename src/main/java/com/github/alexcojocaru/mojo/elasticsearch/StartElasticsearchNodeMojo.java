@@ -49,6 +49,7 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
      */
     protected Integer tcpPort;
 
+    @Override
     public void execute() throws MojoExecutionException
     {
         File dataDirectory = prepareDirectory(outputDirectory, dataDirname, "data directory");
