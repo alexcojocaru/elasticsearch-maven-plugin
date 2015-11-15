@@ -4,7 +4,9 @@ import java.io.File;
 import java.util.HashMap;
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -54,16 +56,26 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
     {
         assertNotNull(mojo);
         mojo.execute();
-        
+
         HttpClient client = HttpClientBuilder.create().build();
+        
         HttpGet get = new HttpGet("http://localhost:" + elasticsearchNode.getHttpPort());
+        
+        final int connectionTimeout = 500; // millis
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(connectionTimeout)
+                .setConnectTimeout(connectionTimeout)
+                .setSocketTimeout(connectionTimeout)
+                .build();
+        get.setConfig(requestConfig);
+
         try
         {
             client.execute(get);
             
             fail("The ES cluster should have been down by now");
         }
-        catch (HttpHostConnectException expected)
+        catch (HttpHostConnectException | ConnectTimeoutException expected)
         {
         }
 

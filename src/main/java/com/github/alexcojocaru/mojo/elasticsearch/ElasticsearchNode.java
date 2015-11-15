@@ -1,8 +1,9 @@
 package com.github.alexcojocaru.mojo.elasticsearch;
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
@@ -15,7 +16,7 @@ public class ElasticsearchNode
 {
     private Node node;
     private int httpPort;
-    
+
     /**
      * Start a local ES node with the given settings.
      * <br>
@@ -28,7 +29,7 @@ public class ElasticsearchNode
     {
         // Set the node to be as lightweight as possible,
         // at the same time being able to be discovered from an external JVM.
-        settings = ImmutableSettings.settingsBuilder()
+        settings = Settings.settingsBuilder()
                 .put("index.number_of_shards", 1)
                 .put("index.number_of_replicas", 0)
                 .put("network.host", "127.0.0.1")
@@ -54,12 +55,17 @@ public class ElasticsearchNode
      */
     public static ElasticsearchNode start(String dataPath) throws MojoExecutionException
     {
-        Settings settings = ImmutableSettings.settingsBuilder()
+        // ES v2.0.0 requires the path.home property.
+        // Set it to the parent of the data directory.
+        String homePath = new File(dataPath).getParent();
+        
+        Settings settings = Settings.settingsBuilder()
                 .put("cluster.name", "test")
                 .put("action.auto_create_index", false)
                 .put("transport.tcp.port", 9300)
                 .put("http.port", 9200)
                 .put("path.data", dataPath)
+                .put("path.home", homePath)
                 .build();
         return new ElasticsearchNode(settings);
     }
@@ -80,19 +86,16 @@ public class ElasticsearchNode
      */
     public void stop()
     {
-        if (node == null)
+        if (node != null)
         {
-            return;
+            node.close();
+            node = null;
         }
-        
-        node.stop();
-        node.close();
-        node = null;
     }
 
     public boolean isClosed()
     {
-        return (node == null || node !=null && node.isClosed());
+        return (node == null || node != null && node.isClosed());
     }
 
     /**

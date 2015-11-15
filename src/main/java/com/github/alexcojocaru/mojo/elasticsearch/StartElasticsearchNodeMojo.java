@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 
 /**
@@ -55,11 +54,13 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
         File dataDirectory = prepareDirectory(outputDirectory, dataDirname, "data directory");
         File logsDirectory = prepareDirectory(outputDirectory, logsDirname, "logs directory");
 
-        ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder()
+        Settings.Builder builder = Settings.settingsBuilder()
                 .put("cluster.name", clusterName)
                 .put("action.auto_create_index", false)
                 .put("transport.tcp.port", tcpPort)
                 .put("http.port", httpPort)
+                // ES v2.0.0 requires this property; set it to the parent of the data/log dirs.
+                .put("path.home", outputDirectory.getAbsolutePath())
                 .put("path.data", dataDirectory.getAbsolutePath())
                 .put("path.logs", logsDirectory.getAbsolutePath());
 

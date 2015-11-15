@@ -1,10 +1,13 @@
 # Elasticsearch Maven Plugin [![Build Status](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin.png?branch=master)](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin)
 
 A Maven plugin to run Elasticsearch instances during the integration test phase of a build.
-Although it is not a local Elasticsearch node per se
-(for it must be able to communicate to other nodes outside the JVM),
+Although it is not a local Elasticsearch node per se (for it is not able to communicate to other nodes outside the JVM),
 it is as lightweight as possible (1 shard, 0 replicas, multicast discovery disabled and zen ping timeout set to 3ms).
-It also has another goal that allows you to run a single node Elasticsearch cluster (optional loading data) and keep it running until the process is killed by CTRL+C.
+
+Another way to run a single node Elasticsearch cluster (providing a scriptFile is optional) is through the **run** goal,
+which keeps the process running until it is terminated with CTRL+C.
+
+The current plugin version supports Elasticsearch v2.x.x. For Elasticsearch v1.x.x support, see version 1.x of the plugin.
 
 ## Usage
 The following Elasticsearch properties can be configured through the plugin configuration section:
@@ -43,7 +46,7 @@ Include the following in the pom.xml file and modify the configuration as needed
     	    <artifactId>elasticsearch-maven-plugin</artifactId>
 			<!-- REPLACE THE FOLLOWING WITH THE LATEST VERSION
 				OF elasticsearch-maven-plugin FROM search.maven.com -->
-    	    <version>1.11-SNAPSHOT</version>
+    	    <version>2.0</version>
     	    <configuration>
     			<clusterName>test</clusterName>
     			<tcpPort>9300</tcpPort>
@@ -110,88 +113,88 @@ An load script file can be provided to the *run* goal of the plugin, in which ca
 ## Multiple Instances
 The plugin can support multiple instances of elastic search. This will require configuring executions for each cluster instance.  To ensure that each instance of an execution is refering to a specific cluster instance, it is required that the cluster name is the same for each instance.
 
-                <plugin>
-                    <groupId>com.github.alexcojocaru</groupId>
-                    <artifactId>elasticsearch-maven-plugin</artifactId>
-                    <version>1.12</version>
-                    <executions>
-			<!-- Manage Cluster 1 -->
-                        <execution>
-                            <id>start-elasticsearch</id>
-                            <phase>pre-integration-test</phase>
-                            <goals>
-                                <goal>start</goal>
-                            </goals>
-                            <configuration>
-                                <clusterName>test</clusterName>
-                                <tcpPort>9300</tcpPort>
-                                <httpPort>9200</httpPort>
-                                <configPath>${basedir}/../api/src/test/resources/elasticsearch/config</configPath>
-                                <outputDirectory>${project.build.directory}/esrch1</outputDirectory>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>deploy-json</id>
-                            <phase>pre-integration-test</phase>
-                            <goals>
-                                <goal>load</goal>
-                            </goals>
-                            <configuration>
-                                <clusterName>test</clusterName>
-                                <httpPort>9200</httpPort>
-                                <scriptFile>src/test/resources/elasticsearch.script</scriptFile>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>stop-elasticsearch</id>
-                            <phase>post-integration-test</phase>
-                            <goals>
-                                <goal>stop</goal>
-                            </goals>
-                            <configuration>
-                                <clusterName>test</clusterName>
-                                <httpPort>9200</httpPort>
-                            </configuration>
-                        </execution>
-			<!-- Manage Cluster #2 -->
-                        <execution>
-                            <id>start-elasticsearch-2</id>
-                            <phase>pre-integration-test</phase>
-                            <goals>
-                                <goal>start</goal>
-                            </goals>
-                            <configuration>
-                                <clusterName>test2</clusterName>
-                                <tcpPort>9600</tcpPort>
-                                <httpPort>9500</httpPort>
-                                <configPath>${basedir}/../api/src/test/resources/elasticsearch/config</configPath>
-                                <outputDirectory>${project.build.directory}/esrch2</outputDirectory>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>deploy-json-2</id>
-                            <phase>pre-integration-test</phase>
-                            <goals>
-                                <goal>load</goal>
-                            </goals>
-                            <configuration>
-                                <clusterName>test2</clusterName>
-                                <httpPort>9500</httpPort>
-                                <scriptFile>src/test/resources/elasticsearch.script</scriptFile>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>stop-elasticsearch-2</id>
-                            <phase>post-integration-test</phase>
-                            <goals>
-                                <goal>stop</goal>
-                            </goals>
-                            <configuration>
-                                <clusterName>test2</clusterName>
-                                <httpPort>9500</httpPort>
-                            </configuration>
-                        </execution>
-                    </executions>
-                   <executions>
-		</plugin>
+         <plugin>
+             <groupId>com.github.alexcojocaru</groupId>
+             <artifactId>elasticsearch-maven-plugin</artifactId>
+             <version>1.12</version>
+             <executions>
+                 <!-- Manage Cluster 1 -->
+                 <execution>
+                     <id>start-elasticsearch</id>
+                     <phase>pre-integration-test</phase>
+                     <goals>
+                         <goal>start</goal>
+                     </goals>
+                     <configuration>
+                         <clusterName>test</clusterName>
+                         <tcpPort>9300</tcpPort>
+                         <httpPort>9200</httpPort>
+                         <configPath>${basedir}/../api/src/test/resources/elasticsearch/config</configPath>
+                         <outputDirectory>${project.build.directory}/esrch1</outputDirectory>
+                     </configuration>
+                 </execution>
+                 <execution>
+                     <id>deploy-json</id>
+                     <phase>pre-integration-test</phase>
+                     <goals>
+                         <goal>load</goal>
+                     </goals>
+                     <configuration>
+                         <clusterName>test</clusterName>
+                         <httpPort>9200</httpPort>
+                         <scriptFile>src/test/resources/elasticsearch.script</scriptFile>
+                     </configuration>
+                 </execution>
+                 <execution>
+                     <id>stop-elasticsearch</id>
+                     <phase>post-integration-test</phase>
+                     <goals>
+                         <goal>stop</goal>
+                     </goals>
+                     <configuration>
+                         <clusterName>test</clusterName>
+                         <httpPort>9200</httpPort>
+                     </configuration>
+                 </execution>
+                 <!-- Manage Cluster #2 -->
+                 <execution>
+                     <id>start-elasticsearch-2</id>
+                     <phase>pre-integration-test</phase>
+                     <goals>
+                         <goal>start</goal>
+                     </goals>
+                     <configuration>
+                         <clusterName>test2</clusterName>
+                         <tcpPort>9600</tcpPort>
+                         <httpPort>9500</httpPort>
+                         <configPath>${basedir}/../api/src/test/resources/elasticsearch/config</configPath>
+                         <outputDirectory>${project.build.directory}/esrch2</outputDirectory>
+                     </configuration>
+                 </execution>
+                 <execution>
+                     <id>deploy-json-2</id>
+                     <phase>pre-integration-test</phase>
+                     <goals>
+                         <goal>load</goal>
+                     </goals>
+                     <configuration>
+                         <clusterName>test2</clusterName>
+                         <httpPort>9500</httpPort>
+                         <scriptFile>src/test/resources/elasticsearch.script</scriptFile>
+                     </configuration>
+                 </execution>
+                 <execution>
+                     <id>stop-elasticsearch-2</id>
+                     <phase>post-integration-test</phase>
+                     <goals>
+                         <goal>stop</goal>
+                     </goals>
+                     <configuration>
+                         <clusterName>test2</clusterName>
+                         <httpPort>9500</httpPort>
+                     </configuration>
+                 </execution>
+             </executions>
+            <executions>
+        </plugin>
 
