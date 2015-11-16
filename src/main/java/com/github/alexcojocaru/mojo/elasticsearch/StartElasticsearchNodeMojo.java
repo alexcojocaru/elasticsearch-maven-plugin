@@ -43,6 +43,11 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
     protected String pluginsPath;
 
     /**
+     * @parameter default-value=false
+     */
+    protected boolean autoCreateIndex;
+
+    /**
      * @parameter
      * @required
      */
@@ -56,7 +61,7 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
 
         Settings.Builder builder = Settings.settingsBuilder()
                 .put("cluster.name", clusterName)
-                .put("action.auto_create_index", false)
+                .put("action.auto_create_index", autoCreateIndex)
                 .put("transport.tcp.port", tcpPort)
                 .put("http.port", httpPort)
                 // ES v2.0.0 requires this property; set it to the parent of the data/log dirs.
