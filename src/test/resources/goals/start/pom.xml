@@ -17,6 +17,7 @@
 					<clusterName>test</clusterName>
 					<tcpPort>9300</tcpPort>
 					<httpPort>9200</httpPort>
+					<autoCreateIndex>true</autoCreateIndex>
 				</configuration>
 			</plugin>
 		</plugins>

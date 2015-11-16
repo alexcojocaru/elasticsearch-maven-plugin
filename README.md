@@ -39,6 +39,9 @@ The following Elasticsearch properties can be configured through the plugin conf
 *   **scriptFile** [required by the *load* goal]
     > a list of commands to be executed to provision the Elasticsearch cluster. See the [load.script](#load.script) section for details.
 
+*   **autoCreateIndex** [optional]
+    > configuration of automatic index creation (defaults to _false_).
+
 Include the following in the pom.xml file and modify the configuration as needed:
 
         <plugin>
