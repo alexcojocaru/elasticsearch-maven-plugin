@@ -52,6 +52,7 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
         HttpGet get = new HttpGet("http://localhost:" + mojo.getNode().getHttpPort());
         HttpResponse response = client.execute(get);
         assertEquals(200, response.getStatusLine().getStatusCode());
+        assertEquals(true, mojo.autoCreateIndex);
     }
 
 }
