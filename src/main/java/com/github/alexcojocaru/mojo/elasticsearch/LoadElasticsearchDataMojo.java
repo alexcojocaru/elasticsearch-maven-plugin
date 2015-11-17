@@ -19,9 +19,8 @@ public class LoadElasticsearchDataMojo extends AbstractElasticsearchNodeMojo
      */
     private File scriptFile;
 
-    @SuppressWarnings("unchecked")
     @Override
     public void execute() throws MojoExecutionException {
-        LoadElasticsearchUtility.load(scriptFile, getLog(),httpPort);
+        LoadElasticsearchUtility.load(scriptFile, getLog(), httpPort);
     }
 }

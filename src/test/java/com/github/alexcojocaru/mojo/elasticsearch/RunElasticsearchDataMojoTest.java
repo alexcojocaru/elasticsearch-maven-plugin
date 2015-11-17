@@ -7,8 +7,11 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
+import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
+
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -16,32 +19,39 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
 {
-
-    private ElasticsearchNode elasticsearchNode;
+    private RunElasticsearchNodeMojo mojo;
 
     @Override
     protected void setUp() throws Exception
     {
         super.setUp();
+
+        File testPom = new File(getBasedir(), "src/test/resources/goals/run/pom.xml");
+
+        Map<ElasticsearchPort, Integer> esPorts = NetUtil.findOpenPortsForElasticsearch();
+
+        mojo = (RunElasticsearchNodeMojo)lookupMojo("run", testPom);
+        mojo.setPluginContext(new HashMap());
+        
+        // I cannot find another way of setting the two required propperties at run time.
+        mojo.httpPort = esPorts.get(ElasticsearchPort.HTTP);
+        mojo.tcpPort = esPorts.get(ElasticsearchPort.TCP);
     }
     
     @Override
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        if (elasticsearchNode != null)
+
+        if (mojo != null && mojo.getNode() != null)
         {
-            elasticsearchNode.stop();
+            mojo.getNode().stop();
         }
         
     }
     
     public void testMojoLookup() throws Exception
     {
-        File testPom = new File(getBasedir(), "src/test/resources/goals/run/pom.xml");
-
-        RunElasticsearchNodeMojo mojo = (RunElasticsearchNodeMojo)lookupMojo("run", testPom);
- 
         assertNotNull(mojo);
     }
 
@@ -54,11 +64,6 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
      */
     public void testMojoExecution() throws Exception
     {
-        File testPom = new File(getBasedir(), "src/test/resources/goals/run/pom.xml");
-
-        final RunElasticsearchNodeMojo mojo = (RunElasticsearchNodeMojo)lookupMojo("run", testPom);
-        mojo.setPluginContext(new HashMap());
-
         final AtomicReference<Exception> internalRunThreadException = new AtomicReference<Exception>();
 
         assertNotNull(mojo);
@@ -78,13 +83,12 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
 
         try {
             Thread.sleep(3000);
-            elasticsearchNode = mojo.getNode();
 
             // Asserts!
             assertNull("MojoExecute threw an exception", internalRunThreadException.get());
 
             HttpClient client = HttpClientBuilder.create().build();
-            HttpGet get = new HttpGet("http://localhost:" + elasticsearchNode.getHttpPort());
+            HttpGet get = new HttpGet("http://localhost:" + mojo.getNode().getHttpPort());
             HttpResponse response = client.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
         }
