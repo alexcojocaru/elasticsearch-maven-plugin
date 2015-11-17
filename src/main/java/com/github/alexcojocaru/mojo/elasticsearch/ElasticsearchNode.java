@@ -55,6 +55,23 @@ public class ElasticsearchNode
      */
     public static ElasticsearchNode start(String dataPath) throws MojoExecutionException
     {
+        return start(dataPath, 9200, 9300);
+    }
+    
+    /**
+     * Start a local ES node with default settings.
+     * <br>
+     * If the local node is already running prior to calling this method,
+     * an IllegalStateException will be thrown.
+     * @param dataPath
+     * @param httpPort
+     * @param tcpPort
+     * @throws MojoExecutionException 
+     * @return an instance of an ElasticsearchNode
+     */
+    public static ElasticsearchNode start(String dataPath, int httpPort, int tcpPort)
+            throws MojoExecutionException
+    {
         // ES v2.0.0 requires the path.home property.
         // Set it to the parent of the data directory.
         String homePath = new File(dataPath).getParent();
@@ -62,8 +79,8 @@ public class ElasticsearchNode
         Settings settings = Settings.settingsBuilder()
                 .put("cluster.name", "test")
                 .put("action.auto_create_index", false)
-                .put("transport.tcp.port", 9300)
-                .put("http.port", 9200)
+                .put("transport.tcp.port", tcpPort)
+                .put("http.port", httpPort)
                 .put("path.data", dataPath)
                 .put("path.home", homePath)
                 .build();

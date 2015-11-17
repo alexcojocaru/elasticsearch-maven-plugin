@@ -2,6 +2,7 @@ package com.github.alexcojocaru.mojo.elasticsearch;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -10,6 +11,8 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+
+import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
 
 /**
  * @author alexcojocaru
@@ -28,7 +31,12 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
         super.setUp();
         
         String dataPath = new File("target/test-harness/elasticsearch-data").getAbsolutePath();
-        elasticsearchNode = ElasticsearchNode.start(dataPath);
+
+        Map<ElasticsearchPort, Integer> esPorts = NetUtil.findOpenPortsForElasticsearch();
+        int httpPort = esPorts.get(ElasticsearchPort.HTTP);
+        int tcpPort = esPorts.get(ElasticsearchPort.TCP);
+
+        elasticsearchNode = ElasticsearchNode.start(dataPath, httpPort, tcpPort);
 
         //Configure mojo with context
         File testPom = new File(getBasedir(), "src/test/resources/goals/stop/pom.xml");
@@ -41,11 +49,13 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
+
         if (elasticsearchNode != null && !elasticsearchNode.isClosed())
         {
             elasticsearchNode.stop();
         }
     }
+    
     
     public void testMojoLookup() throws Exception
     {

@@ -15,8 +15,7 @@
 					<dataDirname>elasticsearch-data-run</dataDirname>
 					<logsDirname>elasticsearch-logs-run</logsDirname>
 					<clusterName>test-run</clusterName>
-					<tcpPort>9300</tcpPort>
-					<httpPort>9200</httpPort>
+					<!-- the http.port and tcp.port are provided dynamically in the MojoTest -->
 				</configuration>
 			</plugin>
 		</plugins>
