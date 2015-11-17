@@ -44,6 +44,11 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
     protected String pluginsPath;
 
     /**
+     * @parameter default-value=false
+     */
+    protected boolean autoCreateIndex;
+
+    /**
      * @parameter
      * @required
      */
@@ -57,7 +62,7 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
 
         ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName)
-                .put("action.auto_create_index", false)
+                .put("action.auto_create_index", autoCreateIndex)
                 .put("transport.tcp.port", tcpPort)
                 .put("http.port", httpPort)
                 .put("path.data", dataDirectory.getAbsolutePath())
