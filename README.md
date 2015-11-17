@@ -44,8 +44,7 @@ Include the following in the pom.xml file and modify the configuration as needed
         <plugin>
     	    <groupId>com.github.alexcojocaru</groupId>
     	    <artifactId>elasticsearch-maven-plugin</artifactId>
-			<!-- REPLACE THE FOLLOWING WITH THE LATEST VERSION
-				OF elasticsearch-maven-plugin FROM search.maven.com -->
+			<!-- REPLACE THE FOLLOWING WITH THE PLUGIN VERSION YOU REQUIRE -->
     	    <version>2.0</version>
     	    <configuration>
     			<clusterName>test</clusterName>
@@ -80,6 +79,14 @@ Include the following in the pom.xml file and modify the configuration as needed
     	            </goals>
     	        </execution>
     	    </executions>
+			<dependencies>
+				<dependency>
+					<groupId>org.elasticsearch</groupId>
+					<artifactId>elasticsearch</artifactId>
+					<!-- REPLACE THE FOLLOWING WITH THE VERSION OF YOUR DESIRE -->
+					<version>2.0.0</version>
+				</dependency>
+			</dependencies>
     	</plugin>
 
 ## <a name="load.script"></a>Load script
