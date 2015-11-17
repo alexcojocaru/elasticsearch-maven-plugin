@@ -11,7 +11,12 @@
 				<groupId>com.github.alexcojocaru</groupId>
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<configuration>
-					<clusterName>test</clusterName>
+					<outputDirectory>target/test-harness-run</outputDirectory>
+					<dataDirname>elasticsearch-data-run</dataDirname>
+					<logsDirname>elasticsearch-logs-run</logsDirname>
+					<clusterName>test-run</clusterName>
+					<tcpPort>9300</tcpPort>
+					<httpPort>9200</httpPort>
 				</configuration>
 			</plugin>
 		</plugins>

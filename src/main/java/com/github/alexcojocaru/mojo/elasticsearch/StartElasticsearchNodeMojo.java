@@ -2,88 +2,96 @@ package com.github.alexcojocaru.mojo.elasticsearch;
 
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.settings.Settings;
 
 /**
  * Goal which starts a local Elasticsearch node.
- * 
- * @author alexcojocaru
- * 
+ *
+ * @author gfernandes
+ *
  * @goal start
  * @phase pre-integration-test
  */
-public class StartElasticsearchNodeMojo extends AbstractMojo
-{
+public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
+
     /**
      * @parameter default-value="${project.build.directory}"
      * @required
      */
-    private File outputDirectory;
+    protected File outputDirectory;
 
     /**
      * @parameter default-value="elasticsearch-data"
      */
-    private String dataDirname;
+    protected String dataDirname;
 
     /**
      * @parameter default-value="elasticsearch-logs"
      */
-    private String logsDirname;
-
-    /**
-     * @parameter
-     * @required
-     */
-    private String clusterName;
-
-    /**
-     * @parameter
-     * @required
-     */
-    private Integer tcpPort;
-
-    /**
-     * @parameter
-     * @required
-     */
-    private Integer httpPort;
+    protected String logsDirname;
 
     /**
      * @parameter default-value=""
      */
-    private String configPath;
+    protected String configPath;
 
+    /**
+     * @parameter default-value=""
+     */
+    protected String pluginsPath;
 
+    /**
+     * @parameter
+     * @required
+     */
+    protected Integer tcpPort;
+
+    @Override
     public void execute() throws MojoExecutionException
     {
         File dataDirectory = prepareDirectory(outputDirectory, dataDirname, "data directory");
         File logsDirectory = prepareDirectory(outputDirectory, logsDirname, "logs directory");
-        
-        Builder builder = ImmutableSettings.settingsBuilder()
+
+        ImmutableSettings.Builder builder = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName)
                 .put("action.auto_create_index", false)
                 .put("transport.tcp.port", tcpPort)
                 .put("http.port", httpPort)
                 .put("path.data", dataDirectory.getAbsolutePath())
                 .put("path.logs", logsDirectory.getAbsolutePath());
-        
+
         if (configPath != null && configPath.trim().length() > 0 && new File(configPath).exists())
         {
             builder.put("path.conf", configPath);
         }
+        if (pluginsPath != null && pluginsPath.trim().length() > 0 && new File(pluginsPath).exists())
+        {
+            builder.put("path.plugins", pluginsPath);
+        }
+
         
         Settings settings = builder.build();
-        
-        ElasticSearchNode.start(settings);
+        startNode(settings);
     }
-    
-    /**
+
+    protected ElasticsearchNode startNode(Settings settings) throws MojoExecutionException
+    {
+        if (getNode() != null)
+        {
+            return getNode();
+        }
+        else
+        {
+            ElasticsearchNode elasticsearchNode = new ElasticsearchNode(settings);
+            super.getPluginContext().put(clusterName, elasticsearchNode);
+            return elasticsearchNode;
+        }
+    }
+
+   /**
      * 
      * @param parentDir
      * @param dirname
@@ -120,4 +128,6 @@ public class StartElasticsearchNodeMojo extends AbstractMojo
         
         return dir;
     }
+
+    
 }

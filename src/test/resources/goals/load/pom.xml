@@ -12,6 +12,8 @@
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<configuration>
 					<scriptFile>src/test/resources/goals/load/load.script</scriptFile>
+					<clusterName>test</clusterName>
+					<httpPort>9200</httpPort>
 				</configuration>
 			</plugin>
 		</plugins>
