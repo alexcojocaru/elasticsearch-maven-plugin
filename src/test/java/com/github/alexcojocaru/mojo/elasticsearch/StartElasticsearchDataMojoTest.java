@@ -1,13 +1,16 @@
 package com.github.alexcojocaru.mojo.elasticsearch;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +23,7 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
 {
 
     private StartElasticsearchNodeMojo mojo;
+    private HttpClient httpClient;
 
     @Override
     protected void setUp() throws Exception
@@ -36,6 +40,8 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
         // I cannot find another way of setting the two required propperties at run time.
         mojo.httpPort = esPorts.get(ElasticsearchPort.HTTP);
         mojo.tcpPort = esPorts.get(ElasticsearchPort.TCP);
+
+        httpClient = HttpClientBuilder.create().build();
     }
     
     @Override
@@ -43,6 +49,11 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
     {
         super.tearDown();
 
+        stopNode();
+    }
+
+    private void stopNode() throws Exception
+    {
         if (mojo != null && mojo.getNode() != null)
         {
             mojo.getNode().stop();
@@ -60,11 +71,68 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
         assertNotNull(mojo);
         mojo.execute();
 
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpGet get = new HttpGet("http://localhost:" + mojo.getNode().getHttpPort());
-        HttpResponse response = client.execute(get);
+        HttpGet get = new HttpGet(getUri());
+        HttpResponse response = httpClient.execute(get);
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals(true, mojo.autoCreateIndex);
+    }
+
+    private String getUri() throws Exception
+    {
+        return "http://localhost:" + mojo.getNode().getHttpPort();
+    }
+
+    public void testKeepData() throws Exception
+    {
+        assertNotNull(mojo);
+
+        mojo.execute();
+
+        final String indexName = "myindex";
+
+        // succeeds
+        StatusLine statusLine = createIndex(indexName);
+        assertEquals(statusLine.getReasonPhrase(), 2, statusLine.getStatusCode() / 100);
+
+        // fails because exists
+        Thread.sleep(500);
+        statusLine = createIndex(indexName);
+        assertEquals(statusLine.getReasonPhrase(), 4, statusLine.getStatusCode() / 100);
+
+        stopNode();
+        setUp();
+        Thread.sleep(500);
+        mojo.execute();
+
+        // succeeds because deleted and newly created
+        statusLine = createIndex(indexName);
+        assertEquals(statusLine.getReasonPhrase(), 2, statusLine.getStatusCode() / 100);
+
+        stopNode();
+        setUp();
+        Thread.sleep(500);
+        mojo.keepData = true;
+        mojo.execute();
+
+        // fails because existed from previous
+        statusLine = createIndex(indexName);
+        assertEquals(statusLine.getReasonPhrase(), 4, statusLine.getStatusCode() / 100);
+
+    }
+
+    private StatusLine createIndex(final String indexName) throws Exception
+    {
+        final String indexUri = getUri() + "/" + indexName;
+        HttpPut put = new HttpPut(indexUri);
+        HttpResponse response = httpClient.execute(put);
+        final StatusLine statusLine = response.getStatusLine();
+        if (statusLine.getStatusCode() >= 300) {
+            final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+            response.getEntity().writeTo(ostream);
+            System.out.println(statusLine.toString());
+            System.out.println(ostream.toString());
+        }
+        return statusLine;
     }
 
 }

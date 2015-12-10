@@ -27,6 +27,9 @@ The following Elasticsearch properties can be configured through the plugin conf
 *   **logsDirname** [optional]
     > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch logs will be created;
 
+*   **keepData** [optional]
+    > whether to keep the data and log directories if they already exist (defaults to _false_);
+
 *   **configPath** [optional]
     > the path of the config directory to be used by the Elasticsearch instance; it is needed for scripting support, in which case the directory referred by the path should contains only a *scripts* directory, with the required scripts;
 
