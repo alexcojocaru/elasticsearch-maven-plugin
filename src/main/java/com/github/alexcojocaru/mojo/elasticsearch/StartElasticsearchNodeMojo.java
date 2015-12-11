@@ -24,6 +24,11 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
     protected File outputDirectory;
 
     /**
+     * @parameter default-value="false"
+     */
+    protected boolean keepData;
+
+    /**
      * @parameter default-value="elasticsearch-data"
      */
     protected String dataDirname;
@@ -111,6 +116,11 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
         // If the directory already exists, delete it.
         if (dir.exists())
         {
+            if (keepData)
+            {
+                return dir;
+            }
+
             try
             {
                 FileUtils.deleteDirectory(dir);
@@ -122,7 +132,7 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
                         + dir.getAbsolutePath(), e);
             }
         }
-        
+
         // Create a new Elasticsearch directory.
         if (!dir.mkdirs())
         {
