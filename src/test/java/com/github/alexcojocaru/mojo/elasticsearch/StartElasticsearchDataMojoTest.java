@@ -10,7 +10,6 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -123,16 +122,8 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
     private StatusLine createIndex(final String indexName) throws Exception
     {
         final String indexUri = getUri() + "/" + indexName;
-        HttpPut put = new HttpPut(indexUri);
-        HttpResponse response = httpClient.execute(put);
-        final StatusLine statusLine = response.getStatusLine();
-        if (statusLine.getStatusCode() >= 300) {
-            final ByteArrayOutputStream ostream = new ByteArrayOutputStream();
-            response.getEntity().writeTo(ostream);
-            System.out.println(statusLine.toString());
-            System.out.println(ostream.toString());
-        }
-        return statusLine;
+        final HttpResponse response = httpClient.execute(new HttpPut(indexUri));
+        return response.getStatusLine();
     }
 
 }
