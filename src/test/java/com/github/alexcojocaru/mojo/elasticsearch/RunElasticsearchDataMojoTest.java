@@ -1,18 +1,22 @@
 package com.github.alexcojocaru.mojo.elasticsearch;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import com.jayway.awaitility.Awaitility;
 
 /**
  * @author gfernandes
@@ -68,11 +72,16 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
 
         assertNotNull(mojo);
         
-        Thread toRun = new Thread(new Runnable() {
-            public void run() {
-                try {
+        Thread toRun = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                try
+                {
                     mojo.execute();
-                } catch (MojoExecutionException e) {
+                }
+                catch (MojoExecutionException e)
+                {
                     e.printStackTrace();
                     internalRunThreadException.set(e);
                 }
@@ -81,24 +90,56 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
 
         toRun.start();
 
-        try {
-            Thread.sleep(3000);
-
-            // Asserts!
+        try
+        {
+            // verify that the node start did not fail
             assertNull("MojoExecute threw an exception", internalRunThreadException.get());
 
-            HttpClient client = HttpClientBuilder.create().build();
-            HttpGet get = new HttpGet("http://localhost:" + mojo.getNode().getHttpPort());
-            HttpResponse response = client.execute(get);
-            assertEquals(200, response.getStatusLine().getStatusCode());
+            final HttpClient client = HttpClientBuilder.create().build();
+            
+            final HttpGet get = new HttpGet("http://localhost:" + mojo.httpPort);
+
+            final int connectionTimeout = 100; // millis
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectionRequestTimeout(connectionTimeout)
+                    .setConnectTimeout(connectionTimeout)
+                    .setSocketTimeout(connectionTimeout)
+                    .build();
+            get.setConfig(requestConfig);
+
+            Awaitility
+                    .with().pollInterval(200, TimeUnit.MILLISECONDS)
+                    .and()
+                    .with().pollDelay(200, TimeUnit.MILLISECONDS)
+                    .atMost(4000, TimeUnit.MILLISECONDS)
+                    .await()
+                    .until(new Callable<Boolean>()
+                    {
+                        @Override
+                        public Boolean call() throws Exception
+                        {
+                            try
+                            {
+                                HttpResponse response = client.execute(get);
+                                return response.getStatusLine().getStatusCode() == 200;
+                            }
+                            catch (Exception e)
+                            {
+                                // lets just assume the exception is due to the node starting
+                                // and not log the exception
+                                return false;
+                            }
+                        }
+                    });
         }
-        catch (Exception e ) {
-            fail(e.getMessage());
-        }
-        finally {
-            try {
+        finally
+        {
+            try
+            {
                 toRun.interrupt();
-            } catch(Exception e) {
+            }
+            catch(Exception e)
+            {
                 e.printStackTrace();
             }
         }
