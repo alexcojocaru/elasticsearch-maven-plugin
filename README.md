@@ -30,6 +30,9 @@ The following Elasticsearch properties can be configured through the plugin conf
 *   **logsDirname** [optional]
     > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch logs will be created;
 
+*   **keepData** [optional]
+    > whether to keep the data and log directories if they already exist (defaults to _false_);
+
 *   **configPath** [optional]
     > the path of the config directory to be used by the Elasticsearch instance; it is needed for scripting support, in which case the directory referred by the path should contains only a *scripts* directory, with the required scripts;
 
@@ -38,6 +41,9 @@ The following Elasticsearch properties can be configured through the plugin conf
 
 *   **scriptFile** [required by the *load* goal]
     > a list of commands to be executed to provision the Elasticsearch cluster. See the [load.script](#load.script) section for details.
+
+*   **autoCreateIndex** [optional]
+    > configuration of automatic index creation represented by _action.auto\_create\_index_ setting (defaults to _false_).
 
 Include the following in the pom.xml file and modify the configuration as needed:
 

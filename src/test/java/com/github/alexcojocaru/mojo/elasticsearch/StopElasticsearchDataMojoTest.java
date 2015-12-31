@@ -70,7 +70,7 @@ public class StopElasticsearchDataMojoTest extends AbstractMojoTestCase
         HttpClient client = HttpClientBuilder.create().build();
         
         HttpGet get = new HttpGet("http://localhost:" + elasticsearchNode.getHttpPort());
-        
+
         final int connectionTimeout = 500; // millis
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectionRequestTimeout(connectionTimeout)

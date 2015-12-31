@@ -23,6 +23,11 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
     protected File outputDirectory;
 
     /**
+     * @parameter default-value="false"
+     */
+    protected boolean keepData;
+
+    /**
      * @parameter default-value="elasticsearch-data"
      */
     protected String dataDirname;
@@ -43,6 +48,11 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
     protected String pluginsPath;
 
     /**
+     * @parameter default-value=false
+     */
+    protected boolean autoCreateIndex;
+
+    /**
      * @parameter
      * @required
      */
@@ -56,7 +66,7 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
 
         Settings.Builder builder = Settings.settingsBuilder()
                 .put("cluster.name", clusterName)
-                .put("action.auto_create_index", false)
+                .put("action.auto_create_index", autoCreateIndex)
                 .put("transport.tcp.port", tcpPort)
                 .put("http.port", httpPort)
                 // ES v2.0.0 requires this property; set it to the parent of the data/log dirs.
@@ -107,6 +117,11 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
         // If the directory already exists, delete it.
         if (dir.exists())
         {
+            if (keepData)
+            {
+                return dir;
+            }
+
             try
             {
                 FileUtils.deleteDirectory(dir);
@@ -118,7 +133,7 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
                         + dir.getAbsolutePath(), e);
             }
         }
-        
+
         // Create a new Elasticsearch directory.
         if (!dir.mkdirs())
         {
