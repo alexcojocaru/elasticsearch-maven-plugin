@@ -40,8 +40,6 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
 
         this.elasticsearchNode = ElasticsearchNode.start(dataPath, httpPort, tcpPort);
 
-        elasticsearchNode.getClient().admin().indices().delete(new DeleteIndexRequest("test_index"));
-
         //Configure mojo with context
         mojo = (LoadElasticsearchDataMojo)lookupMojo("load", testPom);
         mojo.setPluginContext(new HashMap());
@@ -71,16 +69,6 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
     public void testMojoExecution() throws Exception
     {
         mojo.execute();
-    }
-
-    public void testMojoExecutionIsSkipped() throws Exception
-    {
-        mojo.skip = true;
-
-        assertNotNull(mojo);
-        mojo.execute();
-
-        assertFalse(elasticsearchNode.getClient().admin().indices().exists(new IndicesExistsRequest("test_index")).get().isExists());
     }
 
 }
