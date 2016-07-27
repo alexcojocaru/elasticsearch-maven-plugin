@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.exists.ExistsRequest;
@@ -39,6 +40,8 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
 
         this.elasticsearchNode = ElasticsearchNode.start(dataPath, httpPort, tcpPort);
 
+        elasticsearchNode.getClient().admin().indices().delete(new DeleteIndexRequest("test_index"));
+
         //Configure mojo with context
         mojo = (LoadElasticsearchDataMojo)lookupMojo("load", testPom);
         mojo.setPluginContext(new HashMap());
@@ -46,6 +49,7 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
         
         // I cannot find another way of setting the two required propperties at run time.
         mojo.httpPort = esPorts.get(ElasticsearchPort.HTTP);
+
     }
     
     @Override
@@ -76,7 +80,7 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
         assertNotNull(mojo);
         mojo.execute();
 
-        assertFalse(mojo.getNode().getClient().admin().indices().exists(new IndicesExistsRequest("test_index")).get().isExists());
+        assertFalse(elasticsearchNode.getClient().admin().indices().exists(new IndicesExistsRequest("test_index")).get().isExists());
     }
 
 }
