@@ -27,30 +27,32 @@ public class RunElasticsearchNodeMojo extends StartElasticsearchNodeMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        super.execute();
-        if (scriptFile != null) {
-            getLog().info("RunElasticsearchNodeMojo loading data");
-            LoadElasticsearchUtility.load(scriptFile, getLog(), httpPort);
-        }
-
-        final ElasticsearchNode esearchNode = super.getNode();
-
-        //Adding shutdown hook to stop ES
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                esearchNode.stop();
-                waitES.countDown();
+        if (!skip) {
+            super.execute();
+            if (scriptFile != null) {
+                getLog().info("RunElasticsearchNodeMojo loading data");
+                LoadElasticsearchUtility.load(scriptFile, getLog(), httpPort);
             }
-        });
 
-        waitIndefinitely();
+            final ElasticsearchNode esearchNode = super.getNode();
 
-        getLog().info("RunElasticsearchNodeMojo waiting for ES to be stopped");
-        try {
-            waitES.await(SHUTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            getLog().warn("RunElasticsearchNodeMojo interrupted, ES instance has not stopped after " +
-                    SHUTDOWN_TIMEOUT + "ms");
+            //Adding shutdown hook to stop ES
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    esearchNode.stop();
+                    waitES.countDown();
+                }
+            });
+
+            waitIndefinitely();
+
+            getLog().info("RunElasticsearchNodeMojo waiting for ES to be stopped");
+            try {
+                waitES.await(SHUTDOWN_TIMEOUT, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                getLog().warn("RunElasticsearchNodeMojo interrupted, ES instance has not stopped after " +
+                        SHUTDOWN_TIMEOUT + "ms");
+            }
         }
     }
 

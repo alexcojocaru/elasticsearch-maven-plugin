@@ -7,6 +7,11 @@ import java.util.Map;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.exists.ExistsRequest;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.index.IndexRequest;
 
 /**
  * @author alexcojocaru
@@ -62,6 +67,16 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
     public void testMojoExecution() throws Exception
     {
         mojo.execute();
+    }
+
+    public void testMojoExecutionIsSkipped() throws Exception
+    {
+        mojo.skip = true;
+
+        assertNotNull(mojo);
+        mojo.execute();
+
+        assertFalse(mojo.getNode().getClient().admin().indices().exists(new IndicesExistsRequest("test_index")).get().isExists());
     }
 
 }

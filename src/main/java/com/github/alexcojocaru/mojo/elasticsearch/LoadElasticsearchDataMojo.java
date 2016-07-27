@@ -21,6 +21,8 @@ public class LoadElasticsearchDataMojo extends AbstractElasticsearchNodeMojo
 
     @Override
     public void execute() throws MojoExecutionException {
-        LoadElasticsearchUtility.load(scriptFile, getLog(), httpPort);
+        if (!skip) {
+            LoadElasticsearchUtility.load(scriptFile, getLog(), httpPort);
+        }
     }
 }

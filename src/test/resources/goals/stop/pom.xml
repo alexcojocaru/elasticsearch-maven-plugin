@@ -12,7 +12,7 @@
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<configuration>
 					<clusterName>test</clusterName>
-					<!-- the http.port and tcp.port are provided dynamically in the MojoTest -->
+					<!-- the http.port and tcp.port and skip are provided dynamically in the MojoTest -->
 				</configuration>
 			</plugin>
 		</plugins>
