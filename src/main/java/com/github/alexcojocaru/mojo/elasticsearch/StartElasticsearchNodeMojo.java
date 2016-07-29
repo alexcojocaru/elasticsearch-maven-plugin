@@ -61,31 +61,31 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
     @Override
     public void execute() throws MojoExecutionException
     {
-        File dataDirectory = prepareDirectory(outputDirectory, dataDirname, "data directory");
-        File logsDirectory = prepareDirectory(outputDirectory, logsDirname, "logs directory");
+        if (!skip) {
+            File dataDirectory = prepareDirectory(outputDirectory, dataDirname, "data directory");
+            File logsDirectory = prepareDirectory(outputDirectory, logsDirname, "logs directory");
 
-        Settings.Builder builder = Settings.settingsBuilder()
-                .put("cluster.name", clusterName)
-                .put("action.auto_create_index", autoCreateIndex)
-                .put("transport.tcp.port", tcpPort)
-                .put("http.port", httpPort)
-                // ES v2.0.0 requires this property; set it to the parent of the data/log dirs.
-                .put("path.home", outputDirectory.getAbsolutePath())
-                .put("path.data", dataDirectory.getAbsolutePath())
-                .put("path.logs", logsDirectory.getAbsolutePath());
+            Settings.Builder builder = Settings.settingsBuilder()
+                    .put("cluster.name", clusterName)
+                    .put("action.auto_create_index", autoCreateIndex)
+                    .put("transport.tcp.port", tcpPort)
+                    .put("http.port", httpPort)
+                    // ES v2.0.0 requires this property; set it to the parent of the data/log dirs.
+                    .put("path.home", outputDirectory.getAbsolutePath())
+                    .put("path.data", dataDirectory.getAbsolutePath())
+                    .put("path.logs", logsDirectory.getAbsolutePath());
 
-        if (configPath != null && configPath.trim().length() > 0 && new File(configPath).exists())
-        {
-            builder.put("path.conf", configPath);
+            if (configPath != null && configPath.trim().length() > 0 && new File(configPath).exists()) {
+                builder.put("path.conf", configPath);
+            }
+            if (pluginsPath != null && pluginsPath.trim().length() > 0 && new File(pluginsPath).exists()) {
+                builder.put("path.plugins", pluginsPath);
+            }
+
+
+            Settings settings = builder.build();
+            startNode(settings);
         }
-        if (pluginsPath != null && pluginsPath.trim().length() > 0 && new File(pluginsPath).exists())
-        {
-            builder.put("path.plugins", pluginsPath);
-        }
-
-        
-        Settings settings = builder.build();
-        startNode(settings);
     }
 
     protected ElasticsearchNode startNode(Settings settings) throws MojoExecutionException

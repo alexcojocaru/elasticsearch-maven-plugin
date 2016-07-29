@@ -15,7 +15,7 @@
 					<dataDirname>elasticsearch-data</dataDirname>
 					<logsDirname>elasticsearch-logs</logsDirname>
 					<clusterName>test</clusterName>
-					<!-- the http.port and tcp.port are provided dynamically in the MojoTest -->
+					<!-- the http.port and tcp.port and skip are provided dynamically in the MojoTest -->
 					<autoCreateIndex>true</autoCreateIndex>
 				</configuration>
 			</plugin>

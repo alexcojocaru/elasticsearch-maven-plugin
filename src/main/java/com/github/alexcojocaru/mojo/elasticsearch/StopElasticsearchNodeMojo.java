@@ -15,6 +15,9 @@ public class StopElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo
     @Override
     public void execute() throws MojoExecutionException
     {
-        getNode().stop();
+        if (getNode() != null )
+        {
+            getNode().stop();
+        }
     }
 }

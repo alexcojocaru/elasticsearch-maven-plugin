@@ -144,4 +144,14 @@ public class RunElasticsearchDataMojoTest extends AbstractMojoTestCase
             }
         }
     }
+
+    public void testMojoExecutionIsSkipped() throws Exception
+    {
+        mojo.skip = true;
+
+        assertNotNull(mojo);
+        mojo.execute();
+
+        assertNull(mojo.getNode());
+    }
 }

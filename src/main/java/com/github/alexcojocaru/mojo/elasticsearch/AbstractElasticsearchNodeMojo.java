@@ -22,6 +22,11 @@ public abstract class AbstractElasticsearchNodeMojo extends AbstractMojo
      */
     protected Integer httpPort;
 
+    /**
+     * @parameter
+     */
+    protected boolean skip = false;
+
     protected ElasticsearchNode getNode() throws MojoExecutionException
     {
         return (ElasticsearchNode) super.getPluginContext().get(clusterName);
