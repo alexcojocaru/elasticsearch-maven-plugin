@@ -9,6 +9,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.exists.ExistsRequest;
 import org.elasticsearch.action.get.GetRequest;
@@ -39,6 +40,7 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
         int tcpPort = esPorts.get(ElasticsearchPort.TCP);
 
         this.elasticsearchNode = ElasticsearchNode.start(dataPath, httpPort, tcpPort);
+        elasticsearchNode.getClient().admin().indices().delete(new DeleteIndexRequest("_all"));
 
         //Configure mojo with context
         mojo = (LoadElasticsearchDataMojo)lookupMojo("load", testPom);
@@ -57,6 +59,7 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
         
         if (elasticsearchNode != null && !elasticsearchNode.isClosed())
         {
+            elasticsearchNode.getClient().admin().indices().delete(new DeleteIndexRequest("_all"));
             this.elasticsearchNode.stop();
         }
     }
@@ -69,6 +72,17 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
     public void testMojoExecution() throws Exception
     {
         mojo.execute();
+
+        assertTrue(elasticsearchNode.getClient().admin().indices().getIndex(new GetIndexRequest()).get().indices().length == 1);
+    }
+
+    public void testMojoExecutionIsSkipped() throws Exception
+    {
+        mojo.skip = true;
+        mojo.execute();
+
+        assertTrue(elasticsearchNode.getClient().admin().indices().getIndex(new GetIndexRequest()).get().indices().length == 0);
+
     }
 
 }
