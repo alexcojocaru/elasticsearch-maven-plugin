@@ -25,6 +25,8 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
     private ElasticsearchNode elasticsearchNode;
 
     private LoadElasticsearchDataMojo mojo;
+    
+    private final static String LOAD_INDEX_NAME = "load_test_index";
 
     @Override
     protected void setUp() throws Exception
@@ -40,28 +42,39 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
         int tcpPort = esPorts.get(ElasticsearchPort.TCP);
 
         this.elasticsearchNode = ElasticsearchNode.start(dataPath, httpPort, tcpPort);
-        elasticsearchNode.getClient().admin().indices().delete(new DeleteIndexRequest("_all"));
 
         //Configure mojo with context
         mojo = (LoadElasticsearchDataMojo)lookupMojo("load", testPom);
-        mojo.setPluginContext(new HashMap());
+        mojo.setPluginContext(new HashMap<>());
         mojo.getPluginContext().put("test", elasticsearchNode);
         
         // I cannot find another way of setting the two required propperties at run time.
         mojo.httpPort = esPorts.get(ElasticsearchPort.HTTP);
-
     }
     
     @Override
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        
+
         if (elasticsearchNode != null && !elasticsearchNode.isClosed())
         {
-            elasticsearchNode.getClient().admin().indices().delete(new DeleteIndexRequest("_all"));
+            // if the load test index was created by the test, delete it,
+            // and wait until the delete finalizes
+            if (isExists())
+            {
+                elasticsearchNode.getClient().admin().indices().delete(
+                        new DeleteIndexRequest(LOAD_INDEX_NAME)).get();
+            }
+
             this.elasticsearchNode.stop();
         }
+    }
+    
+    private boolean isExists() throws Exception
+    {
+        return elasticsearchNode.getClient().admin().indices().exists(
+                        new IndicesExistsRequest(LOAD_INDEX_NAME)).get().isExists();
     }
     
     public void testMojoLookup() throws Exception
@@ -73,7 +86,7 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
     {
         mojo.execute();
 
-        assertTrue(elasticsearchNode.getClient().admin().indices().getIndex(new GetIndexRequest()).get().indices().length == 1);
+        assertTrue(isExists());
     }
 
     public void testMojoExecutionIsSkipped() throws Exception
@@ -81,8 +94,7 @@ public class LoadElasticsearchDataMojoTest extends AbstractMojoTestCase
         mojo.skip = true;
         mojo.execute();
 
-        assertTrue(elasticsearchNode.getClient().admin().indices().getIndex(new GetIndexRequest()).get().indices().length == 0);
-
+        assertFalse(isExists());
     }
 
 }
