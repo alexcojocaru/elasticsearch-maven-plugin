@@ -27,17 +27,23 @@ The following Elasticsearch properties can be configured through the plugin conf
 *   **dataDirname** [optional]
     > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch data will be stored;
 
-*   **logsDirname** [optional]
-    > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch logs will be created; for logging to be enabled, the configPath property has to be defined too and point to a directory which contains a logging.yml file (see the src/test/resources/config for an example); you may also have to add log4j v1.x.x as dependency to the plugin configuration in your pom.xml (see the maven-invoker-plugin config in pom.xml)
-
 *   **keepData** [optional]
     > whether to keep the data and log directories if they already exist (defaults to _false_);
 
 *   **configPath** [optional]
-    > the path of the config directory to be used by the Elasticsearch instance; it is needed for scripting support, in which case the directory referred by the path should contains only a *scripts* directory, with the required scripts;
+    > the path of the config directory to be used by the Elasticsearch instance.
+    > It is required for scripting support, in which case the directory referred by this path should contain only a *scripts* directory, with the required scripts.
+    > It is also required for logging support, in which case the directory referred by this path should contain a *logging.yml* file to define the log4j configuration (<https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration.html#logging>).
+    > See the *src/test/resources/example/logging/config* for an example.
+    > If the *${path.logs}* parameter is used in *logging.yml*, the *logsDirname* property has to be also defined, for it translates to *${path.logs}* in the elasticsearch configuration.
+    > Note that you may also have to add log4j v1.x.x as dependency to the elasticsearch maven plugin configuration in your pom.xml;
 
 *   **pluginsPath** [optional]
-    > the path of the plugins directory to be used by the Elasticsearch instance; it is needed for providing custom plugins to the ES instance, each plugin will be contained in a subdirectory;
+    > the path of the plugins directory to be used by the Elasticsearch instance.
+    > It is needed for providing custom plugins to the ES instance, each plugin will be contained in a subdirectory;
+
+*   **logsDirname** [optional]
+    > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch log files will be created. See the notes on *configPath* for details on logging;
 
 *   **scriptFile** [required by the *load* goal]
     > a list of commands to be executed to provision the Elasticsearch cluster. See the [load.script](#load.script) section for details.
@@ -96,7 +102,7 @@ Include the following in the pom.xml file and modify the configuration as needed
     	</plugin>
 
 ## <a name="load.script"></a>Load script
-An load script file can be provided to the *load* goal of the plugin, in which case it will be executed on the local Elasticsearch cluster.
+A load script file can be provided to the *load* goal of the plugin, in which case it will be executed on the local Elasticsearch cluster.
 
 The empty lines are ignored, as well as lines starting with the '#' sign.
 
@@ -124,7 +130,8 @@ Each command has three parts, separated by colon.
 An load script file can be provided to the *run* goal of the plugin, in which case it will be executed on the local Elasticsearch cluster.
 
 ## Multiple Instances
-The plugin can support multiple instances of elastic search. This will require configuring executions for each cluster instance.  To ensure that each instance of an execution is refering to a specific cluster instance, it is required that the cluster name is the same for each instance.
+The plugin can support multiple instances of elastic search. This will require configuring executions for each cluster instance.
+To ensure that each instance of an execution is refering to a specific cluster instance, it is required that the cluster name is the same for each instance.
 
          <plugin>
              <groupId>com.github.alexcojocaru</groupId>
@@ -210,4 +217,3 @@ The plugin can support multiple instances of elastic search. This will require c
              </executions>
             <executions>
         </plugin>
-
