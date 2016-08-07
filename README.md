@@ -28,7 +28,7 @@ The following Elasticsearch properties can be configured through the plugin conf
     > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch data will be stored;
 
 *   **logsDirname** [optional]
-    > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch logs will be created;
+    > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch logs will be created; for logging to be enabled, the configPath property has to be defined too and point to a directory which contains a logging.yml file (see the src/test/resources/config for an example); you may also have to add log4j v1.x.x as dependency to the plugin configuration in your pom.xml (see the maven-invoker-plugin config in pom.xml)
 
 *   **keepData** [optional]
     > whether to keep the data and log directories if they already exist (defaults to _false_);

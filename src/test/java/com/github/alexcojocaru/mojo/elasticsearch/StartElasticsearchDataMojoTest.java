@@ -61,7 +61,6 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
         }
     }
 
-    
     public void testMojoLookup() throws Exception
     {
         assertNotNull(mojo);
