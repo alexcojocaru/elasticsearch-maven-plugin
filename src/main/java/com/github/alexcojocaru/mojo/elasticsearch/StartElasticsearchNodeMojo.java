@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.elasticsearch.common.logging.log4j.LogConfigurator;
 import org.elasticsearch.common.settings.Settings;
 
 /**
@@ -65,10 +64,8 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
         if (!skip) {
             File dataDirectory = prepareDirectory(outputDirectory, dataDirname, "data directory");
             File logsDirectory = prepareDirectory(outputDirectory, logsDirname, "logs directory");
-            
-            boolean loggingEnabled = false;
 
-            Settings.Builder builder = Settings.settingsBuilder()
+            Settings.Builder builder = Settings.builder()
                     .put("cluster.name", clusterName)
                     .put("action.auto_create_index", autoCreateIndex)
                     .put("transport.tcp.port", tcpPort)
@@ -81,24 +78,13 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
             if (configPath != null && configPath.trim().length() > 0 && new File(configPath).exists()) {
                 File configDirectory = new File(configPath);
                 builder.put("path.conf", configDirectory.getAbsolutePath());
-                
-                loggingEnabled = true;
             }
             if (pluginsPath != null && pluginsPath.trim().length() > 0 && new File(pluginsPath).exists()) {
                 builder.put("path.plugins", pluginsPath);
             }
 
             Settings settings = builder.build();
-            
-            // after checking out the elasticsearch code in org.elasticsearch.bootstrap.Bootstrap,
-            // it looks like the logging context is only set up
-            // when starting the ES instance through the command line
-            // :-o
-            if (loggingEnabled)
-            {
-                setupLogging(settings);
-            }
-            
+
             startNode(settings);
         }
     }
@@ -111,14 +97,14 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
         }
         else
         {
-            ElasticsearchNode elasticsearchNode = new ElasticsearchNode(settings);
+            ElasticsearchNode elasticsearchNode = ElasticsearchNode.start( settings );
             super.getPluginContext().put(clusterName, elasticsearchNode);
             return elasticsearchNode;
         }
     }
 
    /**
-     * 
+     *
      * @param parentDir
      * @param dirname
      * @param purpose What the directory is used for (i.e. 'data directory', 'logs directory., etc).
@@ -156,31 +142,8 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
                     "Cannot create the Elasticsearch " + purpose + " "
                     + dir.getAbsolutePath());
         }
-        
+
         return dir;
     }
 
-    /**
-     * Copied from org.elasticsearch.bootstrap.Bootstrap.
-     * @param settings
-     */
-    private static void setupLogging(Settings settings)
-    {
-        try
-        {
-            Class.forName("org.apache.log4j.Logger");
-            LogConfigurator.configure(settings, true);
-        } catch (ClassNotFoundException e)
-        {
-            // no log4j
-        } catch (NoClassDefFoundError e)
-        {
-            // no log4j
-        } catch (Exception e)
-        {
-            System.err.println("Failed to configure logging...");
-            e.printStackTrace();
-        }
-    }
-    
 }

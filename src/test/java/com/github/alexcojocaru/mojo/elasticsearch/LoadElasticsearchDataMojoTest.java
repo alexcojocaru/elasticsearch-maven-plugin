@@ -9,11 +9,6 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
-import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.exists.ExistsRequest;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.index.IndexRequest;
 
 /**
  * @author alexcojocaru

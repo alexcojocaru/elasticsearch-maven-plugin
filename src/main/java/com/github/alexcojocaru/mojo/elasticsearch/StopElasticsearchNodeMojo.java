@@ -1,5 +1,7 @@
 package com.github.alexcojocaru.mojo.elasticsearch;
 
+import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
@@ -17,7 +19,11 @@ public class StopElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo
     {
         if (getNode() != null )
         {
-            getNode().stop();
+            try {
+                getNode().stop();
+            } catch (IOException e) {
+                throw new MojoExecutionException( "StopElasticsearchNodeMojo failed to stop the Elasticsearch node", e );
+            }
         }
     }
 }
