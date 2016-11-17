@@ -6,13 +6,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,6 +90,11 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
         return "http://localhost:" + mojo.getNode().getHttpPort();
     }
 
+    private String getUri(int port) throws Exception
+    {
+        return "http://localhost:" + port;
+    }
+
     public void testKeepData() throws Exception
     {
         assertNotNull(mojo);
@@ -128,6 +131,28 @@ public class StartElasticsearchDataMojoTest extends AbstractMojoTestCase
         statusLine = createIndex(indexName);
         assertEquals(statusLine.getReasonPhrase(), 4, statusLine.getStatusCode() / 100);
 
+    }
+
+    public void testStartNodeClosed() throws Exception
+    {
+        assertNotNull(mojo);
+        mojo.execute();
+
+        HttpGet get = new HttpGet(getUri());
+        HttpResponse response = httpClient.execute(get);
+        assertEquals(200, response.getStatusLine().getStatusCode());
+
+        int httpPort = mojo.httpPort;
+
+        ElasticsearchNode node = mojo.getNode();
+
+        stopNode();
+        mojo.execute();
+
+        get = new HttpGet(getUri(httpPort));
+        response = httpClient.execute(get);
+        assertEquals(200, response.getStatusLine().getStatusCode());
+        assertNotSame(node, mojo.getNode());
     }
 
     private StatusLine createIndex(final String indexName) throws Exception
