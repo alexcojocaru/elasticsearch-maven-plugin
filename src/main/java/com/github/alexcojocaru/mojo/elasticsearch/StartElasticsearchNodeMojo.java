@@ -52,11 +52,6 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
      * @parameter default-value=false
      */
     protected boolean autoCreateIndex;
-
-    /**
-     * @parameter default-value=true
-     */
-    protected boolean reuseElasticNode = true;
     
     /**
      * @parameter
@@ -110,7 +105,7 @@ public class StartElasticsearchNodeMojo extends AbstractElasticsearchNodeMojo {
 
     protected ElasticsearchNode startNode(Settings settings) throws MojoExecutionException
     {
-        if (reuseElasticNode && getNode() != null)
+        if (getNode() != null && !getNode().isClosed())
         {
             return getNode();
         }
