@@ -3,6 +3,7 @@ package com.github.alexcojocaru.mojo.elasticsearch;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -38,8 +39,13 @@ public class RunElasticsearchNodeMojo extends StartElasticsearchNodeMojo {
 
             //Adding shutdown hook to stop ES
             Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
                 public void run() {
-                    esearchNode.stop();
+                    try {
+                        esearchNode.stop();
+                    } catch (IOException e) {
+                        getLog().error("RunElasticsearchNodeMojo failed to send a stop command to ES instance", e);
+                    }
                     waitES.countDown();
                 }
             });
