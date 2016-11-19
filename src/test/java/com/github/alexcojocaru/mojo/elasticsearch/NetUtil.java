@@ -14,7 +14,7 @@ public class NetUtil
     public enum ElasticsearchPort
     {
         HTTP,
-        TCP
+        TRANSPORT
     };
     
     /**
@@ -36,7 +36,7 @@ public class NetUtil
             socket2 = new ServerSocket(0);
             
             ports.put(ElasticsearchPort.HTTP, socket1.getLocalPort());
-            ports.put(ElasticsearchPort.TCP, socket2.getLocalPort());
+            ports.put(ElasticsearchPort.TRANSPORT, socket2.getLocalPort());
         }
         finally
         {
