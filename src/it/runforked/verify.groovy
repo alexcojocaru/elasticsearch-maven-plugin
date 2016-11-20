@@ -1,10 +1,12 @@
 import java.io.File
 
-import com.github.alexcojocaru.mojo.elasticsearch.VerificationUtil
+import com.github.alexcojocaru.mojo.elasticsearch.v2.ItVerification
 
 // there is a single instance in this test
 
 def esBaseDir = new File(new File(basedir, "target"), "elasticsearch0")
 
-VerificationUtil.verifyBaseDirectory(esBaseDir)
-VerificationUtil.verifyInstanceIsNotRunning(esBaseDir)
+ItVerification.verifyBaseDirectory(esBaseDir)
+ItVerification.verifyInstanceIsNotRunning(esBaseDir)
+
+return true

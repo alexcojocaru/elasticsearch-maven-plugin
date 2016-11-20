@@ -1,4 +1,4 @@
-package com.github.alexcojocaru.mojo.elasticsearch;
+package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,24 +9,27 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import com.github.alexcojocaru.mojo.elasticsearch.NetUtil.ElasticsearchPort;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.NetUtil.ElasticsearchPort;
+
 
 /**
  * @author alexcojocaru
  */
-public class SetupUtil
+public class ItSetup
 {
     /**
      * Generate a map of properties to be passed to the plugin
      * 
+     * @param count the number of ES instances
      * @throws IOException
      */
-    public static Map<String, String> generateProperties() throws IOException
+    public static Map<String, String> generateProperties(int count) throws IOException
     {
         String clusterName = RandomStringUtils.randomAlphanumeric(8);
-        Map<ElasticsearchPort, Integer> esPorts = NetUtil.findOpenPortsForElasticsearch();
+        Map<ElasticsearchPort, Integer> esPorts = NetUtil.findOpenPortsForElasticsearch(count);
 
         Map<String, String> props = new LinkedHashMap<>();
+        props.put("instanceCount", String.valueOf(count));
         props.put("clusterName", clusterName);
         props.put("httpPort", esPorts.get(ElasticsearchPort.HTTP).toString());
         props.put("transportPort", esPorts.get(ElasticsearchPort.TRANSPORT).toString());

@@ -17,14 +17,14 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 
 /**
  * Copied from the t7mp project.
- * Defines a sequence of {@link Step}s.
+ * Defines a sequence of {@link InstanceStep}s.
  * 
  * @author Joerg Bellmann
  */
-public interface StepSequence
-        extends Step
+public interface InstanceStepSequence
+        extends InstanceStep
 {
 
-    void add(Step step);
+    void add(InstanceStep step);
 
 }

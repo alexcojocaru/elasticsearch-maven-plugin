@@ -14,7 +14,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
- * The main plugin mojo which stops forked ES instances.
+ * The main plugin mojo to stop a forked ES instances.
  * 
  * @author Alex Cojocaru
  */
@@ -32,9 +32,9 @@ public class StopMojo
             return;
         }
 
-        PluginContext context = buildContext();
+        ClusterConfiguration clusterConfig = buildClusterConfiguration();
 
-        for (InstanceConfiguration config : context.getConfigurationList())
+        for (InstanceConfiguration config : clusterConfig.getInstanceConfigurationList())
         {
             try
             {

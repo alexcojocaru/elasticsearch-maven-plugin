@@ -1,6 +1,5 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugins.annotations.Component;
@@ -79,6 +78,12 @@ public abstract class AbstractElasticsearchMojo
      */
     @Parameter
     protected String pathLogs;
+
+    /**
+     * The path to the scripts directory.
+     */
+    @Parameter
+    protected String pathScripts;
 
     /**
      * The path to the initialization script file to execute after Elasticsearch has started.
@@ -202,6 +207,16 @@ public abstract class AbstractElasticsearchMojo
         this.pathLogs = pathLogs;
     }
 
+    public String getPathScripts()
+    {
+        return pathScripts;
+    }
+
+    public void setPathScripts(String pathScripts)
+    {
+        this.pathScripts = pathScripts;
+    }
+
     public String getPathInitScript()
     {
         return pathInitScript;
@@ -254,34 +269,35 @@ public abstract class AbstractElasticsearchMojo
 
     
     @Override
-    public List<InstanceConfiguration> buildInstanceConfigurationList()
+    public ClusterConfiguration buildClusterConfiguration()
     {
-        InstanceConfigurationUtil.validateInstanceCount(instanceCount);
+        ClusterConfiguration.Builder clusterConfigBuilder = new ClusterConfiguration.Builder()
+                .withArtifactResolver(buildArtifactResolver())
+                .withLog(getLog())
+                .withVersion(version)
+                .withClusterName(clusterName)
+                .withPathScripts(pathScripts)
+                .withPathInitScript(pathInitScript)
+                .withKeepExistingData(keepExistingData)
+                .withTimeout(timeout)
+                .withSetAwait(setAwait)
+                .withAutoCreateIndex(autoCreateIndex);
 
-        List<InstanceConfiguration> configList = new ArrayList<>();
         for (int i = 0; i < instanceCount; i++)
         {
-            InstanceConfiguration config = new InstanceConfiguration.Builder()
+            clusterConfigBuilder.addInstanceConfiguration(new InstanceConfiguration.Builder()
                     .withId(i)
                     .withBaseDir(baseDir.getAbsolutePath() + i)
-                    .withVersion(version)
-                    .withClusterName(clusterName)
                     .withHttpPort(httpPort + i)
                     .withTransportPort(transportPort + i)
                     .withPathData(pathData)
                     .withPathLogs(pathLogs)
-                    .withPathInitScript(pathInitScript)
-                    .withKeepExistingData(keepExistingData)
-                    .withTimeout(timeout)
-                    .withSetAwait(setAwait)
-                    .withAutoCreateIndex(autoCreateIndex)
-                    .build();
-            configList.add(config);
+                    .build());
         }
-
-        InstanceConfigurationUtil.validatePorts(configList);
-
-        return configList;
+        
+        ClusterConfiguration clusterConfig = clusterConfigBuilder.build();
+        
+        return clusterConfig;
     }
 
     @Override
@@ -303,6 +319,8 @@ public abstract class AbstractElasticsearchMojo
     // (protected String additionalLogConfigFilePath = "";)
 
     // TODO redirect process output? ; log plugin output / error to file?
+    
+    // TODO parallelize the starting of multiple instances
 
     // update the readme
     // unit tests

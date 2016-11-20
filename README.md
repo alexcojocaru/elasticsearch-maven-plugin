@@ -25,27 +25,30 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > the version of Elasticsearch to install
 
 *   **httpPort** [defaultValue=9200]
-    > the port to configure Elasticsearch to listen to HTTP traffic to
+    > the port to configure Elasticsearch to listen to HTTP traffic to; when configuring multiple instances, they will be assigned subsequent HTTP ports starting with this value (mind the conflicts with the transport ports)
 
 *   **transportPort** [defaultValue=9300]
-    > the port for the Elasticsearch node to node communication
+    > the port for the Elasticsearch node to node communication; when configuring multiple instances, they will be assigned subsequent transport ports starting with this value (mind the conflicts with the HTTP ports)
 
-*   **pathData** [defaultValue=""] - WIP
+*   **pathData** [defaultValue=""] - WIP per instance !!!
     > the custom data directory to configure in Elasticsearch
 
-*   **pathLogs** [defaultValue=""] - WIP
+*   **pathLogs** [defaultValue=""] - WIP per instance !!!
     > the custom logs directory to configure in Elasticsearch
 
-*   **pathInitScript** [defaultValue=""] - WIP
+*   **pathScripts** [defaultValue=""]
+    > the custom directory containing file-based scripts, to be used in Elasticsearch
+
+*   **pathInitScript** [defaultValue=""] - WIP run once at the end !!!
     > the path of the initialization script (see the [Initialization script](#initScript) section for details)
 
 *   **keepExistingData** [defaultValue=false] - WIP
     > whether to keep the data and log directories if they already exist
 
-*   **timeout** [defaultValue=30] - WIP
+*   **timeout** [defaultValue=30]
     > how long to wait (in seconds) for each Elasticsearch instance to start up
 
-*   **setAwait** [defaultValue=false] - WIP
+*   **setAwait** [defaultValue=false]
     > whether to block the execution once all Elasticsearch instances have started, so that the maven build will not proceed to the next step; use CTRL+C to abort the process
 
 *   **autoCreateIndex** [defaultValue=true]

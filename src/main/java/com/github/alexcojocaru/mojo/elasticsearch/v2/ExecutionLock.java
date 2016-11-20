@@ -22,8 +22,7 @@ public final class ExecutionLock
      */
     public void lock()
     {
-        log.info(
-                "Elasticsearch has started; blocking the execution. Press CTRL+C to stop the process.");
+        log.info("Elasticsearch has started and the maven process has been blocked. Press CTRL+C to stop the process.");
 
         synchronized (lock)
         {

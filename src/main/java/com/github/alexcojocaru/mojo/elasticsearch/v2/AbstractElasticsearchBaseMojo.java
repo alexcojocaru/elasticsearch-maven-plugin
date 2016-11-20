@@ -1,11 +1,8 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
@@ -22,10 +19,9 @@ public abstract class AbstractElasticsearchBaseMojo
         implements ElasticsearchBaseConfiguration
 {
     /**
-     * The number of Elasticsearch nodes to start within the cluster. Only a single node is
-     * supported at the moment.
+     * The number of Elasticsearch nodes to start within the cluster.
      */
-    @Parameter(defaultValue = "1", readonly = true)
+    @Parameter(defaultValue = "1")
     protected int instanceCount;
 
     /**
@@ -39,7 +35,7 @@ public abstract class AbstractElasticsearchBaseMojo
      */
     @Parameter(defaultValue = "false")
     protected boolean skip;
-
+    
     
     @Override
     public int getInstanceCount()
@@ -74,23 +70,25 @@ public abstract class AbstractElasticsearchBaseMojo
         this.skip = skip;
     }
 
-    
-    @Override
-    public List<InstanceConfiguration> buildInstanceConfigurationList()
-    {
-        InstanceConfigurationUtil.validateInstanceCount(instanceCount);
 
-        List<InstanceConfiguration> configList = new ArrayList<>();
+    @Override
+    public ClusterConfiguration buildClusterConfiguration()
+    {
+        ClusterConfiguration.Builder clusterConfigBuilder = new ClusterConfiguration.Builder()
+                .withArtifactResolver(buildArtifactResolver())
+                .withLog(getLog());
+
         for (int i = 0; i < instanceCount; i++)
         {
-            InstanceConfiguration config = new InstanceConfiguration.Builder()
+            clusterConfigBuilder.addInstanceConfiguration(new InstanceConfiguration.Builder()
                     .withId(i)
                     .withBaseDir(baseDir.getAbsolutePath() + i)
-                    .build();
-            configList.add(config);
+                    .build());
         }
-
-        return configList;
+        
+        ClusterConfiguration clusterConfig = clusterConfigBuilder.build();
+        
+        return clusterConfig;
     }
 
     @Override
@@ -98,12 +96,6 @@ public abstract class AbstractElasticsearchBaseMojo
     {
         ChainedArtifactResolver artifactResolver = new ChainedArtifactResolver();
         return artifactResolver;
-    }
-
-    @Override
-    public Log getLog()
-    {
-        return super.getLog();
     }
 
 }

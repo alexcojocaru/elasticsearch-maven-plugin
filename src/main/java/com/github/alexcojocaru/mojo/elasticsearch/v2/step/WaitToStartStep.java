@@ -1,6 +1,6 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 
-import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceContext;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.Monitor;
 
@@ -10,17 +10,17 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.client.Monitor;
  * @author Alex Cojocaru
  */
 public class WaitToStartStep
-        implements Step
+        implements InstanceStep
 {
 
     @Override
-    public void execute(InstanceContext context)
+    public void execute(InstanceConfiguration config)
     {
-        int httpPort = context.getConfiguration().getHttpPort();
-        int timeout = context.getConfiguration().getTimeout();
+        int httpPort = config.getHttpPort();
+        int timeout = config.getClusterConfiguration().getTimeout();
 
         ElasticsearchClient client = new ElasticsearchClient("localhost", httpPort);
-        Monitor monitor = new Monitor(client, context.getLog());
+        Monitor monitor = new Monitor(client, config.getClusterConfiguration().getLog());
         monitor.waitToStart(timeout);
     }
 

@@ -1,15 +1,15 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.step.PostStartInstanceSequence;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.step.PreStartClusterSequence;
 
 /**
- * The main plugin mojo which starts forked ES instances.
+ * The main plugin mojo to start a forked ES instances.
  * 
  * @author Alex Cojocaru
  */
@@ -25,28 +25,26 @@ public class RunForkedMojo
             getLog().info("Skipping plugin execution");
             return;
         }
+        
+        ClusterConfiguration clusterConfig = buildClusterConfiguration();
+        new PreStartClusterSequence().execute(clusterConfig);
 
-        PluginContext context = buildContext();
-
-        for (InstanceConfiguration config : context.getConfigurationList())
+        for (InstanceConfiguration config : clusterConfig.getInstanceConfigurationList())
         {
-            Validate.notNull(this.getVersion(), "The Elasticsearch version is required");
-            PreConditions.checkConfiguredElasticsearchVersion(getLog(), this.getVersion());
-
-            getLog().info(String.format("Starting Elasticsearch configuration: %s", config));
+            getLog().info(String.format(
+                    "Starting Elasticsearch [%d] configuration: %s",
+                    config.getId(),
+                    config));
 
             try
             {
-                InstanceContext instanceContext = new InstanceContext(config,
-                        context.getArtifactResolver(), context.getLog());
-
-                ForkedInstance instance = new ForkedInstance(instanceContext);
+                ForkedInstance instance = new ForkedInstance(config);
                 instance.configureInstance();
 
                 Thread thread = new Thread(instance);
                 thread.start();
 
-                new PostStartInstanceSequence().execute(instanceContext);
+                new PostStartInstanceSequence().execute(config);
             }
             catch (Exception e)
             {

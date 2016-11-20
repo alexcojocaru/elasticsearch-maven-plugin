@@ -6,7 +6,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
  * @author Alex Cojocaru
  */
 public class PostStartInstanceSequence
-        extends DefaultStepSequence
+        extends DefaultInstanceStepSequence
 {
 
     public PostStartInstanceSequence()

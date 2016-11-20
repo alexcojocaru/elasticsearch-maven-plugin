@@ -5,11 +5,11 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
  * 
  * @author Alex Cojocaru
  */
-public class ForkedSetupSequence
-        extends DefaultStepSequence
+public class InstanceSetupSequence
+        extends DefaultInstanceStepSequence
 {
 
-    public ForkedSetupSequence()
+    public InstanceSetupSequence()
     {
         add(new ResolveElasticsearchStep());
     }

@@ -169,8 +169,7 @@
 				<version>2.0.0</version>
 				<configuration>
 					<addTestClassPath>true</addTestClassPath>
-					<!-- TODO change the following param to false -->
-					<debug>true</debug>
+					<debug>false</debug>
 					<streamLogs>true</streamLogs>
 					<projectsDirectory>src/it</projectsDirectory>
 					<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>

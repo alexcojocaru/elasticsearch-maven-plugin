@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.maven.plugin.logging.Log;
 
-import com.github.alexcojocaru.mojo.elasticsearch.v2.step.ForkedSetupSequence;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.step.StepSequence;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceSetupSequence;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceStepSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.util.ElasticsearchUtil;
 
 /**
@@ -20,25 +22,17 @@ public class ForkedInstance
         implements Runnable
 {
 
-    private final InstanceContext context;
+    private final InstanceConfiguration config;
     private Process process;
 
-    /**
-     * @param context
-     */
-    public ForkedInstance(InstanceContext context)
+    public ForkedInstance(InstanceConfiguration config)
     {
-        this.context = context;
+        this.config = config;
     }
 
-    /**
-     * Set up the instance.
-     * 
-     * @param mavenPluginContext
-     */
     public void configureInstance()
     {
-        getSetupSequence().execute(context);
+        getSetupSequence().execute(config);
     }
 
     @Override
@@ -50,33 +44,36 @@ public class ForkedInstance
 
     private void startElasticsearch()
     {
-        File baseDir = new File(context.getConfiguration().getBaseDir());
+        File baseDir = new File(config.getBaseDir());
 
         ProcessBuilder processBuilder = new ProcessBuilder(getStartScriptCommand());
         processBuilder.directory(baseDir);
         processBuilder.redirectErrorStream(true);
+        
+        Log log = config.getClusterConfiguration().getLog();
 
         try
         {
-            context.getLog().info(String.format(
-                    "Starting Elasticsearch in directory '%s' with arguments '%s'",
+            log.info(String.format(
+                    "Starting Elasticsearch [%d] in directory '%s' with arguments '%s'",
+                    config.getId(),
                     processBuilder.directory(),
                     String.join(" ", processBuilder.command())));
 
             process = processBuilder.start();
 
             Runtime.getRuntime().addShutdownHook(
-                    new ForkedElasticsearchProcessShutdownHook(process, context.getLog()));
+                    new ForkedElasticsearchProcessShutdownHook(process, log));
 
             int exitValue = process.waitFor();
-            context.getLog().info(String.format(
+            log.info(String.format(
                     "Elasticsearch [%d] stopped with exit code %d",
-                    context.getConfiguration().getId(),
+                    config.getId(),
                     exitValue));
         }
         catch (InterruptedException | IOException e)
         {
-            context.getLog().error("Cannot start Elasticsearch", e);
+            log.error("Cannot start Elasticsearch", e);
         }
     }
 
@@ -88,33 +85,34 @@ public class ForkedInstance
             return;
         }
 
-        File baseDir = new File(context.getConfiguration().getBaseDir());
+        File baseDir = new File(config.getBaseDir());
         File binDirectory = ElasticsearchUtil.getBinDirectory(baseDir);
 
         ProcessBuilder processBuilder = new ProcessBuilder("chmod", "755", "elasticsearch");
         processBuilder.directory(binDirectory);
         processBuilder.redirectErrorStream(true);
 
+        Log log = config.getClusterConfiguration().getLog();
+
         try
         {
             Process p = processBuilder.start();
             int exitValue = p.waitFor();
-            context.getLog().debug(String.format(
+            log.debug(String.format(
                     "SetStartScriptPermission finished with exit code %d",
                     exitValue));
         }
         catch (InterruptedException | IOException e)
         {
-            context.getLog().error(
-                    "Cannot set the 755 permissions on the start scirpt 'bin/elasticsearch'");
+            log.error("Cannot set the 755 permissions on the start scirpt 'bin/elasticsearch'");
 
             throw new ElasticsearchSetupException(e.getMessage(), e);
         }
     }
 
-    private StepSequence getSetupSequence()
+    private InstanceStepSequence getSetupSequence()
     {
-        StepSequence sequence = new ForkedSetupSequence();
+        InstanceStepSequence sequence = new InstanceSetupSequence();
         return sequence;
     }
 
@@ -136,13 +134,19 @@ public class ForkedInstance
         // Write the PID to a file, to be used to shut down the instance
         cmd.add("-p pid");
 
-        cmd.add("-Ecluster.name=" + context.getConfiguration().getClusterName());
-        cmd.add("-Ehttp.port=" + context.getConfiguration().getHttpPort());
-        cmd.add("-Etransport.tcp.port=" + context.getConfiguration().getTransportPort());
+        cmd.add("-Ecluster.name=" + config.getClusterConfiguration().getClusterName());
+        cmd.add("-Ehttp.port=" + config.getHttpPort());
+        cmd.add("-Etransport.tcp.port=" + config.getTransportPort());
 
-        if (context.getConfiguration().isAutoCreateIndex() == false)
+        if (config.getClusterConfiguration().isAutoCreateIndex() == false)
         {
             cmd.add("-Eaction.auto_create_index=false");
+        }
+        
+        String pathScripts = config.getClusterConfiguration().getPathScripts();
+        if (StringUtils.isNotBlank(pathScripts))
+        {
+            cmd.add("-Epath.scripts=" + pathScripts);
         }
 
         cmd.add("-Ehttp.cors.enabled=true");

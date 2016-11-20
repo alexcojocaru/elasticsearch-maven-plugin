@@ -1,4 +1,4 @@
-package com.github.alexcojocaru.mojo.elasticsearch;
+package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 /**
  * @author Alex Cojocaru
  */
-public class VerificationUtil
+public class ItVerification
 {
     /**
      * Verify that the given baseDir is a directory on the disk.

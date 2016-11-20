@@ -5,13 +5,12 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.plugin.logging.Log;
 import org.zeroturnaround.zip.ZipUtil;
 import org.zeroturnaround.zip.commons.FileUtils;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchArtifact;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceContext;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ResolutionException;
 
 /**
@@ -20,31 +19,28 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ResolutionExc
  * @author Alex Cojocaru
  */
 public class ResolveElasticsearchStep
-        implements Step
+        implements InstanceStep
 {
     @Override
-    public void execute(InstanceContext context)
+    public void execute(InstanceConfiguration config)
     {
-        if (StringUtils.isEmpty(context.getConfiguration().getVersion()))
-        {
-            throw new ElasticsearchSetupException("Version should not be null or empty.");
-        }
-
+        Log log = config.getClusterConfiguration().getLog();
+        
         File unpackDirectory = null;
         try
         {
-            String version = context.getConfiguration().getVersion();
+            String version = config.getClusterConfiguration().getVersion();
+
             ElasticsearchArtifact artifact = new ElasticsearchArtifact(version);
 
-            context.getLog().debug("Resolving " + artifact.toString());
+            log.debug("Resolving " + artifact.toString());
 
-            File resolvedArtifact = context.getArtifactResolver()
+            File resolvedArtifact = config.getClusterConfiguration()
+                    .getArtifactResolver()
                     .resolveArtifact(artifact.getArtifactCoordinates());
             unpackDirectory = getUnpackDirectory();
             ZipUtil.unpack(resolvedArtifact, unpackDirectory);
-            moveToElasticsearchDirectory(
-                    unpackDirectory,
-                    new File(context.getConfiguration().getBaseDir()));
+            moveToElasticsearchDirectory(unpackDirectory, new File(config.getBaseDir()));
         }
         catch (ResolutionException | IOException e)
         {
@@ -60,9 +56,11 @@ public class ResolveElasticsearchStep
                 }
                 catch (IOException e)
                 {
-                    context.getLog().error("Could not delete Elasticsearch upack directory : "
-                            + unpackDirectory.getAbsolutePath());
-                    context.getLog().error(e.getMessage(), e);
+                    log.error(
+                            String.format(
+                                "Could not delete Elasticsearch upack directory : ",
+                                unpackDirectory.getAbsolutePath()),
+                            e);
                 }
             }
         }

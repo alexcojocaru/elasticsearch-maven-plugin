@@ -31,7 +31,7 @@ public class ForkedElasticsearchProcessShutdownHook
             try
             {
                 int exitCode = elasticsearchProcess.waitFor();
-                log.info("... the Elasticsearch process stopped. Exit code: " + exitCode);
+                log.info("... the Elasticsearch process has stopped. Exit code: " + exitCode);
             }
             catch (InterruptedException e)
             {

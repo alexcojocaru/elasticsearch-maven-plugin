@@ -15,15 +15,16 @@
  */
 package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 
-import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceContext;
-
 /**
  * Copied from the t7mp project.
- * Defines a small simple Step/Task/Unit of Work.
+ * Defines a sequence of {@link ClusterStep}s.
+ * 
+ * @author Joerg Bellmann
  */
-public interface Step
+public interface ClusterStepSequence
+        extends ClusterStep
 {
 
-    void execute(InstanceContext context);
+    void add(ClusterStep step);
 
 }
