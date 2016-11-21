@@ -181,6 +181,20 @@
 					<localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
 					<settingsFile>src/it/settings.xml</settingsFile>
 					<!--
+						the doc on the invoker plugin says testProperty is deprecated,
+						but passing the following as properties doesn't work
+					-->
+					<testProperties>
+						<property>
+							<name>elasticsearch.maven.plugin.version</name>
+							<value>${project.version}</value>
+						</property>
+						<property>
+							<name>maven.version</name>
+							<value>${maven.version}</value>
+						</property>
+					</testProperties>
+					<!--
 						the list of goals to execute on each project;
 						since the ES plugin mojos are bound to pre and post integration test phases,
 						execute the verify goal

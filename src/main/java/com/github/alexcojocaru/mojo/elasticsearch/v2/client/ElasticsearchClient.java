@@ -6,19 +6,25 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.maven.plugin.logging.Log;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -28,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class ElasticsearchClient
 {
+    private final Log log;
     private final String hostname;
     private final int port;
 
@@ -74,8 +81,9 @@ public class ElasticsearchClient
         return httpClient;
     }
 
-    public ElasticsearchClient(String hostname, int port)
+    public ElasticsearchClient(Log log, String hostname, int port)
     {
+        this.log = log;
         this.hostname = hostname;
         this.port = port;
     }
@@ -83,34 +91,50 @@ public class ElasticsearchClient
     public <T> T get(String path, Class<T> clazz) throws ElasticsearchClientException
     {
         String uri = String.format("http://%s:%d%s", hostname, port, path);
+        log.debug(String.format("Sending GET request to %s", uri));
 
-        try
-        {
-            // Create new getRequest with below mentioned URL
-            HttpGet getRequest = new HttpGet(uri);
+        HttpGet request = new HttpGet(uri);
+        request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
 
-            // Add additional header to getRequest which accepts application/json data
-            getRequest.addHeader("accept", "application/json");
+        String content = executeRequest(request);
+        T result = deserialize(content, clazz);
 
-            // Execute your request and catch response
-            HttpResponse response = httpClient.execute(getRequest);
+        return result;
+    }
 
-            // Check for HTTP response code: 200 = success
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200)
-            {
-                throw new RuntimeException("Failed : HTTP error code : " + statusCode);
-            }
+    public void put(String path, String entity) throws ElasticsearchClientException
+    {
+        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        log.info(String.format("Sending PUT request to %s with entity '%s'", uri, entity));
 
-            String content = readContent(response.getEntity());
-            T result = deserialize(content, clazz);
+        HttpPut request = new HttpPut(uri);
+        request.setEntity(new StringEntity(entity, ContentType.APPLICATION_JSON));
+        executeRequest(request);
+    }
 
-            return result;
-        }
-        catch (IOException e)
-        {
-            throw new ElasticsearchClientException(e);
-        }
+    public <T> T post(String path, String entity, Class<T> clazz)
+            throws ElasticsearchClientException
+    {
+        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        log.debug(String.format("Sending POST request to %s with entity '%s'", uri, entity));
+
+        HttpPost request = new HttpPost(uri);
+        request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+        request.setEntity(new StringEntity(entity, ContentType.APPLICATION_JSON));
+
+        String content = executeRequest(request);
+        T result = deserialize(content, clazz);
+
+        return result;
+    }
+
+    public void delete(String path) throws ElasticsearchClientException
+    {
+        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        log.debug(String.format("Sending DELETE request to %s", uri));
+
+        HttpDelete request = new HttpDelete(uri);
+        executeRequest(request);
     }
 
     protected String readContent(HttpEntity entity)
@@ -128,9 +152,52 @@ public class ElasticsearchClient
         return content.toString();
     }
 
-    protected <T> T deserialize(String content, Class<T> clazz)
-            throws JsonParseException, JsonMappingException, IOException
+    @SuppressWarnings("unchecked")
+    public <T> T deserialize(String content, Class<T> clazz) throws ElasticsearchClientException
     {
-        return mapper.readValue(content, clazz);
+        if (clazz == String.class)
+        {
+            return (T)content;
+        }
+        
+        try
+        {
+            return mapper.readValue(content, clazz);
+        }
+        catch (IOException ex)
+        {
+            throw new ElasticsearchClientException(String.format(
+                    "Cannot deserialize the content '%s' to class %s", content, clazz));
+        }
+    }
+    
+    protected String executeRequest(HttpRequestBase request) throws ElasticsearchClientException
+    {
+        try
+        {
+            HttpResponse response = httpClient.execute(request);
+
+            int statusCode = response.getStatusLine().getStatusCode();
+            String content = readContent(response.getEntity());
+            log.debug(String.format(
+                    "Response with status code %d and content: %s", statusCode, content));
+            
+            // some PUT requests return 200, some 201 :-O
+            if (statusCode != 200 && statusCode != 201)
+            {
+                throw new ElasticsearchClientException(String.format(
+                        "%s failed with HTTP error code %d", request.getMethod(), statusCode));
+            }
+            
+            return content;
+        }
+        catch (IOException e)
+        {
+            throw new ElasticsearchClientException(e);
+        }
+        finally
+        {
+            request.releaseConnection();
+        }
     }
 }

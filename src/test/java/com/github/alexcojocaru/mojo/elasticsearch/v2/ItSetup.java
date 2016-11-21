@@ -29,10 +29,10 @@ public class ItSetup
         Map<ElasticsearchPort, Integer> esPorts = NetUtil.findOpenPortsForElasticsearch(count);
 
         Map<String, String> props = new LinkedHashMap<>();
-        props.put("instanceCount", String.valueOf(count));
-        props.put("clusterName", clusterName);
-        props.put("httpPort", esPorts.get(ElasticsearchPort.HTTP).toString());
-        props.put("transportPort", esPorts.get(ElasticsearchPort.TRANSPORT).toString());
+        props.put("es.instanceCount", String.valueOf(count));
+        props.put("es.clusterName", clusterName);
+        props.put("es.httpPort", esPorts.get(ElasticsearchPort.HTTP).toString());
+        props.put("es.transportPort", esPorts.get(ElasticsearchPort.TRANSPORT).toString());
 
         return props;
     }

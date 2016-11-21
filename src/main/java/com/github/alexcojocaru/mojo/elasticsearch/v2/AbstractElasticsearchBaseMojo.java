@@ -21,7 +21,7 @@ public abstract class AbstractElasticsearchBaseMojo
     /**
      * The number of Elasticsearch nodes to start within the cluster.
      */
-    @Parameter(defaultValue = "1")
+    @Parameter(property="es.instanceCount", defaultValue = "1")
     protected int instanceCount;
 
     /**
@@ -33,7 +33,7 @@ public abstract class AbstractElasticsearchBaseMojo
     /**
      * Whether to skip the plugin execution or not.
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(property="es.skip", defaultValue = "false")
     protected boolean skip;
     
     

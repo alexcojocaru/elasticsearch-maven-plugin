@@ -5,6 +5,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import com.github.alexcojocaru.mojo.elasticsearch.v2.step.PostStartClusterSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.step.PostStartInstanceSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.step.PreStartClusterSequence;
 
@@ -52,10 +53,7 @@ public class RunForkedMojo
             }
         }
 
-        if (isSetAwait())
-        {
-            new ExecutionLock(getLog()).lock();
-        }
+        new PostStartClusterSequence().execute(clusterConfig);
     }
 
 }

@@ -42,13 +42,13 @@ public abstract class AbstractElasticsearchMojo
     /**
      * The version of Elasticsearch to install
      */
-    @Parameter(defaultValue = "5.0.0")
+    @Parameter(property="es.version", defaultValue = "5.0.0")
     protected String version;
 
     /**
      * The Elasticsearch cluster name to set up; alphanumeric.
      */
-    @Parameter(defaultValue = "test")
+    @Parameter(property="es.clusterName", defaultValue = "test")
     protected String clusterName;
 
     /**
@@ -56,7 +56,7 @@ public abstract class AbstractElasticsearchMojo
      * instanceCount parameter), the subsequent nodes will get subsequent port numbers (eg. 9201,
      * 9202, etc).
      */
-    @Parameter(defaultValue = "9200")
+    @Parameter(property="es.httpPort", defaultValue = "9200")
     protected int httpPort;
 
     /**
@@ -64,56 +64,56 @@ public abstract class AbstractElasticsearchMojo
      * (see the instanceCount parameter), the subsequent nodes will get subsequent port numbers (eg.
      * 9301, 9302, etc).
      */
-    @Parameter(defaultValue = "9300")
+    @Parameter(property="es.transportPort", defaultValue = "9300")
     protected int transportPort;
 
     /**
      * The path to the data directory.
      */
-    @Parameter
+    @Parameter(property="es.pathData")
     protected String pathData;
 
     /**
      * The path to the logs directory.
      */
-    @Parameter
+    @Parameter(property="es.pathLogs")
     protected String pathLogs;
 
     /**
      * The path to the scripts directory.
      */
-    @Parameter
+    @Parameter(property="es.pathScripts")
     protected String pathScripts;
 
     /**
      * The path to the initialization script file to execute after Elasticsearch has started.
      */
-    @Parameter
+    @Parameter(property="es.pathInitScript")
     protected String pathInitScript;
 
     /**
      * Whether to keep existing data (data and logs directories).
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(property="es.keepExistingData", defaultValue = "false")
     protected boolean keepExistingData;
 
     /**
      * How long to wait (in seconds) for the Elasticsearch cluster to start up.
      */
-    @Parameter(defaultValue = "30")
+    @Parameter(property="es.timeout", defaultValue = "30")
     protected int timeout;
 
     /**
      * Whether to block the execution once all Elasticsearch instances have started,
      * so that the maven build will not proceed to the next step. Use CTRL+C to abort the process.
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(property="es.setAwait", defaultValue = "false")
     protected boolean setAwait;
 
     /**
      * Whether to configure the Elasticsearch cluster to auto create indexes.
      */
-    @Parameter(defaultValue = "false")
+    @Parameter(property="es.autoCreateIndex", defaultValue = "false")
     protected boolean autoCreateIndex;
 
     

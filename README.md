@@ -39,7 +39,7 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **pathScripts** [defaultValue=""]
     > the custom directory containing file-based scripts, to be used in Elasticsearch
 
-*   **pathInitScript** [defaultValue=""] - WIP run once at the end !!!
+*   **pathInitScript** [defaultValue=""]
     > the path of the initialization script (see the [Initialization script](#initScript) section for details)
 
 *   **keepExistingData** [defaultValue=false] - WIP
@@ -105,7 +105,7 @@ Each command has three parts, separated by colon.
 * the JSON to send to Elasticsearch; for DELETE commands it should be empty for a DELETE
 
 
-**Examples** (see the *src/test/resources/goals/load/load.script* file for more examples) (TODO update the script file path):
+**Examples** (see the *src/it/runforked-with-init-script/init.script* file for a more complete example):
 
 * To send a *POST* request to *http://localhost:9200/test\_index/test\_type/\_mapping*:
 > POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "string" }, "lastModified" : { "type" : "date" } } } }

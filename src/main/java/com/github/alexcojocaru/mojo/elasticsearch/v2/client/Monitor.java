@@ -24,7 +24,7 @@ public class Monitor
         this.log = log;
     }
     
-    public void waitToStart(int timeout)
+    public void waitToStart(final String clusterName, int timeout)
     {
         log.debug(String.format("Waiting  up to %ds for Elasticsearch to start ...", timeout));
         Awaitility.await()
@@ -36,21 +36,21 @@ public class Monitor
                             @Override
                             public Boolean call() throws Exception
                             {
-                                return isRunning();
+                                return isRunning(clusterName);
                             }
                         }
                 );
         log.debug("Elasticsearch has started");
     }
     
-    public boolean isRunning()
+    public boolean isRunning(String clusterName)
     {
         boolean result;
         try
         {
             @SuppressWarnings("unchecked")
             Map<String, Object> response = client.get("/", Map.class);
-            result = response.containsKey("cluster_name");
+            result = clusterName.equals(response.get("cluster_name"));
         }
         catch (ElasticsearchClientException e)
         {

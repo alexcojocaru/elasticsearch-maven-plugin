@@ -10,37 +10,11 @@
 
 	<build>
 		<plugins>
-			<!--
-				the testPropertiesFile property on the invoker plugin doesn't work (FML);
-				load the file and pass the props explicitly to the plugin
-			-->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>properties-maven-plugin</artifactId>
-				<version>1.0.0</version>
-				<executions>
-					<execution>
-						<phase>initialize</phase>
-						<goals>
-							<goal>read-project-properties</goal>
-						</goals>
-						<configuration>
-							<files>
-								<file>test.properties</file>
-							</files>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>com.github.alexcojocaru</groupId>
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<version>@project.version@</version>
 				<configuration>
-					<instanceCount>${instanceCount}</instanceCount>
-					<clusterName>${clusterName}</clusterName>
-					<httpPort>${httpPort}</httpPort>
-					<transportPort>${transportPort}</transportPort>
 				</configuration>
 				<executions>
 					<execution>

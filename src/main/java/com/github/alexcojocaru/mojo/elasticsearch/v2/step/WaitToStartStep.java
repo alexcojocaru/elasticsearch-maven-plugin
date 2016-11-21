@@ -19,9 +19,13 @@ public class WaitToStartStep
         int httpPort = config.getHttpPort();
         int timeout = config.getClusterConfiguration().getTimeout();
 
-        ElasticsearchClient client = new ElasticsearchClient("localhost", httpPort);
+        ElasticsearchClient client = new ElasticsearchClient(
+                config.getClusterConfiguration().getLog(),
+                "localhost",
+                httpPort);
+
         Monitor monitor = new Monitor(client, config.getClusterConfiguration().getLog());
-        monitor.waitToStart(timeout);
+        monitor.waitToStart(config.getClusterConfiguration().getClusterName(), timeout);
     }
 
 }

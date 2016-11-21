@@ -2,9 +2,9 @@ import java.io.File
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ItVerification
 
-// there are two instances in this test
+def instanceCount = Integer.parseInt(context.get("instanceCount"))
 
-(0..1).each {
+(0..<instanceCount).each {
     def esBaseDir = new File(new File(basedir, "target"), "elasticsearch" + it)
 
 	ItVerification.verifyBaseDirectory(esBaseDir)
