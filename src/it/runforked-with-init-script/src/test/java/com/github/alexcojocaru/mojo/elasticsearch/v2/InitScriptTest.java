@@ -1,4 +1,4 @@
-package com.github.alexcojocaru.mojo.elasticsearch.v2.runforkedwithinitscript;
+package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,6 +17,7 @@ import org.apache.maven.plugin.logging.Log;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClientException;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.Monitor;
 
 /**
  * 
@@ -24,35 +25,13 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClientE
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class InitScriptTest
-{
-    private static int httpPort;
-    
-    private ElasticsearchClient client;
-    
-    @Mock
-    private Log log;
-    
-
-    @BeforeClass
-    public static void beforeClass()
+public class InitScriptTest extends ItBase
+{    
+    @Test
+    public void testClusterRunning()
     {
-        try
-        {
-            Properties props = new Properties();
-            props.load(new FileInputStream("test.properties"));
-            httpPort = Integer.parseInt(props.getProperty("es.httpPort"));
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException("Cannot load httpPort from test.properties", e);
-        }
-    }
-    
-    @Before
-    public void before()
-    {
-        client = new ElasticsearchClient(log, "localhost", httpPort);
+        boolean isRunning = Monitor.isClusterRunning(clusterName, client);
+        Assert.assertTrue("The ES cluster should be running", isRunning);
     }
     
     @Test

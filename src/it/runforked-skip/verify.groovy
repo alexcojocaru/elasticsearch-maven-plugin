@@ -10,7 +10,7 @@ def httpPort = Integer.parseInt(context.get("es.httpPort"))
     def esBaseDir = new File(new File(basedir, "target"), "elasticsearch" + it)
     def verification = new ItVerification(esBaseDir)
 
-	verification.verifyBaseDirectoryExists()
+	verification.verifyBaseDirectoryNotExists()
 	verification.verifyInstanceNotRunning(clusterName, httpPort)
 }
 

@@ -49,6 +49,7 @@
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<version>@project.version@</version>
 				<configuration>
+					<skip>true</skip>
 				</configuration>
 				<executions>
 					<execution>

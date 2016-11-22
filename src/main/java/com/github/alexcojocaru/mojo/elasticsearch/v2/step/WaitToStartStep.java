@@ -25,7 +25,10 @@ public class WaitToStartStep
                 httpPort);
 
         Monitor monitor = new Monitor(client, config.getClusterConfiguration().getLog());
-        monitor.waitToStart(config.getClusterConfiguration().getClusterName(), timeout);
+        monitor.waitToStart(
+                config.getBaseDir(),
+                config.getClusterConfiguration().getClusterName(),
+                timeout);
     }
 
 }

@@ -185,8 +185,7 @@ public class ElasticsearchClient
             // some PUT requests return 200, some 201 :-O
             if (statusCode != 200 && statusCode != 201)
             {
-                throw new ElasticsearchClientException(String.format(
-                        "%s failed with HTTP error code %d", request.getMethod(), statusCode));
+                throw new ElasticsearchClientException(request.getMethod(), statusCode, content);
             }
             
             return content;

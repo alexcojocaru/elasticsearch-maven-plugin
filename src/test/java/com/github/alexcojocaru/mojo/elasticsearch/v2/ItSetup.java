@@ -13,17 +13,32 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.NetUtil.ElasticsearchPort;
 
 
 /**
+ * Used by the groovy setup scripts executed at the beginning of each integration test.
+ * 
  * @author alexcojocaru
  */
 public class ItSetup
 {
+    /**
+     * The base direction of the test execution (ie. the project directory)
+     */
+    private final File baseDir;
+    
+    /**
+     * @param executionBaseDir
+     */
+    public ItSetup(File baseDir)
+    {
+        this.baseDir = baseDir;
+    }
+
     /**
      * Generate a map of properties to be passed to the plugin
      * 
      * @param count the number of ES instances
      * @throws IOException
      */
-    public static Map<String, String> generateProperties(int count) throws IOException
+    public Map<String, String> generateProperties(int count) throws IOException
     {
         String clusterName = RandomStringUtils.randomAlphanumeric(8);
         Map<ElasticsearchPort, Integer> esPorts = NetUtil.findOpenPortsForElasticsearch(count);
@@ -40,7 +55,7 @@ public class ItSetup
     /**
      * Write the given map to a properties file.
      */
-    public static void saveProperties(File dir, String filename, Map<String, String> props)
+    public void saveProperties(String filename, Map<String, String> props)
             throws IOException
     {
         Properties javaProps = new Properties();
@@ -49,7 +64,7 @@ public class ItSetup
             javaProps.put(name, value);
         });
 
-        File file = new File(dir, filename);
+        File file = new File(baseDir, filename);
         javaProps.store(new FileOutputStream(file), null);
     }
 }

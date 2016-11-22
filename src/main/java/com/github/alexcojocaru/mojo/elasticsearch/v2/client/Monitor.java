@@ -1,11 +1,13 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.client;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.maven.plugin.logging.Log;
 import org.awaitility.Awaitility;
+import org.mockito.Mockito;
 
 /**
  * A monitor on an Elasticsearch instance.
@@ -24,7 +26,7 @@ public class Monitor
         this.log = log;
     }
     
-    public void waitToStart(final String clusterName, int timeout)
+    public void waitToStart(final String baseDir, final String clusterName, int timeout)
     {
         log.debug(String.format("Waiting  up to %ds for Elasticsearch to start ...", timeout));
         Awaitility.await()
@@ -36,14 +38,33 @@ public class Monitor
                             @Override
                             public Boolean call() throws Exception
                             {
-                                return isRunning(clusterName);
+                                return isProcessRunning(baseDir)
+                                        && isClusterRunning(clusterName, client);
                             }
                         }
                 );
         log.debug("Elasticsearch has started");
     }
     
-    public boolean isRunning(String clusterName)
+    /**
+     * Check whether the PID file created by the ES process exists or not.
+     * @param baseDir
+     * @return
+     */
+    public static boolean isProcessRunning(String baseDir)
+    {
+        File pidFile = new File(baseDir, " pid");
+        boolean exists = pidFile.isFile();
+        return exists;
+    }
+    
+    /**
+     * Check whether the cluster with the given name exists in the ES referenced by the client.
+     * @param clusterName
+     * @param httpPort
+     * @return
+     */
+    public static boolean isClusterRunning(String clusterName, ElasticsearchClient client)
     {
         boolean result;
         try
@@ -59,5 +80,18 @@ public class Monitor
         }
         
         return result;
+    }
+    
+    /**
+     * Check whether the cluster with the given name exists in the ES running on the given port.
+     * @param clusterName
+     * @param httpPort
+     * @return
+     */
+    public static boolean isClusterRunning(String clusterName, int httpPort)
+    {
+        Log log = Mockito.mock(Log.class);
+        ElasticsearchClient client = new ElasticsearchClient(log, "localhost", httpPort);
+        return isClusterRunning(clusterName, client);
     }
 }
