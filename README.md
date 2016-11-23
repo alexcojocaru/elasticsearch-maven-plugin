@@ -1,4 +1,4 @@
-# Elasticsearch Maven Plugin [![Build Status](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin.png?branch=master)](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin)
+# Elasticsearch Maven Plugin [![Build Status](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin.png?branch=elasticsearch-2.x)](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin/branches)
 
 A Maven plugin to run Elasticsearch instances during the integration test phase of a build.
 Although it is not a local Elasticsearch node per se (for it is not able to communicate to other nodes outside the JVM),
