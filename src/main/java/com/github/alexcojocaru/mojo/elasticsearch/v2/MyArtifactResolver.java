@@ -18,7 +18,6 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 import java.io.File;
 import java.util.List;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -58,9 +57,9 @@ public class MyArtifactResolver
     /**
      * Resolves an Artifact from the repositories.
      * 
-     * @param coordinates
-     * @return
-     * @throws MojoExecutionException
+     * @param coordinates The artifact coordinates
+     * @return The local file resolved/downloaded for the given coordinates
+     * @throws ResolutionException If the artifact cannot be resolved
      */
     public File resolveArtifact(String coordinates) throws ResolutionException
     {

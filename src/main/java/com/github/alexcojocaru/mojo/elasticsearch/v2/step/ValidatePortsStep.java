@@ -10,7 +10,8 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
 
 /**
- * Validate that the provided and inferred HTTP and transport ports are not protected (ie. < 1024).
+ * Validate that the provided and inferred HTTP and transport ports are not protected
+ * (ie. less than 1024).
  * 
  * @author Alex Cojocaru
  */

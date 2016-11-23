@@ -48,8 +48,8 @@ public class Monitor
     
     /**
      * Check whether the PID file created by the ES process exists or not.
-     * @param baseDir
-     * @return
+     * @param baseDir the ES base directory
+     * @return true if the process is running, false otherwise
      */
     public static boolean isProcessRunning(String baseDir)
     {
@@ -60,9 +60,9 @@ public class Monitor
     
     /**
      * Check whether the cluster with the given name exists in the ES referenced by the client.
-     * @param clusterName
-     * @param httpPort
-     * @return
+     * @param clusterName the ES cluster name
+     * @param client the ES client to use to connect to ES
+     * @return true if the cluster is running, false otherwise
      */
     public static boolean isClusterRunning(String clusterName, ElasticsearchClient client)
     {
@@ -84,9 +84,9 @@ public class Monitor
     
     /**
      * Check whether the cluster with the given name exists in the ES running on the given port.
-     * @param clusterName
-     * @param httpPort
-     * @return
+     * @param clusterName the ES cluster name
+     * @param httpPort the HTTP port to connect to ES
+     * @return true if the cluster is running, false otherwise
      */
     public static boolean isClusterRunning(String clusterName, int httpPort)
     {

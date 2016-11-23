@@ -16,7 +16,7 @@ public class ElasticsearchClientException
     
 
     /**
-     * @param message
+     * @param message The exception message
      */
     public ElasticsearchClientException(String message)
     {
@@ -24,9 +24,9 @@ public class ElasticsearchClientException
     }
 
     /**
-     * @param method 
-     * @param statusCode
-     * @param responseContent
+     * @param method The HTTP method which triggered the exception
+     * @param statusCode The status code on the response which triggered the exception
+     * @param responseContent The content in the response which triggered the exception
      */
     public ElasticsearchClientException(String method, int statusCode, String responseContent)
     {
@@ -42,7 +42,7 @@ public class ElasticsearchClientException
     }
 
     /**
-     * @param cause
+     * @param cause The exception cause
      */
     public ElasticsearchClientException(Throwable cause)
     {

@@ -18,6 +18,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Copied from the t7mp project.
@@ -27,42 +28,22 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class AbstractArtifact {
 
-    /**
-     * 
-     * @parameter
-     * @required
-     */
+    @Parameter(required=true)
     protected String groupId;
 
-    /**
-     * 
-     * @parameter
-     * @required
-     */
+    @Parameter(required=true)
     protected String artifactId;
 
-    /**
-     * 
-     * @parameter
-     */
+    @Parameter
     protected String version;
 
-    /**
-     * 
-     * @parameter
-     */
+    @Parameter
     protected String type;
 
-    /**
-     * 
-     * @parameter
-     */
+    @Parameter
     protected String classifier;
 
-    /**
-     * 
-     * @parameter
-     */
+    @Parameter
     protected String systemPath;
 
     protected File file;
@@ -145,6 +126,7 @@ public abstract class AbstractArtifact {
     /**
      * The {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>} of the artifact.
      * 
+     * @return The Maven coordinates for the current artifact
      */
     protected String buildDefaultMavenCoordinates() {
         StringBuilder sb = new StringBuilder();

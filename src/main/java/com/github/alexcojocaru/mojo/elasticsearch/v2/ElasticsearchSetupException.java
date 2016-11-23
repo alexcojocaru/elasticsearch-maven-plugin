@@ -9,8 +9,8 @@ public class ElasticsearchSetupException
     private static final long serialVersionUID = 7187554107621129031L;
 
     /**
-     * @param message
-     * @param cause
+     * @param message The exception message
+     * @param cause The cause
      */
     public ElasticsearchSetupException(String message, Throwable cause)
     {
@@ -18,7 +18,7 @@ public class ElasticsearchSetupException
     }
 
     /**
-     * @param message
+     * @param message The message
      */
     public ElasticsearchSetupException(String message)
     {
@@ -26,7 +26,7 @@ public class ElasticsearchSetupException
     }
 
     /**
-     * @param cause
+     * @param cause The cause
      */
     public ElasticsearchSetupException(Throwable cause)
     {
