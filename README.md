@@ -1,87 +1,82 @@
 # Elasticsearch Maven Plugin [![Build Status](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin.png?branch=master)](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin)
 
-A Maven plugin to run Elasticsearch instances during the integration test phase of a build.
-Although it is not a local Elasticsearch node per se (for it is not able to communicate to other nodes outside the JVM),
-it is as lightweight as possible (1 shard, 0 replicas, multicast discovery disabled and zen ping timeout set to 3ms).
+A Maven plugin to run instances of Elasticsearch version 5+ during the integration test phase of a build.
+Instances are started in forked processes using the **runforked** goal.
+They are terminated using the **stop** goal and, for extra peace of mind, using a JVM shutdown hook.
 
-Another way to run a single node Elasticsearch cluster (providing a scriptFile is optional) is through the **run** goal,
-which keeps the process running until it is terminated with CTRL+C.
+Each instance is _installed_ in _${project.build.directory}/elasticsearch${instanceIndex}_.
 
-The current plugin version supports Elasticsearch v2.x.x. For Elasticsearch v1.x.x support, see version 1.x of the plugin.
+For Elasticsearch version 1.x.x and 2.x.x support, see version 1.x and 2.x of this plugin.
 
 ## Usage
-The following Elasticsearch properties can be configured through the plugin configuration section:
+The Elasticsearch behaviour and properties can be configured through the following plugin configuration parameters:
 
-*   **clusterName** [required]:
-    > the name of the cluster to create;
+*   **instanceCount** [defaultValue=1]
+    > how many Elasticsearch instances to start (all within the same cluster)
 
-*   **tcpPort** [required]
-    > the port for the node to node communication;
+*   **skip** [defaultValue=false]
+    > whether to skip the plugin execution or not
 
-*   **httpPort** [required]
-    > the port to listen to HTTP traffic;
+*   **clusterName** [defaultValue="test"]
+    > the name of the cluster to create
 
-*   **outputDirectory** [optional]
-    > the directory where the Elasticsearch data directory will be created (defaults to the project build directory);
+*   **version** [defaultValue="5.0.0"]
+    > the version of Elasticsearch to install
 
-*   **dataDirname** [optional]
-    > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch data will be stored;
+*   **httpPort** [defaultValue=9200]
+    > the port to configure Elasticsearch to listen to HTTP traffic to; when configuring multiple instances, they will be assigned subsequent HTTP ports starting with this value (mind the conflicts with the transport ports)
 
-*   **keepData** [optional]
-    > whether to keep the data and log directories if they already exist (defaults to _false_);
+*   **transportPort** [defaultValue=9300]
+    > the port for the Elasticsearch node to node communication; when configuring multiple instances, they will be assigned subsequent transport ports starting with this value (mind the conflicts with the HTTP ports)
 
-*   **configPath** [optional]
-    > the path of the config directory to be used by the Elasticsearch instance.
-    > It is required for scripting support, in which case the directory referred by this path should contain only a *scripts* directory, with the required scripts.
-    > It is also required for logging support, in which case the directory referred by this path should contain a *logging.yml* file to define the log4j configuration (<https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-configuration.html#logging>).
-    > See the *src/test/resources/example/logging/config* for an example.
-    > If the *${path.logs}* parameter is used in *logging.yml*, the *logsDirname* property has to be also defined, for it translates to *${path.logs}* in the elasticsearch configuration.
-    > Note that you may also have to add log4j v1.x.x as dependency to the elasticsearch maven plugin configuration in your pom.xml;
+*   **pathData** [defaultValue=""] - WIP per instance !!!
+    > the custom data directory to configure in Elasticsearch
 
-*   **pluginsPath** [optional]
-    > the path of the plugins directory to be used by the Elasticsearch instance.
-    > It is needed for providing custom plugins to the ES instance, each plugin will be contained in a subdirectory;
+*   **pathLogs** [defaultValue=""] - WIP per instance !!!
+    > the custom logs directory to configure in Elasticsearch
 
-*   **logsDirname** [optional]
-    > the name of the directory within the *outputDirectory* (see the property above) where the Elasticsearch log files will be created. See the notes on *configPath* for details on logging;
+*   **pathScripts** [defaultValue=""]
+    > the absolute path (or relative to the maven project) of the custom directory containing file-based scripts, to be used in Elasticsearch
 
-*   **scriptFile** [required by the *load* goal]
-    > a list of commands to be executed to provision the Elasticsearch cluster. See the [load.script](#load.script) section for details.
+*   **pathInitScript** [defaultValue=""]
+    > the path of the initialization script (see the [Initialization script](#initScript) section for details)
 
-*   **autoCreateIndex** [optional]
-    > configuration of automatic index creation represented by _action.auto\_create\_index_ setting (defaults to _false_).
+*   **keepExistingData** [defaultValue=false] - WIP
+    > whether to keep the data and log directories if they already exist
 
-Include the following in the pom.xml file and modify the configuration as needed:
+*   **timeout** [defaultValue=30]
+    > how long to wait (in seconds) for each Elasticsearch instance to start up
+
+*   **setAwait** [defaultValue=false]
+    > whether to block the execution once all Elasticsearch instances have started, so that the maven build will not proceed to the next step; use CTRL+C to abort the process
+
+*   **autoCreateIndex** [defaultValue=true]
+    > configuration of automatic index creation represented by _action.auto\_create\_index_ setting
+
+
+To use the plugin, include the following in your pom.xml file and modify the configuration as needed:
 
         <plugin>
     	    <groupId>com.github.alexcojocaru</groupId>
     	    <artifactId>elasticsearch-maven-plugin</artifactId>
-			<!-- REPLACE THE FOLLOWING WITH THE PLUGIN VERSION YOU REQUIRE -->
-    	    <version>2.0</version>
+			<!-- REPLACE THE FOLLOWING WITH THE PLUGIN VERSION YOU NEED -->
+    	    <version>5.0</version>
     	    <configuration>
     			<clusterName>test</clusterName>
     			<tcpPort>9300</tcpPort>
     			<httpPort>9200</httpPort>
     	    </configuration>
     	    <executions>
-    	        <!-- The elasticsearch plugin is by default bound to the
-    	        pre-integration-test and post-integration-test phases -->
+    	        <!--
+					The elasticsearch maven plugin goals are by default bound to the
+					pre-integration-test and post-integration-test phases
+				-->
     	        <execution>
     	            <id>start-elasticsearch</id>
     	            <phase>pre-integration-test</phase>
     	            <goals>
-    	                <goal>start</goal>
+    	                <goal>runforked</goal>
     	            </goals>
-    	        </execution>
-    	        <execution>
-    	            <id>deploy-json</id>
-    	            <phase>pre-integration-test</phase>
-    	            <goals>
-    	                <goal>load</goal>
-    	            </goals>
-    	            <configuration>
-                        <scriptFile>src/test/resources/elasticsearch.script</scriptFile>
-    	            </configuration>
     	        </execution>
     	        <execution>
     	            <id>stop-elasticsearch</id>
@@ -91,129 +86,28 @@ Include the following in the pom.xml file and modify the configuration as needed
     	            </goals>
     	        </execution>
     	    </executions>
-			<dependencies>
-				<dependency>
-					<groupId>org.elasticsearch</groupId>
-					<artifactId>elasticsearch</artifactId>
-					<!-- REPLACE THE FOLLOWING WITH THE VERSION OF YOUR DESIRE -->
-					<version>2.0.0</version>
-				</dependency>
-			</dependencies>
     	</plugin>
 
-## <a name="load.script"></a>Load script
-A load script file can be provided to the *load* goal of the plugin, in which case it will be executed on the local Elasticsearch cluster.
+## <a name="initScript"></a>Initialization script
+An initialization script file can be provided using the _pathInitScript_ parameter of the plugin, in which case it will be executed on the local Elasticsearch cluster.
 
-The empty lines are ignored, as well as lines starting with the '#' sign.
+Empty lines are ignored, as well as lines starting with the '#' sign.
 
 Each command has three parts, separated by colon.
 
-* the request method: one of *PUT*, *POST*, *DELETE*;
-    > this is the name (uppercase) of the request method to be used for the current command;
+* the request method: one of *PUT*, *POST*, *DELETE*
+    > the name (in uppercase) of the request method to be used for the current command
 
-* the path part of the URL (should not start with a slash);
-    > will be appended to the protocol, hostname and port parts when the full URL is constructed;
+* the path part of the URL (should not start with slash)
+    > will be appended to the protocol, hostname and port parts when the full URL is constructed
 
-* the JSON to send to Elasticsearch; it should be empty for a DELETE command.
+* the JSON to send to Elasticsearch; for DELETE commands it should be empty for a DELETE
 
 
-**Examples** (see the *src/test/resources/goals/load/load.script* file for more examples)
-:
+**Examples** (see the *src/it/runforked-with-init-script/init.script* file for a more complete example):
+
+* To send a *POST* request to *http://localhost:9200/test\_index/test\_type/\_mapping*:
 > POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "string" }, "lastModified" : { "type" : "date" } } } }
->> A *POST* request will be send to *http://localhost:9200/test\_index/test\_type/\_mapping*
 
+* To send a *DELETE* request to *http://localhost:9200/test\_index/test\_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
 > DELETE:test\_index/test\_type/1:
->> A *DELETE* request will be send to *http://localhost:9200/test\_index/test\_type/1* with no content. Note the colon at the end, for there is no JSON data in case of a DELETE.
-
-## Run Elasticsearch node
-*run* goal allows you to start the local Elastisearch cluster and keep it running until the process is killed.
-An load script file can be provided to the *run* goal of the plugin, in which case it will be executed on the local Elasticsearch cluster.
-
-## Multiple Instances
-The plugin can support multiple instances of elastic search. This will require configuring executions for each cluster instance.
-To ensure that each instance of an execution is refering to a specific cluster instance, it is required that the cluster name is the same for each instance.
-
-         <plugin>
-             <groupId>com.github.alexcojocaru</groupId>
-             <artifactId>elasticsearch-maven-plugin</artifactId>
-             <version>1.12</version>
-             <executions>
-                 <!-- Manage Cluster 1 -->
-                 <execution>
-                     <id>start-elasticsearch</id>
-                     <phase>pre-integration-test</phase>
-                     <goals>
-                         <goal>start</goal>
-                     </goals>
-                     <configuration>
-                         <clusterName>test</clusterName>
-                         <tcpPort>9300</tcpPort>
-                         <httpPort>9200</httpPort>
-                         <configPath>${basedir}/../api/src/test/resources/elasticsearch/config</configPath>
-                         <outputDirectory>${project.build.directory}/esrch1</outputDirectory>
-                     </configuration>
-                 </execution>
-                 <execution>
-                     <id>deploy-json</id>
-                     <phase>pre-integration-test</phase>
-                     <goals>
-                         <goal>load</goal>
-                     </goals>
-                     <configuration>
-                         <clusterName>test</clusterName>
-                         <httpPort>9200</httpPort>
-                         <scriptFile>src/test/resources/elasticsearch.script</scriptFile>
-                     </configuration>
-                 </execution>
-                 <execution>
-                     <id>stop-elasticsearch</id>
-                     <phase>post-integration-test</phase>
-                     <goals>
-                         <goal>stop</goal>
-                     </goals>
-                     <configuration>
-                         <clusterName>test</clusterName>
-                         <httpPort>9200</httpPort>
-                     </configuration>
-                 </execution>
-                 <!-- Manage Cluster #2 -->
-                 <execution>
-                     <id>start-elasticsearch-2</id>
-                     <phase>pre-integration-test</phase>
-                     <goals>
-                         <goal>start</goal>
-                     </goals>
-                     <configuration>
-                         <clusterName>test2</clusterName>
-                         <tcpPort>9600</tcpPort>
-                         <httpPort>9500</httpPort>
-                         <configPath>${basedir}/../api/src/test/resources/elasticsearch/config</configPath>
-                         <outputDirectory>${project.build.directory}/esrch2</outputDirectory>
-                     </configuration>
-                 </execution>
-                 <execution>
-                     <id>deploy-json-2</id>
-                     <phase>pre-integration-test</phase>
-                     <goals>
-                         <goal>load</goal>
-                     </goals>
-                     <configuration>
-                         <clusterName>test2</clusterName>
-                         <httpPort>9500</httpPort>
-                         <scriptFile>src/test/resources/elasticsearch.script</scriptFile>
-                     </configuration>
-                 </execution>
-                 <execution>
-                     <id>stop-elasticsearch-2</id>
-                     <phase>post-integration-test</phase>
-                     <goals>
-                         <goal>stop</goal>
-                     </goals>
-                     <configuration>
-                         <clusterName>test2</clusterName>
-                         <httpPort>9500</httpPort>
-                     </configuration>
-                 </execution>
-             </executions>
-            <executions>
-        </plugin>

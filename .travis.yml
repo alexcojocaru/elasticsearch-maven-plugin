@@ -1,4 +1,6 @@
 language: java
 jdk:
-  - oraclejdk7
+  - oraclejdk8
+os:
+  - linux
 script: "mvn clean verify"
