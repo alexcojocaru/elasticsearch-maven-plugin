@@ -4,7 +4,7 @@ A Maven plugin to run instances of Elasticsearch version 5+ during the integrati
 Instances are started in forked processes using the **runforked** goal.
 They are terminated using the **stop** goal and, for extra peace of mind, using a JVM shutdown hook.
 
-Each instance is _installed_ in _${project.build.directory}/elasticsearch${instanceIndex}_.
+Each instance is installed in _${project.build.directory}/elasticsearch${instanceIndex}_.
 
 For Elasticsearch version 1.x.x and 2.x.x support, see version 1.x and 2.x of this plugin.
 
@@ -29,10 +29,10 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **transportPort** [defaultValue=9300]
     > the port for the Elasticsearch node to node communication; when configuring multiple instances, they will be assigned subsequent transport ports starting with this value (mind the conflicts with the HTTP ports)
 
-*   **pathData** [defaultValue=""] - WIP per instance !!!
+*   **pathData** [defaultValue=""] - work in progress (note: per instance !!!)
     > the custom data directory to configure in Elasticsearch
 
-*   **pathLogs** [defaultValue=""] - WIP per instance !!!
+*   **pathLogs** [defaultValue=""] - work in progress (note: per instance !!!)
     > the custom logs directory to configure in Elasticsearch
 
 *   **pathScripts** [defaultValue=""]
@@ -41,7 +41,7 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **pathInitScript** [defaultValue=""]
     > the path of the initialization script (see the [Initialization script](#initScript) section for details)
 
-*   **keepExistingData** [defaultValue=false] - WIP
+*   **keepExistingData** [defaultValue=false] - work in progress
     > whether to keep the data and log directories if they already exist
 
 *   **timeout** [defaultValue=30]
@@ -54,7 +54,7 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > configuration of automatic index creation represented by _action.auto\_create\_index_ setting
 
 
-To use the plugin, include the following in your pom.xml file and modify the configuration as needed:
+To use the plugin, include the following in your _pom.xml_ file and modify the configuration as needed:
 
         <plugin>
     	    <groupId>com.github.alexcojocaru</groupId>
@@ -89,7 +89,7 @@ To use the plugin, include the following in your pom.xml file and modify the con
     	</plugin>
 
 ## <a name="initScript"></a>Initialization script
-An initialization script file can be provided using the _pathInitScript_ parameter of the plugin, in which case it will be executed on the local Elasticsearch cluster.
+An initialization script file can be provided using the **pathInitScript** parameter of the plugin, in which case it will be executed against the local Elasticsearch cluster.
 
 Empty lines are ignored, as well as lines starting with the '#' sign.
 
