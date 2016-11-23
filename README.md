@@ -37,7 +37,7 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > the custom logs directory to configure in Elasticsearch
 
 *   **pathScripts** [defaultValue=""]
-    > the custom directory containing file-based scripts, to be used in Elasticsearch
+    > the absolute path (or relative to the maven project) of the custom directory containing file-based scripts, to be used in Elasticsearch
 
 *   **pathInitScript** [defaultValue=""]
     > the path of the initialization script (see the [Initialization script](#initScript) section for details)
@@ -110,5 +110,5 @@ Each command has three parts, separated by colon.
 * To send a *POST* request to *http://localhost:9200/test\_index/test\_type/\_mapping*:
 > POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "string" }, "lastModified" : { "type" : "date" } } } }
 
-* To send a *DELETE* request to *http://localhost:9200/test\_index/test\_type/1* with no content; note the colon at the end, for there is no JSON data in case of a DELETE.
+* To send a *DELETE* request to *http://localhost:9200/test\_index/test\_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
 > DELETE:test\_index/test\_type/1:

@@ -324,5 +324,4 @@ public abstract class AbstractElasticsearchMojo
 
     // update the readme
     // unit tests
-    // integration tests: pathScripts
 }

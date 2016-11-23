@@ -146,7 +146,8 @@ public class ForkedInstance
         String pathScripts = config.getClusterConfiguration().getPathScripts();
         if (StringUtils.isNotBlank(pathScripts))
         {
-            cmd.add("-Epath.scripts=" + pathScripts);
+            File scriptsDir = new File(pathScripts);
+            cmd.add("-Epath.scripts=" + scriptsDir.getAbsolutePath());
         }
 
         cmd.add("-Ehttp.cors.enabled=true");

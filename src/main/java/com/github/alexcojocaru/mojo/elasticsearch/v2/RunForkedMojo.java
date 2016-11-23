@@ -33,7 +33,7 @@ public class RunForkedMojo
         for (InstanceConfiguration config : clusterConfig.getInstanceConfigurationList())
         {
             getLog().info(String.format(
-                    "Starting Elasticsearch [%d] configuration: %s",
+                    "Using Elasticsearch [%d] configuration: %s",
                     config.getId(),
                     config));
 
