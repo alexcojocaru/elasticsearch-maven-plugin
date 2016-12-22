@@ -79,6 +79,7 @@ public class StopMojo
 
         if (SystemUtils.IS_OS_WINDOWS)
         {
+            cmd.add("taskkill");
             cmd.add("/pid");
             cmd.add(pid);
         }
