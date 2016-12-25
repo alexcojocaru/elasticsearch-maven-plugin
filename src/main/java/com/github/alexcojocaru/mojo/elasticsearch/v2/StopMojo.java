@@ -81,6 +81,7 @@ public class StopMojo
         {
             cmd.add("taskkill");
             cmd.add("/pid");
+            cmd.add("/F");
             cmd.add(pid);
         }
         else
