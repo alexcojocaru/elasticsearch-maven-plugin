@@ -53,6 +53,9 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **autoCreateIndex** [defaultValue=true]
     > configuration of automatic index creation represented by _action.auto\_create\_index_ setting
 
+*   **logLevel** [defaultValue=INFO]
+    > the log level to be used by the console logger; the valid values are defined in AbstractElasticsearchBaseMojo.getMavenLogLevel() and they are: DEBUG, INFO, WARN, ERROR, FATAL, DISABLED.
+
 
 To use the plugin, include the following in your _pom.xml_ file and modify the configuration as needed:
 

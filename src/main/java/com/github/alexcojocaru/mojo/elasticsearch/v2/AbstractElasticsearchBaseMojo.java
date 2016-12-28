@@ -2,8 +2,12 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.io.File;
 
+import org.apache.maven.monitor.logging.DefaultLog;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchBaseConfiguration;
@@ -35,6 +39,14 @@ public abstract class AbstractElasticsearchBaseMojo
      */
     @Parameter(property="es.skip", defaultValue = "false")
     protected boolean skip;
+
+    /**
+     * The plugin log level.
+     */
+    @Parameter(property="es.logLevel", defaultValue = "DEBUG")
+    protected String logLevel;
+    
+    private Log log;
     
     
     @Override
@@ -70,6 +82,46 @@ public abstract class AbstractElasticsearchBaseMojo
         this.skip = skip;
     }
 
+    @Override
+    public String getLogLevel()
+    {
+        return logLevel;
+    }
+
+    public void setLogLevel(String logLevel)
+    {
+        this.logLevel = logLevel;
+    }
+    
+    private int getMavenLogLevel()
+    {
+        switch (logLevel)
+        {
+            case "DEBUG":
+                return Logger.LEVEL_DEBUG;
+            case "WARN":
+                return Logger.LEVEL_WARN;
+            case "ERROR":
+                return Logger.LEVEL_ERROR;
+            case "FATAL":
+                return Logger.LEVEL_FATAL;
+            case "DISABLED":
+                return Logger.LEVEL_DISABLED;
+            case "INFO":
+            default:
+                return Logger.LEVEL_INFO;
+        }
+    }
+
+    @Override
+    public Log getLog()
+    {
+        if (log == null)
+        {
+            log = new DefaultLog(new ConsoleLogger(getMavenLogLevel(), "console"));
+        }
+        return log;
+    }
 
     @Override
     public ClusterConfiguration buildClusterConfiguration()

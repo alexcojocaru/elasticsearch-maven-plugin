@@ -311,17 +311,4 @@ public abstract class AbstractElasticsearchMojo
                 getLog()));
         return artifactResolver;
     }
-
-    // TODO add support for providing pathConfig which overrides pathData and pathLogs
-    // ./bin/elasticsearch -Epath.conf=/path/to/my/config/
-
-    // TODO can I override the log4j 2 config by appending extra config to the file
-    // (protected String additionalLogConfigFilePath = "";)
-
-    // TODO redirect process output? ; log plugin output / error to file?
-    
-    // TODO parallelize the starting of multiple instances
-
-    // update the readme
-    // unit tests
 }

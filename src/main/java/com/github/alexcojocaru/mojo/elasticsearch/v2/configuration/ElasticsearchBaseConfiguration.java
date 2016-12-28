@@ -20,6 +20,8 @@ public interface ElasticsearchBaseConfiguration
     
     boolean isSkip();
     
+    String getLogLevel();
+    
 
     ClusterConfiguration buildClusterConfiguration();
     
