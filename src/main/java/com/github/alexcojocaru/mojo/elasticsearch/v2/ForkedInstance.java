@@ -48,7 +48,7 @@ public class ForkedInstance
 
         ProcessBuilder processBuilder = new ProcessBuilder(getStartScriptCommand());
         processBuilder.directory(baseDir);
-        processBuilder.redirectErrorStream(true);
+        processBuilder.inheritIO();
         
         Log log = config.getClusterConfiguration().getLog();
 
@@ -90,7 +90,7 @@ public class ForkedInstance
 
         ProcessBuilder processBuilder = new ProcessBuilder("chmod", "755", "elasticsearch");
         processBuilder.directory(binDirectory);
-        processBuilder.redirectErrorStream(true);
+        processBuilder.inheritIO();
 
         Log log = config.getClusterConfiguration().getLog();
 
