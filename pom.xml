@@ -242,6 +242,9 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--
+				 http://central.sonatype.org/pages/apache-maven.html
+			-->
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
