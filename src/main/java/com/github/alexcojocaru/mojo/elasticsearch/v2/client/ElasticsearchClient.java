@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A REST client for Elasticsearch.
- * 
+ *
  * @author Alex Cojocaru
  */
 public class ElasticsearchClient
@@ -102,6 +102,21 @@ public class ElasticsearchClient
         return result;
     }
 
+    public <T> T get(String path, String entity, Class<T> clazz) throws ElasticsearchClientException
+    {
+        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        log.debug(String.format("Sending GET request to %s with entity '%s'", uri, entity));
+
+        HttpGetWithEntity request = new HttpGetWithEntity(uri);
+        request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
+        request.setEntity(new StringEntity(entity, ContentType.APPLICATION_JSON));
+
+        String content = executeRequest(request);
+        T result = deserialize(content, clazz);
+
+        return result;
+    }
+
     public void put(String path, String entity) throws ElasticsearchClientException
     {
         String uri = String.format("http://%s:%d%s", hostname, port, path);
@@ -159,7 +174,7 @@ public class ElasticsearchClient
         {
             return (T)content;
         }
-        
+
         try
         {
             return mapper.readValue(content, clazz);
@@ -170,7 +185,7 @@ public class ElasticsearchClient
                     "Cannot deserialize the content '%s' to class %s", content, clazz));
         }
     }
-    
+
     protected String executeRequest(HttpRequestBase request) throws ElasticsearchClientException
     {
         try
@@ -181,13 +196,13 @@ public class ElasticsearchClient
             String content = readContent(response.getEntity());
             log.debug(String.format(
                     "Response with status code %d and content: %s", statusCode, content));
-            
+
             // some PUT requests return 200, some 201 :-O
             if (statusCode != 200 && statusCode != 201)
             {
                 throw new ElasticsearchClientException(request.getMethod(), statusCode, content);
             }
-            
+
             return content;
         }
         catch (IOException e)

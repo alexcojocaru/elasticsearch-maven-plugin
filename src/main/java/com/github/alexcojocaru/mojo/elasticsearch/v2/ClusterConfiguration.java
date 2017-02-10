@@ -23,6 +23,7 @@ public class ClusterConfiguration
 
     private String version;
     private String clusterName;
+    private String pathConf;
     private String pathScripts;
     private String pathInitScript;
     private boolean keepExistingData;
@@ -64,6 +65,11 @@ public class ClusterConfiguration
         return clusterName;
     }
     
+    public String getPathConf()
+    {
+        return pathConf;
+    }
+
     public String getPathScripts()
     {
         return pathScripts;
@@ -99,6 +105,7 @@ public class ClusterConfiguration
         return new ToStringBuilder(this)
                 .append("version", version)
                 .append("clusterName", clusterName)
+                .append("pathConfigFile", pathConf)
                 .append("pathScripts", pathScripts)
                 .append("pathInitScript", pathInitScript)
                 .append("keepExistingData", keepExistingData)
@@ -117,6 +124,7 @@ public class ClusterConfiguration
 
         private String version;
         private String clusterName;
+        private String pathConf;
         private String pathScripts;
         private String pathInitScript;
         private boolean keepExistingData;
@@ -152,6 +160,12 @@ public class ClusterConfiguration
         public Builder withClusterName(String clusterName)
         {
             this.clusterName = clusterName;
+            return this;
+        }
+
+        public Builder withPathConf(String pathConf)
+        {
+            this.pathConf = pathConf;
             return this;
         }
 
@@ -198,6 +212,7 @@ public class ClusterConfiguration
 
             config.version = version;
             config.clusterName = clusterName;
+            config.pathConf = pathConf;
             config.pathScripts = pathScripts;
             config.pathInitScript = pathInitScript;
             config.keepExistingData = keepExistingData;
