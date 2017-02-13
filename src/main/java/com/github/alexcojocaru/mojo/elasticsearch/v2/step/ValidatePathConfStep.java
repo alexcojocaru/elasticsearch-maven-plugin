@@ -8,24 +8,24 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
 
 /**
- * Validate that the provided pathScripts, if any, points to an existing directory.
- * 
+ * Validate that the provided pathConf, if any, points to an existing directory.
+ *
  * @author Alex Cojocaru
  */
-public class ValidatePathScriptsStep
+public class ValidatePathConfStep
         implements ClusterStep
 {
 
     @Override
     public void execute(ClusterConfiguration config)
     {
-        String pathScripts = config.getPathScripts();
-        
-        if (StringUtils.isNotBlank(pathScripts) && new File(pathScripts).isDirectory() == false)
+        String pathConf = config.getPathConf();
+
+        if (StringUtils.isNotBlank(pathConf) && new File(pathConf).isDirectory() == false)
         {
             throw new ElasticsearchSetupException(String.format(
-                    "The value of the 'pathScripts' parameter ('%1$s') must be the absolute path"
-                    + " (or relative to the maven project) of an existing directory.", pathScripts));
+                    "The value of the 'pathConf' parameter ('%1$s') must be the absolute path"
+                    + " (or relative to the maven project) of an existing directory.", pathConf));
         }
     }
 

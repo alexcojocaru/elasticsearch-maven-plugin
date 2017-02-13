@@ -29,6 +29,9 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **transportPort** [defaultValue=9300]
     > the port for the Elasticsearch node to node communication; when configuring multiple instances, they will be assigned subsequent transport ports starting with this value (mind the conflicts with the HTTP ports)
 
+*   **pathConf** [defaultValue=""] (note: common to all instances !!!)
+    > the absolute path (or relative to the maven project) of the custom directory containing configuration files, to be copied to Elasticsearch instances
+
 *   **pathData** [defaultValue=""] - work in progress (note: per instance !!!)
     > the custom data directory to configure in Elasticsearch
 

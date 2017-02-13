@@ -16,6 +16,8 @@ public interface ElasticsearchConfiguration extends ElasticsearchBaseConfigurati
     
     int getTransportPort();
     
+    String getPathConf();
+    
     String getPathData();
     
     String getPathLogs();

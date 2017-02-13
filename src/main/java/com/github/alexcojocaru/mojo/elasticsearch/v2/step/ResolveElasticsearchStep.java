@@ -40,7 +40,15 @@ public class ResolveElasticsearchStep
                     .resolveArtifact(artifact.getArtifactCoordinates());
             unpackDirectory = getUnpackDirectory();
             ZipUtil.unpack(resolvedArtifact, unpackDirectory);
-            moveToElasticsearchDirectory(unpackDirectory, new File(config.getBaseDir()));
+            File baseDir = new File(config.getBaseDir());
+            moveToElasticsearchDirectory(unpackDirectory, baseDir);
+
+            String pathConf = config.getClusterConfiguration().getPathConf();
+            if (pathConf != null && !pathConf.isEmpty()) {
+                // Merge the user-defined config directory with the default one
+                // This allows user to omit some configuration files (jvm.options for instance)
+                FileUtils.copyDirectory(new File(pathConf), new File(baseDir, "config"));
+            }
         }
         catch (ResolutionException | IOException e)
         {

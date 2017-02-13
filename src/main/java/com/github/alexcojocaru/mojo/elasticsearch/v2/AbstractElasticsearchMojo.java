@@ -68,6 +68,12 @@ public abstract class AbstractElasticsearchMojo
     protected int transportPort;
 
     /**
+     * The path to the configuration directory (containing elasticsearch.yml, log4j2.properties, ...).
+     */
+    @Parameter(property="es.pathConf")
+    protected String pathConf;
+
+    /**
      * The path to the data directory.
      */
     @Parameter(property="es.pathData")
@@ -187,6 +193,16 @@ public abstract class AbstractElasticsearchMojo
         this.transportPort = transportPort;
     }
 
+    public String getPathConf()
+    {
+        return pathConf;
+    }
+
+    public void setPathConf(String pathData)
+    {
+        this.pathConf = pathData;
+    }
+
     public String getPathData()
     {
         return pathData;
@@ -266,8 +282,8 @@ public abstract class AbstractElasticsearchMojo
     {
         this.autoCreateIndex = autoCreateIndex;
     }
-
     
+
     @Override
     public ClusterConfiguration buildClusterConfiguration()
     {
@@ -276,6 +292,7 @@ public abstract class AbstractElasticsearchMojo
                 .withLog(getLog())
                 .withVersion(version)
                 .withClusterName(clusterName)
+                .withPathConf(pathConf)
                 .withPathScripts(pathScripts)
                 .withPathInitScript(pathInitScript)
                 .withKeepExistingData(keepExistingData)

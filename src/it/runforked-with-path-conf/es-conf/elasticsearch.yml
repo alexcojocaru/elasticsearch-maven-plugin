@@ -1,0 +1,2 @@
+# Enable Groovy scripting support for search
+script.engine.groovy.inline.search: on
