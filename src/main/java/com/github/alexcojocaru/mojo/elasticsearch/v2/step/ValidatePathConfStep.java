@@ -24,8 +24,8 @@ public class ValidatePathConfStep
         if (StringUtils.isNotBlank(pathConf) && new File(pathConf).isDirectory() == false)
         {
             throw new ElasticsearchSetupException(String.format(
-                    "The value of the 'pathConf' parameter must be the absolute path"
-                    + " (or relative to the maven project) of an existing directory."));
+                    "The value of the 'pathConf' parameter ('%1$s') must be the absolute path"
+                    + " (or relative to the maven project) of an existing directory.", pathConf));
         }
     }
 

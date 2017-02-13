@@ -24,8 +24,8 @@ public class ValidatePathScriptsStep
         if (StringUtils.isNotBlank(pathScripts) && new File(pathScripts).isDirectory() == false)
         {
             throw new ElasticsearchSetupException(String.format(
-                    "The value of the 'pathScripts' parameter must be the absolute path"
-                    + " (or relative to the maven project) of an existing directory."));
+                    "The value of the 'pathScripts' parameter ('%1$s') must be the absolute path"
+                    + " (or relative to the maven project) of an existing directory.", pathScripts));
         }
     }
 

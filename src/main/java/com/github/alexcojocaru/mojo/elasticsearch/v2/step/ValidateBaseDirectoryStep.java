@@ -30,7 +30,8 @@ public class ValidateBaseDirectoryStep
         catch (Exception e)
         {
             throw new ElasticsearchSetupException(String.format(
-                    "The value of the 'baseDir' parameter is not a valid file path."));
+                    "The value of the 'baseDir' parameter ('%1$s') is not a valid file path.",
+                    baseDir));
         }
     }
 
