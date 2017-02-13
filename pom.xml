@@ -54,7 +54,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.version>3.2.5</maven.version>
-		<aether.version>1.1.0</aether.version>
+		<aether.version>1.13.1</aether.version>
 	</properties>
 
 	<dependencies>
@@ -85,8 +85,13 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.eclipse.aether</groupId>
+			<groupId>org.sonatype.aether</groupId>
 			<artifactId>aether-api</artifactId>
+			<version>${aether.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sonatype.aether</groupId>
+			<artifactId>aether-util</artifactId>
 			<version>${aether.version}</version>
 		</dependency>
 
