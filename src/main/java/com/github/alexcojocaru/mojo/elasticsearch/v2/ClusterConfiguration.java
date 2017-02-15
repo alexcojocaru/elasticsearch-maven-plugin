@@ -25,6 +25,7 @@ public class ClusterConfiguration
     private String clusterName;
     private String pathConf;
     private String pathScripts;
+    private List<PluginConfiguration> plugins;
     private String pathInitScript;
     private boolean keepExistingData;
     private int timeout;
@@ -75,6 +76,11 @@ public class ClusterConfiguration
         return pathScripts;
     }
 
+    public List<PluginConfiguration> getPlugins()
+    {
+        return plugins;
+    }
+
     public String getPathInitScript()
     {
         return pathInitScript;
@@ -107,6 +113,7 @@ public class ClusterConfiguration
                 .append("clusterName", clusterName)
                 .append("pathConfigFile", pathConf)
                 .append("pathScripts", pathScripts)
+                .append("plugins", plugins)
                 .append("pathInitScript", pathInitScript)
                 .append("keepExistingData", keepExistingData)
                 .append("timeout", timeout)
@@ -126,6 +133,7 @@ public class ClusterConfiguration
         private String clusterName;
         private String pathConf;
         private String pathScripts;
+        private List<PluginConfiguration> plugins;
         private String pathInitScript;
         private boolean keepExistingData;
         private int timeout;
@@ -175,6 +183,12 @@ public class ClusterConfiguration
             return this;
         }
 
+        public Builder withElasticsearchPlugin(List<PluginConfiguration> plugins)
+        {
+            this.plugins = plugins;
+            return this;
+        }
+
         public Builder withPathInitScript(String pathInitScript)
         {
             this.pathInitScript = pathInitScript;
@@ -214,6 +228,7 @@ public class ClusterConfiguration
             config.clusterName = clusterName;
             config.pathConf = pathConf;
             config.pathScripts = pathScripts;
+            config.plugins = plugins;
             config.pathInitScript = pathInitScript;
             config.keepExistingData = keepExistingData;
             config.timeout = timeout;

@@ -12,5 +12,7 @@ public class InstanceSetupSequence
     public InstanceSetupSequence()
     {
         add(new ResolveElasticsearchStep());
+        
+        add(new InstallPluginsStep());
     }
 }
