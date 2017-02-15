@@ -1,11 +1,9 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceSetupSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceStepSequence;
@@ -37,14 +35,11 @@ public class ForkedInstance
     public void run()
     {
         FilesystemUtil.setScriptPermission(config, "elasticsearch");
-        startElasticsearch();
-    }
 
-    private void startElasticsearch()
-    {
         ProcessUtil.executeScript(config,
                 getStartScriptCommand(),
-                new ForkedElasticsearchProcessShutdownHook(config));
+                null,
+                new ForkedElasticsearchProcessDestroyer(config));
     }
 
     private InstanceStepSequence getSetupSequence()
@@ -53,43 +48,32 @@ public class ForkedInstance
         return sequence;
     }
 
-    protected String[] getStartScriptCommand()
+    protected CommandLine getStartScriptCommand()
     {
-        List<String> cmd = new ArrayList<>();
-
-        if (SystemUtils.IS_OS_WINDOWS)
-        {
-            cmd.add("cmd");
-            cmd.add("/c");
-            cmd.add(".\\bin\\elasticsearch");
-        }
-        else
-        {
-            cmd.add("./bin/elasticsearch");
-        }
+        CommandLine cmd = ProcessUtil.buildCommandLine("./bin/elasticsearch");
 
         // Write the PID to a file, to be used to shut down the instance
-        cmd.add("-p pid");
+        cmd.addArgument("-p pid", false);
 
-        cmd.add("-Ecluster.name=" + config.getClusterConfiguration().getClusterName());
-        cmd.add("-Ehttp.port=" + config.getHttpPort());
-        cmd.add("-Etransport.tcp.port=" + config.getTransportPort());
+        cmd.addArgument("-Ecluster.name=" + config.getClusterConfiguration().getClusterName(), false);
+        cmd.addArgument("-Ehttp.port=" + config.getHttpPort(), false);
+        cmd.addArgument("-Etransport.tcp.port=" + config.getTransportPort(), false);
 
         if (config.getClusterConfiguration().isAutoCreateIndex() == false)
         {
-            cmd.add("-Eaction.auto_create_index=false");
+            cmd.addArgument("-Eaction.auto_create_index=false", false);
         }
         
         String pathScripts = config.getClusterConfiguration().getPathScripts();
         if (StringUtils.isNotBlank(pathScripts))
         {
             File scriptsDir = new File(pathScripts);
-            cmd.add("-Epath.scripts=" + scriptsDir.getAbsolutePath());
+            cmd.addArgument("-Epath.scripts=" + scriptsDir.getAbsolutePath(), false);
         }
 
-        cmd.add("-Ehttp.cors.enabled=true");
+        cmd.addArgument("-Ehttp.cors.enabled=true");
 
-        return cmd.toArray(new String[cmd.size()]);
+        return cmd;
     }
 
 }

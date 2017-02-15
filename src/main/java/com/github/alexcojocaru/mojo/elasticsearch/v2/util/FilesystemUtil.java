@@ -2,6 +2,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.util;
 
 import java.io.File;
 
+import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.SystemUtils;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
@@ -46,10 +47,10 @@ public final class FilesystemUtil
             // we do not have file permissions on windows
             return;
         }
-
-        ProcessUtil.executeScript(
-                config,
-                new String[] {"chmod", "755", "bin/" + scriptName},
-                null);
+        
+        CommandLine command = new CommandLine("chmod")
+                .addArgument("755")
+                .addArgument(String.format("bin/%s", scriptName));
+        ProcessUtil.executeScript(config, command);
     }
 }

@@ -183,7 +183,7 @@ public class ClusterConfiguration
             return this;
         }
 
-        public Builder withElasticsearchPlugin(List<PluginConfiguration> plugins)
+        public Builder withElasticsearchPlugins(List<PluginConfiguration> plugins)
         {
             this.plugins = plugins;
             return this;

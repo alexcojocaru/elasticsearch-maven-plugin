@@ -1,10 +1,10 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.plugin.logging.Log;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
@@ -32,35 +32,24 @@ public class InstallPluginsStep
         
         for (PluginConfiguration plugin : config.getClusterConfiguration().getPlugins())
         {
-            log.debug(String.format(
-                    "Found plugin '%s' with options '%s'",
+            log.info(String.format(
+                    "Installing plugin '%s' with options '%s'",
                     plugin.getUri(), plugin.getEsJavaOpts()));
             
-            List<String> cmd = new ArrayList<>();
+            Map<String, String> environment = null;
             
-            if (SystemUtils.IS_OS_WINDOWS)
+            if (StringUtils.isNotBlank(plugin.getEsJavaOpts()))
             {
-                cmd.add("cmd");
-                cmd.add("/c");
-                cmd.add(".\\bin\\elasticsearch-plugin");
-            }
-            else
-            {
-                // How do I do this on Windows ?
-                if (StringUtils.isNotBlank(plugin.getEsJavaOpts()))
-                {
-                    cmd.add(String.format("ES_JAVA_OPTS=\"%s\"", plugin.getEsJavaOpts()));
-                }
-                
-                cmd.add("./bin/elasticsearch-plugin");
+                environment = new HashMap<>();
+                environment.put("ES_JAVA_OPTS", plugin.getEsJavaOpts());
             }
 
-            cmd.add("install");
-            cmd.add("--batch");
-            cmd.add(plugin.getUri());
+            CommandLine cmd = ProcessUtil.buildCommandLine("./bin/elasticsearch-plugin")
+                    .addArgument("install")
+                    .addArgument("--batch")
+                    .addArgument(plugin.getUri());
             
-            String[] cmdArray = cmd.toArray(new String[cmd.size()]);
-            ProcessUtil.executeScript(config, cmdArray, null);
+            ProcessUtil.executeScript(config, cmd, environment, null);
         }
     }
 }

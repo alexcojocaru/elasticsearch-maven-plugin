@@ -311,7 +311,7 @@ public abstract class AbstractElasticsearchMojo
                 .withClusterName(clusterName)
                 .withPathConf(pathConf)
                 .withPathScripts(pathScripts)
-                .withElasticsearchPlugin(plugins)
+                .withElasticsearchPlugins(plugins)
                 .withPathInitScript(pathInitScript)
                 .withKeepExistingData(keepExistingData)
                 .withTimeout(timeout)
