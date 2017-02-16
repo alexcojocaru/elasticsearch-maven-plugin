@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.github.alexcojocaru.mojo.elasticsearch.its.ra</groupId>
+	<artifactId>test</artifactId>
+	<version>1.0-SNAPSHOT</version>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.2.17</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.alexcojocaru</groupId>
+			<artifactId>elasticsearch-maven-plugin</artifactId>
+			<version>${elasticsearch.maven.plugin.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.alexcojocaru</groupId>
+			<artifactId>elasticsearch-maven-plugin</artifactId>
+			<version>${elasticsearch.maven.plugin.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>${maven.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.github.alexcojocaru</groupId>
+				<artifactId>elasticsearch-maven-plugin</artifactId>
+				<version>@project.version@</version>
+				<configuration>
+					<!-- fixing the version to 5.2.1, so I can use custom plugin URL which is tied to that version -->
+					<version>5.2.1</version>
+					<plugins>
+						<plugin>
+							<uri>file://${project.basedir}/src/test/resources/mapper-size-5.2.1.zip</uri>
+							<!-- dummy opts, just to verify that the installation doesn't fail -->
+							<esJavaOpts>-DtestProperty=test-value</esJavaOpts>
+						</plugin>
+						<plugin>
+							<uri>https://artifacts.elastic.co/downloads/elasticsearch-plugins/ingest-user-agent/ingest-user-agent-5.2.1.zip</uri>
+						</plugin>
+						<plugin>
+							<uri>analysis-phonetic</uri>
+						</plugin>
+					</plugins>
+				</configuration>
+				<executions>
+					<execution>
+						<id>run</id>
+						<!-- the tests execute in the "test" phase, start ES before that phase -->
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>runforked</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

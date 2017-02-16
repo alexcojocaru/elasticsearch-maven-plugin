@@ -1,5 +1,9 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.configuration;
 
+import java.util.List;
+
+import com.github.alexcojocaru.mojo.elasticsearch.v2.PluginConfiguration;
+
 /**
  * The more complete configuration of an ES mojo.
  * 
@@ -21,6 +25,8 @@ public interface ElasticsearchConfiguration extends ElasticsearchBaseConfigurati
     String getPathData();
     
     String getPathLogs();
+    
+    List<PluginConfiguration> getPlugins();
     
     String getPathInitScript();
     

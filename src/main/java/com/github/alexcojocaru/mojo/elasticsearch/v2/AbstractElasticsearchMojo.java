@@ -1,5 +1,6 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugins.annotations.Component;
@@ -90,6 +91,12 @@ public abstract class AbstractElasticsearchMojo
      */
     @Parameter(property="es.pathScripts")
     protected String pathScripts;
+    
+    /**
+     * The list of plugins to install into each Elasticsearch instance.
+     */
+    @Parameter
+    protected ArrayList<PluginConfiguration> plugins = new ArrayList<>();
 
     /**
      * The path to the initialization script file to execute after Elasticsearch has started.
@@ -233,6 +240,16 @@ public abstract class AbstractElasticsearchMojo
         this.pathScripts = pathScripts;
     }
 
+    public ArrayList<PluginConfiguration> getPlugins()
+    {
+        return plugins;
+    }
+
+    public void setPlugins(ArrayList<PluginConfiguration> plugins)
+    {
+        this.plugins = plugins;
+    }
+
     public String getPathInitScript()
     {
         return pathInitScript;
@@ -294,6 +311,7 @@ public abstract class AbstractElasticsearchMojo
                 .withClusterName(clusterName)
                 .withPathConf(pathConf)
                 .withPathScripts(pathScripts)
+                .withElasticsearchPlugins(plugins)
                 .withPathInitScript(pathInitScript)
                 .withKeepExistingData(keepExistingData)
                 .withTimeout(timeout)

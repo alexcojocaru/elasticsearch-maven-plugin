@@ -41,6 +41,9 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **pathScripts** [defaultValue=""]
     > the absolute path (or relative to the maven project) of the custom directory containing file-based scripts, to be used in Elasticsearch
 
+*   **plugins** [defaultValue=""]
+    > the list of plugins to install in each Elasticsearch instance before starting it (see the [Plugins](#plugins) section for details)
+
 *   **pathInitScript** [defaultValue=""]
     > the path of the initialization script (see the [Initialization script](#initScript) section for details)
 
@@ -93,6 +96,57 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
     	        </execution>
     	    </executions>
     	</plugin>
+
+
+## <a name="plugins"></a>Plugins
+A list of Elasticsearch plugins can be provided to the elasticsearch-maven-plugin.
+They will be installed into [each Elasticsearch instance](https://www.elastic.co/guide/en/elasticsearch/plugins/5.2/intro.html)
+inside the [plugins directory](https://www.elastic.co/guide/en/elasticsearch/reference/5.2/zip-targz.html#zip-targz-layout)
+using the [--batch option](https://www.elastic.co/guide/en/elasticsearch/plugins/5.2/_other_command_line_parameters.html#_batch_mode),
+before the instance gets started.
+
+The way to enable plugins is as follows:
+
+        <plugin>
+            <groupId>com.github.alexcojocaru</groupId>
+            <artifactId>elasticsearch-maven-plugin</artifactId>
+            <version>5.5</version
+            <configuration>
+                <clusterName>test</clusterName>
+                <tcpPort>9300</tcpPort>
+                <httpPort>9200</httpPort>
+                ...
+                <plugins>
+                    <plugin>
+                        <uri>analysis-icu</uri>
+                    <plugin>
+                    <plugin>
+                        <uri>https://github.com/alexcojocaru/plugin.zip</uri>
+                        <esJavaOpts>-Djavax.net.ssl.trustStore=/home/alex/trustStore.jks</esJavaOpts>
+                    <plugin>
+                    <plugin>
+                        <uri>file:///home/alex/foo.zip</uri>
+                    <plugin>
+                </plugins>
+                ...
+            </configuration>
+            <executions>
+                ...
+            </executions>
+        </plugin>
+
+The plugin tag takes 2 parameters:
+
+*   **uri**
+    > the [name](https://www.elastic.co/guide/en/elasticsearch/plugins/5.2/installation.html),
+    [url](https://www.elastic.co/guide/en/elasticsearch/plugins/5.2/plugin-management-custom-url.html)
+    or [file location](https://www.elastic.co/guide/en/elasticsearch/plugins/5.2/plugin-management-custom-url.html)
+    of the plugin
+
+*   **esJavaOpts** [defaultValue=""]
+    > [additional Elasticsearch Java options](https://www.elastic.co/guide/en/elasticsearch/plugins/5.2/plugin-management-custom-url.html)
+    to be passed to the plugin installation tool when installing the plugin
+
 
 ## <a name="initScript"></a>Initialization script
 An initialization script file can be provided using the **pathInitScript** parameter of the plugin, in which case it will be executed against the local Elasticsearch cluster.
