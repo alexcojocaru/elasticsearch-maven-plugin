@@ -1,12 +1,15 @@
 # Elasticsearch Maven Plugin [![Build Status](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin.png?branch=master)](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin)
 
-A Maven plugin to run instances of Elasticsearch version 5+ during the integration test phase of a build.
+A Maven 3.1+ plugin to run instances of Elasticsearch version 5+ during the integration test phase of a build.
 Instances are started in forked processes using the **runforked** goal.
 They are terminated using the **stop** goal and, for extra peace of mind, using a JVM shutdown hook.
 
 Each instance is installed in _${project.build.directory}/elasticsearch${instanceIndex}_.
 
 For Elasticsearch version 1.x.x and 2.x.x support, see version 1.x and 2.x of this plugin.
+
+Because the plugin uses the new [Eclipse based Aether framework](https://www.eclipse.org/aether/), it only works with Maven 3.1.0 and above.
+See [this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/28) for details.
 
 ## Usage
 The Elasticsearch behaviour and properties can be configured through the following plugin configuration parameters:
