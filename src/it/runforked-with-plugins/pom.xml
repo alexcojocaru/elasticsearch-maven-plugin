@@ -9,6 +9,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	
 	<dependencies>
@@ -64,7 +66,7 @@
 							<uri>https://artifacts.elastic.co/downloads/elasticsearch-plugins/ingest-user-agent/ingest-user-agent-5.2.1.zip</uri>
 						</plugin>
 						<plugin>
-							<uri>ingest-attachment</uri>
+							<uri>analysis-phonetic</uri>
 						</plugin>
 					</plugins>
 				</configuration>

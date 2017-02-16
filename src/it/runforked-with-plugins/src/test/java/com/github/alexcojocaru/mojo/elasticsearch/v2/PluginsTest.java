@@ -2,10 +2,13 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -89,28 +92,50 @@ public class PluginsTest extends ItBase
     }
     
     @Test
-    public void testIngestAttachmentPlugin() throws ElasticsearchClientException
+    public void testAnalysisPhoneticPlugin() throws ElasticsearchClientException
     {
-        // create an index
-        client.put("/attachment", "{ \"settings\": { } }");
+        // create an index with custom analyzer
+        client.put("/phonetic_sample",
+            "{"+
+              "\"settings\": {"+
+                "\"index\": {"+
+                  "\"analysis\": {"+
+                    "\"analyzer\": {"+
+                      "\"my_analyzer\": {"+
+                        "\"tokenizer\": \"standard\","+
+                        "\"filter\": ["+
+                          "\"standard\","+
+                          "\"lowercase\","+
+                          "\"my_metaphone\""+
+                        "]"+
+                      "}"+
+                    "},"+
+                    "\"filter\": {"+
+                      "\"my_metaphone\": {"+
+                        "\"type\": \"phonetic\","+
+                        "\"encoder\": \"metaphone\","+
+                        "\"replace\": false"+
+                      "}"+
+                    "}"+
+                  "}"+
+                "}"+
+              "}"+
+            "}");
         
-        // enable the user-agent plugin
-        client.put("/_ingest/pipeline/attachment",
-                "{ \"description\" : \"attachment info\", \"processors\" : [ { \"attachment\" : { \"field\" : \"data\" } } ] }");
+        // run the analyzer against a piece of text
+        Map result = client.post("/phonetic_sample/_analyze",
+                "{ \"analyzer\": \"my_analyzer\", \"text\": \"Joe Bloggs\" }",
+                HashMap.class);
         
-        // index a document
-        client.put("/attachment/email/1?pipeline=attachment&refresh=true",
-                "{ \"data\" : \"e1xydGYxXGFuc2kNCkxvcmVtIGlwc3VtIGRvbG9yIHNpdCBhbWV0DQpccGFyIH0=\" }");
-        
-        
-        // get the user and observe the auto generated fields/values
-        Map result = client.get("/attachment/email/1", HashMap.class);
-        Assert.assertEquals(true, result.get("found"));
-        
-        Map source = (Map)result.get("_source");
-        Map attachment = (Map)source.get("attachment");
-        Assert.assertEquals("ro", attachment.get("language"));
-        Assert.assertEquals("Lorem ipsum dolor sit amet", attachment.get("content"));
+        // extract the tokens from the result
+        List tokens = new ArrayList<>();
+        for (Object token : (List)result.get("tokens"))
+        {
+            tokens.add(((Map)token).get("token"));
+        }
+
+        List<String> expected = Arrays.asList("J", "joe", "BLKS", "bloggs");
+        Assert.assertEquals(expected, tokens);
     }
     
 }
