@@ -48,7 +48,7 @@ public class PathScriptsTest extends ItBase
                 "{ \"street\" : { \"properties\" : { \"name\" : { \"type\" : \"string\" } } } }");
 
         // index a document
-        client.put("/city/street/1", "{ \"name\" : \"foo\" }");
+        client.put("/city/street/1?refresh=true", "{ \"name\" : \"foo\" }");
         
         
         // la piece de resistence: run the script

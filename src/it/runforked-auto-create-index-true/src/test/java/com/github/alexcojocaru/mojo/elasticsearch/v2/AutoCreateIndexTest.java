@@ -38,7 +38,7 @@ public class AutoCreateIndexTest extends ItBase
     public void testAutoCreateIndex() throws ElasticsearchClientException
     {
         // create a document in a new (non-existing) index
-        client.put("/auto_test_index/test_type/1", "{ \"name\" : \"alexc\" }");
+        client.put("/auto_test_index/test_type/1?refresh=true", "{ \"name\" : \"alexc\" }");
         
         Map index = client.get("/auto_test_index", HashMap.class);
         Assert.assertTrue(index.containsKey("auto_test_index"));
