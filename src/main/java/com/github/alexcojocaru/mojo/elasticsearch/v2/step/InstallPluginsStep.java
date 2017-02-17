@@ -44,7 +44,7 @@ public class InstallPluginsStep
                 environment.put("ES_JAVA_OPTS", plugin.getEsJavaOpts());
             }
 
-            CommandLine cmd = ProcessUtil.buildCommandLine("./bin/elasticsearch-plugin")
+            CommandLine cmd = ProcessUtil.buildCommandLine("bin/elasticsearch-plugin")
                     .addArgument("install")
                     .addArgument("--batch")
                     .addArgument(plugin.getUri());

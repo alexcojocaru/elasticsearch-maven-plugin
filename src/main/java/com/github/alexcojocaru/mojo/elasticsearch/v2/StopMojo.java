@@ -1,17 +1,17 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.ProcessUtil;
 
 /**
  * The main plugin mojo to stop a forked ES instances.
@@ -41,19 +41,9 @@ public class StopMojo
                 getLog().info(String.format("Stopping Elasticsearch [%s]", config));
 
                 String baseDir = config.getBaseDir();
+                ProcessUtil.executeScript(config, getShutdownScriptCommand(baseDir));
 
-                ProcessBuilder processBuilder =
-                        new ProcessBuilder(getShutdownScriptCommand(baseDir));
-                processBuilder.directory(new File(baseDir));
-                processBuilder.redirectErrorStream(true);
-
-                Process process = processBuilder.start();
-                int exitValue = process.waitFor();
-
-                getLog().info(String.format(
-                        "Elasticsearch [%d] stopped with exit code %d",
-                        config.getId(),
-                        exitValue));
+                getLog().info(String.format("Elasticsearch [%d] stopped", config.getId()));
             }
             catch (Exception e)
             {
@@ -62,10 +52,8 @@ public class StopMojo
         }
     }
 
-    protected String[] getShutdownScriptCommand(String basePath)
+    protected CommandLine getShutdownScriptCommand(String basePath)
     {
-        List<String> cmd = new ArrayList<>();
-
         String pid;
         try
         {
@@ -74,23 +62,24 @@ public class StopMojo
         catch (IOException e)
         {
             getLog().error("Cannot read the PID of the Elasticsearch process from the pid file");
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
+
+        CommandLine command;
 
         if (SystemUtils.IS_OS_WINDOWS)
         {
-            cmd.add("taskkill");
-            cmd.add("/pid");
-            cmd.add(pid);
-            cmd.add("/F");
+            command = new CommandLine("taskkill")
+                    .addArgument("/F")
+                    .addArgument("/pid")
+                    .addArgument(pid);
         }
         else
         {
-            cmd.add("kill");
-            cmd.add(pid);
+            command = new CommandLine("kill").addArgument(pid);
         }
-
-        return cmd.toArray(new String[cmd.size()]);
+        
+        return command;
 
     }
 

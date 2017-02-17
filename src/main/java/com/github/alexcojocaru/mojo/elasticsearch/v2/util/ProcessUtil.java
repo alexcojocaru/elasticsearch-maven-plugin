@@ -32,7 +32,9 @@ public class ProcessUtil
         if (SystemUtils.IS_OS_WINDOWS)
         {
             String windowsExecutable = executable.replace('/', '\\');
-            cmd = new CommandLine("cmd").addArgument(String.format("/c %s", windowsExecutable));
+            cmd = new CommandLine("cmd")
+                    .addArgument("/c")
+                    .addArgument(windowsExecutable);
         }
         else
         {

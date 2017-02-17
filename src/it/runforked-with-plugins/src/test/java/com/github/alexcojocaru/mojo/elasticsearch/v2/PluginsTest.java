@@ -11,12 +11,14 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.plugin.logging.Log;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
@@ -41,6 +43,10 @@ public class PluginsTest extends ItBase
     @Test
     public void testMapperSizePlugin() throws ElasticsearchClientException
     {
+        // this plugin gets installed via the 'file://' mechanism;
+        // does not work on Windows due to the Unix-style path separator
+        Assume.assumeTrue(SystemUtils.IS_OS_WINDOWS == false);
+        
         // create an index and enable the mapper _size attribute
         client.put("/plugins", "{ \"mappings\": { \"es\": { \"_size\": { \"enabled\": true } } } }");
         

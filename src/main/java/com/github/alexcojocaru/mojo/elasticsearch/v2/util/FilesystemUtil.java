@@ -38,7 +38,7 @@ public final class FilesystemUtil
     /**
      * Set the 755 permissions on the given script.
      * @param config - the instance config
-     * @param scriptName - the name of the script to make executable
+     * @param scriptName - the name of the script (located in the bin directory) to make executable
      */
     public static void setScriptPermission(InstanceConfiguration config, String scriptName)
     {

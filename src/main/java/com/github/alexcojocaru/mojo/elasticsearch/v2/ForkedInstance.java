@@ -50,7 +50,7 @@ public class ForkedInstance
 
     protected CommandLine getStartScriptCommand()
     {
-        CommandLine cmd = ProcessUtil.buildCommandLine("./bin/elasticsearch");
+        CommandLine cmd = ProcessUtil.buildCommandLine("bin/elasticsearch");
 
         // Write the PID to a file, to be used to shut down the instance
         cmd.addArgument("-p pid", false);
