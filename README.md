@@ -174,3 +174,14 @@ Each command has three parts, separated by colon.
 
 * To send a *DELETE* request to *http://localhost:9200/test\_index/test\_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
 > DELETE:test\_index/test\_type/1:
+
+## FAQ
+
+**Node is killed when running in TravisCI**: When running your build job in [TravisCI](https://travis-ci.org/), it can happen that your node is being killed without any notice.
+To fix that you may have to modify the `.travis.yml` file as follows:
+
+```yml
+sudo: true
+before_script:
+  - sudo sysctl -w vm.max_map_count=262144
+```
