@@ -57,7 +57,7 @@ public class StopMojo
         String pid;
         try
         {
-            pid = new String(Files.readAllBytes(Paths.get(basePath, " pid")));
+            pid = new String(Files.readAllBytes(Paths.get(basePath, "pid")));
         }
         catch (IOException e)
         {
