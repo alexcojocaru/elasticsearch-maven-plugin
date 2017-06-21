@@ -185,3 +185,59 @@ sudo: true
 before_script:
   - sudo sysctl -w vm.max_map_count=262144
 ```
+
+**Avoid downloading internet again and again**: When you want to run integration tests with a given plugin like `x-pack` 
+for example, `maven-elasticsearch-plugin` will run behind the scene a command like `bin/elasticsearch install x-pack` 
+which will download again and again the plugin from internet.
+
+You can use some Maven magic to avoid that download times by using first `maven-dependency-plugin` to download the plugin 
+as an artifact which will be stored first in your local `.m2` directory then downloaded from there to your project target directory.
+
+Then just tell `maven-elasticsearch-plugin` to use this local URL.
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <version>3.0.0</version>
+    <executions>
+        <execution>
+            <id>integ-setup-dependencies-plugins</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+                <goal>copy</goal>
+            </goals>
+            <configuration>
+                <artifactItems>
+                    <artifactItem>
+                        <groupId>org.elasticsearch.plugin</groupId>
+                        <artifactId>x-pack</artifactId>
+                        <version>5.4.2</version>
+                        <type>zip</type>
+                    </artifactItem>
+                </artifactItems>
+                <useBaseVersion>true</useBaseVersion>
+                <outputDirectory>${project.build.directory}/integration-tests/plugins</outputDirectory>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+<plugin>
+    <groupId>com.github.alexcojocaru</groupId>
+    <artifactId>elasticsearch-maven-plugin</artifactId>
+    <version>5.7</version>
+    <configuration>
+        <version>5.4.2</version>
+        <plugins>
+            <plugin>
+                <uri>file://${project.build.directory}/integration-tests/plugins/x-pack-5.4.2.zip</uri>
+            </plugin>
+        </plugins>
+    </configuration>
+</plugin>
+```
+
+
+
+
+
