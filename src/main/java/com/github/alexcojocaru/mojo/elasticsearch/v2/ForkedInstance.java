@@ -52,8 +52,13 @@ public class ForkedInstance
     {
         CommandLine cmd = ProcessUtil.buildCommandLine("bin/elasticsearch");
 
-        // Write the PID to a file, to be used to shut down the instance
-        cmd.addArgument("-p pid", false);
+        // Write the PID to a file, to be used to shut down the instance.
+        // The option ("-p") and the pid file name ("pid") must be provides as separate argument
+        // otherwise, if they are provided as one ("-p pid"), with the way the Java command line
+        // arguments are parsed, the actual file name will be ' pid' (with a leading space),
+        // which creates issues on Windows.
+        cmd.addArgument("-p", false);
+        cmd.addArgument("pid", false);
 
         cmd.addArgument("-Ecluster.name=" + config.getClusterConfiguration().getClusterName(), false);
         cmd.addArgument("-Ehttp.port=" + config.getHttpPort(), false);

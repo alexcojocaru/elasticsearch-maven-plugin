@@ -53,7 +53,7 @@ public class Monitor
      */
     public static boolean isProcessRunning(String baseDir)
     {
-        File pidFile = new File(baseDir, " pid");
+        File pidFile = new File(baseDir, "pid");
         boolean exists = pidFile.isFile();
         return exists;
     }
