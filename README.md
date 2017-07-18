@@ -177,11 +177,72 @@ Each command has three parts, separated by colon.
 
 ## FAQ
 
-**Node is killed when running in TravisCI**: When running your build job in [TravisCI](https://travis-ci.org/), it can happen that your node is being killed without any notice.
+#### Node is killed when running in TravisCI
+When running your build job in [TravisCI](https://travis-ci.org/), it can happen that your node is being killed without any notice.
 To fix that you may have to modify the `.travis.yml` file as follows:
 
 ```yml
 sudo: true
 before_script:
   - sudo sysctl -w vm.max_map_count=262144
+```
+
+#### Avoid downloading a plugin from the Internet repeatedly
+When you want to run integration tests with a given plugin (eg. reindex-client),
+elasticsearch-maven-plugin will run behind the scene a command like
+`bin/elasticsearch-plugin install reindex-client` which will download the plugin
+from the Internet at every execution.
+
+You can use some Maven magic to avoid the download by first using
+`maven-dependency-plugin` to download the plugin as an artifact which will be
+stored in your local `.m2` directory, then copy from there to your project
+target directory, eg.
+```
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get \
+    -DrepoUrl=https://repo1.maven.org/maven2 \
+	-Dartifact=org.elasticsearch.plugin:reindex-client:5.4.2
+```
+
+Then just tell the elasticsearch-maven-plugin to use the local URI.
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-dependency-plugin</artifactId>
+    <version>3.0.0</version>
+    <executions>
+        <execution>
+            <id>integ-setup-dependencies-plugins</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+                <goal>copy</goal>
+            </goals>
+            <configuration>
+                <artifactItems>
+                    <artifactItem>
+                        <groupId>org.elasticsearch.plugin</groupId>
+                        <artifactId>reindex-client</artifactId>
+                        <version>5.4.2</version>
+                        <type>zip</type>
+                    </artifactItem>
+                </artifactItems>
+                <useBaseVersion>true</useBaseVersion>
+                <outputDirectory>${project.build.directory}/integration-tests/plugins</outputDirectory>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+<plugin>
+    <groupId>com.github.alexcojocaru</groupId>
+    <artifactId>elasticsearch-maven-plugin</artifactId>
+    <version>5.7</version>
+    <configuration>
+        <version>5.4.2</version>
+        <plugins>
+            <plugin>
+                <uri>file://${project.build.directory}/integration-tests/plugins/reindex-client-5.4.2.zip</uri>
+            </plugin>
+        </plugins>
+    </configuration>
+</plugin>
 ```
