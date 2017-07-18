@@ -44,7 +44,8 @@ public class ResolveElasticsearchStep
             moveToElasticsearchDirectory(unpackDirectory, baseDir);
 
             String pathConf = config.getClusterConfiguration().getPathConf();
-            if (pathConf != null && !pathConf.isEmpty()) {
+            if (pathConf != null && !pathConf.isEmpty())
+            {
                 // Merge the user-defined config directory with the default one
                 // This allows user to omit some configuration files (jvm.options for instance)
                 FileUtils.copyDirectory(new File(pathConf), new File(baseDir, "config"));

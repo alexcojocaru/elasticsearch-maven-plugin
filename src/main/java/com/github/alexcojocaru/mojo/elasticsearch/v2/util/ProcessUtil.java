@@ -1,13 +1,21 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.util;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ProcessDestroyer;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.environment.EnvironmentUtils;
+import org.apache.commons.io.output.TeeOutputStream;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.plugin.logging.Log;
 
@@ -50,10 +58,11 @@ public class ProcessUtil
      * is not 0.
      * @param config - the instance config
      * @param command - the command to execute
+     * @return the output (as separate lines)
      */
-    public static void executeScript(InstanceConfiguration config, CommandLine command)
+    public static List<String> executeScript(InstanceConfiguration config, CommandLine command)
     {
-        executeScript(config, command, null, null);
+        return executeScript(config, command, null, null);
     }
     
     /**
@@ -64,9 +73,12 @@ public class ProcessUtil
      * @param command - the command to execute
      * @param environment - a map of environment variables; can be null
      * @param processDestroyer - a destroyer handler for the spawned process; can be null 
+     * @return the output (not trimmed of whitespaces) of the given command, as separate lines
      */
-    public static void executeScript(InstanceConfiguration config, CommandLine command,
-            Map<String, String> environment, ProcessDestroyer processDestroyer)
+    public static List<String> executeScript(InstanceConfiguration config,
+            CommandLine command,
+            Map<String, String> environment,
+            ProcessDestroyer processDestroyer)
     {
         Log log = config.getClusterConfiguration().getLog();
         int instanceId = config.getId();
@@ -77,6 +89,12 @@ public class ProcessUtil
         DefaultExecutor executor = new DefaultExecutor();
         executor.setWorkingDirectory(baseDir);
         executor.setProcessDestroyer(processDestroyer); // allows null
+        
+        // set up a tap on the output stream, to collect to output and return it from this method
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        executor.setStreamHandler(new PumpStreamHandler(
+                new TeeOutputStream(System.out, outputStream),
+                System.err));
 
         try
         {
@@ -110,6 +128,25 @@ public class ProcessUtil
                     instanceId, command, baseDir),
                     e);
         }
+        
+        List<String> outputLines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString())))
+        {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                outputLines.add(line);
+            }
+        }
+        catch (IOException e)
+        {
+            throw new ElasticsearchSetupException(
+                    String.format(
+                    "Elasticsearch [%d]: Cannot parse the output of command '%s' executed in directory '%s'. Output: '%s'",
+                    instanceId, command, baseDir, outputStream.toString()),
+                    e);
+        }
+        
+        return Collections.unmodifiableList(outputLines);
     }
 
     /**

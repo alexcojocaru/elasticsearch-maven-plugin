@@ -13,6 +13,8 @@ public class InstanceSetupSequence
     {
         add(new ResolveElasticsearchStep());
         
+        add(new RemovePluginsStep());
+        
         add(new InstallPluginsStep());
     }
 }
