@@ -7,7 +7,7 @@ def instanceCount = 1
 
 def setup = new ItSetup(basedir)
 def props = setup.generateProperties(instanceCount)
-props.put("es.autoCreateIndex", "true");
+props.put("es.autoCreateIndex", "false");
 setup.saveProperties("test.properties", props)
 context.putAll(props);
 

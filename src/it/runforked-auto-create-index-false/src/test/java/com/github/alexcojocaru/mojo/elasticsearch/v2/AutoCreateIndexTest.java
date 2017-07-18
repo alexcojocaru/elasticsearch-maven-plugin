@@ -37,20 +37,17 @@ public class AutoCreateIndexTest extends ItBase
     @Test
     public void testAutoCreateIndex() throws ElasticsearchClientException
     {
-        // create a document in a new (non-existing) index
-        client.put("/auto_test_index/test_type/1?refresh=true", "{ \"name\" : \"alexc\" }");
-        
-        Map index = client.get("/auto_test_index", HashMap.class);
-        Assert.assertTrue(index.containsKey("auto_test_index"));
-    
-        Map user = client.get("/auto_test_index/test_type/1", HashMap.class);
-
-        // the user must exist
-        Assert.assertEquals(Boolean.TRUE, user.get("found"));
-        
-        // verify the user attributes
-        Map userData = (Map)user.get("_source");
-        Assert.assertEquals("alexc", userData.get("name"));
+        // create a document in a new (non-existing) index; it should fail
+        try
+        {
+            client.put("/auto_test_index/test_type/1", "{ \"name\" : \"alexc\" }");
+            throw new IllegalStateException(
+                    "The create index request should have failed with auto_create_index disabled");
+        }
+        catch (ElasticsearchClientException e)
+        {
+            Assert.assertEquals(404, e.getStatusCode());
+        }
     }
     
 }

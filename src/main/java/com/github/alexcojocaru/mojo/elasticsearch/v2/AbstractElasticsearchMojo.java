@@ -126,7 +126,7 @@ public abstract class AbstractElasticsearchMojo
     /**
      * Whether to configure the Elasticsearch cluster to auto create indexes.
      */
-    @Parameter(property="es.autoCreateIndex", defaultValue = "false")
+    @Parameter(property="es.autoCreateIndex", defaultValue = "true")
     protected boolean autoCreateIndex;
 
     
