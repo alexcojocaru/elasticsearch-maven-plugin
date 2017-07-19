@@ -295,6 +295,10 @@ All java tests should extend com.github.alexcojocaru.mojo.elasticsearch.v2.ItBas
 to get the clusterName and httpPort read from the context (ie. the "test.properties" file created by
 the [pre-build hook script](#it/setup.groovy)) and the ES client set up.
 
+*NOTE: It is not possible to execute such a test case in an IDE, due to the lack of context
+(the test properties must be set in the props file by executing the groovy script,
+the elasticsearch maven plugin must be running, etc).*
+
 
 #### How to write new tests
 Copy one of the existing integration tests and modify as needed. It will be picked up
