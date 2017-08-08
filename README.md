@@ -75,7 +75,7 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
     	    <version>5.0</version>
     	    <configuration>
     			<clusterName>test</clusterName>
-    			<tcpPort>9300</tcpPort>
+    			<transportPort>9300</transportPort>
     			<httpPort>9200</httpPort>
     	    </configuration>
     	    <executions>
@@ -116,7 +116,7 @@ The way to enable plugins is as follows:
             <version>5.5</version
             <configuration>
                 <clusterName>test</clusterName>
-                <tcpPort>9300</tcpPort>
+                <transportPort>9300</transportPort>
                 <httpPort>9200</httpPort>
                 ...
                 <plugins>
