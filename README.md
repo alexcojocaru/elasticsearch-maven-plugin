@@ -68,37 +68,41 @@ The Elasticsearch behaviour and properties can be configured through the followi
 
 To use the plugin, include the following in your _pom.xml_ file and modify the configuration as needed:
 
-        <plugin>
-    	    <groupId>com.github.alexcojocaru</groupId>
-    	    <artifactId>elasticsearch-maven-plugin</artifactId>
-			<!-- REPLACE THE FOLLOWING WITH THE PLUGIN VERSION YOU NEED -->
-    	    <version>5.0</version>
-    	    <configuration>
-    			<clusterName>test</clusterName>
-    			<transportPort>9300</transportPort>
-    			<httpPort>9200</httpPort>
-    	    </configuration>
-    	    <executions>
-    	        <!--
-					The elasticsearch maven plugin goals are by default bound to the
-					pre-integration-test and post-integration-test phases
-				-->
-    	        <execution>
-    	            <id>start-elasticsearch</id>
-    	            <phase>pre-integration-test</phase>
-    	            <goals>
-    	                <goal>runforked</goal>
-    	            </goals>
-    	        </execution>
-    	        <execution>
-    	            <id>stop-elasticsearch</id>
-    	            <phase>post-integration-test</phase>
-    	            <goals>
-    	                <goal>stop</goal>
-    	            </goals>
-    	        </execution>
-    	    </executions>
-    	</plugin>
+```xml
+<plugin>
+    <groupId>com.github.alexcojocaru</groupId>
+    <artifactId>elasticsearch-maven-plugin</artifactId>
+    <!-- REPLACE THE FOLLOWING WITH THE PLUGIN VERSION YOU NEED -->
+    <version>5.0</version>
+    <configuration>
+        <!-- REPLACE THE FOLLOWING WITH THE ELASTICSEARCH VERSION YOU NEED -->
+        <version>5.5.0</version>
+        <clusterName>test</clusterName>
+        <transportPort>9300</transportPort>
+        <httpPort>9200</httpPort>
+    </configuration>
+    <executions>
+        <!--
+            The elasticsearch maven plugin goals are by default bound to the
+            pre-integration-test and post-integration-test phases
+        -->
+        <execution>
+            <id>start-elasticsearch</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+                <goal>runforked</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>stop-elasticsearch</id>
+            <phase>post-integration-test</phase>
+            <goals>
+                <goal>stop</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
 
 
 ## <a name="plugins"></a>Plugins
@@ -110,33 +114,35 @@ before the instance gets started.
 
 The way to enable plugins is as follows:
 
-        <plugin>
-            <groupId>com.github.alexcojocaru</groupId>
-            <artifactId>elasticsearch-maven-plugin</artifactId>
-            <version>5.5</version
-            <configuration>
-                <clusterName>test</clusterName>
-                <transportPort>9300</transportPort>
-                <httpPort>9200</httpPort>
-                ...
-                <plugins>
-                    <plugin>
-                        <uri>analysis-icu</uri>
-                    <plugin>
-                    <plugin>
-                        <uri>https://github.com/alexcojocaru/plugin.zip</uri>
-                        <esJavaOpts>-Djavax.net.ssl.trustStore=/home/alex/trustStore.jks</esJavaOpts>
-                    <plugin>
-                    <plugin>
-                        <uri>file:///home/alex/foo.zip</uri>
-                    <plugin>
-                </plugins>
-                ...
-            </configuration>
-            <executions>
-                ...
-            </executions>
-        </plugin>
+```xml
+<plugin>
+    <groupId>com.github.alexcojocaru</groupId>
+    <artifactId>elasticsearch-maven-plugin</artifactId>
+    <version>5.5</version
+    <configuration>
+        <clusterName>test</clusterName>
+        <transportPort>9300</transportPort>
+        <httpPort>9200</httpPort>
+        ...
+        <plugins>
+            <plugin>
+                <uri>analysis-icu</uri>
+            <plugin>
+            <plugin>
+                <uri>https://github.com/alexcojocaru/plugin.zip</uri>
+                <esJavaOpts>-Djavax.net.ssl.trustStore=/home/alex/trustStore.jks</esJavaOpts>
+            <plugin>
+            <plugin>
+                <uri>file:///home/alex/foo.zip</uri>
+            <plugin>
+        </plugins>
+        ...
+    </configuration>
+    <executions>
+        ...
+    </executions>
+</plugin>
+```
 
 The plugin tag takes 2 parameters:
 
@@ -308,7 +314,7 @@ by the invoker plugin due to the wildcard definition in the plugin config in pom
 Change the pomInclude definition to the relative path of the pom.xml of the test you want to run, eg.
 ```xml
 <pomIncludes>
-	<pomInclude>runforked-defaults/pom.xml</pomInclude>
+    <pomInclude>runforked-defaults/pom.xml</pomInclude>
 </pomIncludes>
 ```
 
