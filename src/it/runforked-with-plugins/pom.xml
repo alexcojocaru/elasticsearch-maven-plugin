@@ -54,16 +54,16 @@
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<version>@project.version@</version>
 				<configuration>
-					<!-- fixing the version to 5.2.1, so I can use custom plugin URL which is tied to that version -->
-					<version>5.2.1</version>
+					<!-- setting the version to 5.5.2, so I can use custom plugin URL which is tied to that version -->
+					<version>5.5.2</version>
 					<plugins>
 						<plugin>
-							<uri>file://${project.basedir}/src/test/resources/mapper-size-5.2.1.zip</uri>
+							<uri>file://${project.basedir}/src/test/resources/mapper-size-5.5.2.zip</uri>
 							<!-- dummy opts, just to verify that the installation doesn't fail -->
 							<esJavaOpts>-DtestProperty=test-value</esJavaOpts>
 						</plugin>
 						<plugin>
-							<uri>https://artifacts.elastic.co/downloads/elasticsearch-plugins/ingest-user-agent/ingest-user-agent-5.2.1.zip</uri>
+							<uri>https://artifacts.elastic.co/downloads/elasticsearch-plugins/ingest-user-agent/ingest-user-agent-5.5.2.zip</uri>
 						</plugin>
 						<plugin>
 							<uri>analysis-phonetic</uri>
