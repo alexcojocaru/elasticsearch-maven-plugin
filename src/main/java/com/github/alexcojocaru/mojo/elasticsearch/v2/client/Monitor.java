@@ -45,7 +45,7 @@ public class Monitor
                             }
                         }
                 );
-        log.debug("Elasticsearch instance has started");
+        log.info("Elasticsearch instance has started");
     }
     
     /**
@@ -121,7 +121,7 @@ public class Monitor
                             }
                         }
                 );
-        log.debug("Elasticsearch cluster has started");
+        log.info("Elasticsearch cluster has started");
     }
     
     /**
