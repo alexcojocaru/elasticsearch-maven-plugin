@@ -9,10 +9,9 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.client.Monitor;
  * 
  * @author Alex Cojocaru
  */
-public class WaitToStartStep
+public class WaitToStartInstanceStep
         implements InstanceStep
 {
-
     @Override
     public void execute(InstanceConfiguration config)
     {
@@ -25,10 +24,9 @@ public class WaitToStartStep
                 httpPort);
 
         Monitor monitor = new Monitor(client, config.getClusterConfiguration().getLog());
-        monitor.waitToStart(
+        monitor.waitToStartInstance(
                 config.getBaseDir(),
                 config.getClusterConfiguration().getClusterName(),
                 timeout);
     }
-
 }

@@ -11,6 +11,6 @@ public class PostStartInstanceSequence
 
     public PostStartInstanceSequence()
     {
-        add(new WaitToStartStep());
+        add(new WaitToStartInstanceStep());
     }
 }

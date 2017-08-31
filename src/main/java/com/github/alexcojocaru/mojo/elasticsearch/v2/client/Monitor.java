@@ -26,9 +26,11 @@ public class Monitor
         this.log = log;
     }
     
-    public void waitToStart(final String baseDir, final String clusterName, int timeout)
+    public void waitToStartInstance(final String baseDir, final String clusterName, int timeout)
     {
-        log.debug(String.format("Waiting  up to %ds for Elasticsearch to start ...", timeout));
+        log.debug(String.format(
+        		"Waiting  up to %ds for Elasticsearch instance to start ...",
+        		timeout));
         Awaitility.await()
                 .atMost(timeout, TimeUnit.SECONDS)
                 .pollDelay(1, TimeUnit.SECONDS)
@@ -39,11 +41,11 @@ public class Monitor
                             public Boolean call() throws Exception
                             {
                                 return isProcessRunning(baseDir)
-                                        && isClusterRunning(clusterName, client);
+                                        && isInstanceRunning(clusterName, client);
                             }
                         }
                 );
-        log.debug("Elasticsearch has started");
+        log.debug("Elasticsearch instance has started");
     }
     
     /**
@@ -62,9 +64,9 @@ public class Monitor
      * Check whether the cluster with the given name exists in the ES referenced by the client.
      * @param clusterName the ES cluster name
      * @param client the ES client to use to connect to ES
-     * @return true if the cluster is running, false otherwise
+     * @return true if the instance is running, false otherwise
      */
-    public static boolean isClusterRunning(String clusterName, ElasticsearchClient client)
+    public static boolean isInstanceRunning(String clusterName, ElasticsearchClient client)
     {
         boolean result;
         try
@@ -86,12 +88,86 @@ public class Monitor
      * Check whether the cluster with the given name exists in the ES running on the given port.
      * @param clusterName the ES cluster name
      * @param httpPort the HTTP port to connect to ES
-     * @return true if the cluster is running, false otherwise
+     * @return true if the instance is running, false otherwise
      */
-    public static boolean isClusterRunning(String clusterName, int httpPort)
+    public static boolean isInstanceRunning(String clusterName, int httpPort)
     {
         Log log = Mockito.mock(Log.class);
         ElasticsearchClient client = new ElasticsearchClient(log, "localhost", httpPort);
-        return isClusterRunning(clusterName, client);
+        return isInstanceRunning(clusterName, client);
+    }
+    
+    /**
+     * Wait until the cluster has fully started (ie. all nodes have joined).
+     * @param clusterName the ES cluster name
+     * @param nodesCount the number of nodes in the cluster
+     * @param timeout how many seconds to wait
+     */
+    public void waitToStartCluster(final String clusterName, int nodesCount, int timeout)
+    {
+        log.debug(String.format(
+        		"Waiting  up to %ds for Elasticsearch cluster to start ...",
+        		timeout));
+        Awaitility.await()
+                .atMost(timeout, TimeUnit.SECONDS)
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(1,  TimeUnit.SECONDS)
+                .until(new Callable<Boolean>()
+                        {
+                            @Override
+                            public Boolean call() throws Exception
+                            {
+                                return isClusterRunning(clusterName, nodesCount, client);
+                            }
+                        }
+                );
+        log.debug("Elasticsearch cluster has started");
+    }
+    
+    /**
+     * Verify that the cluster name and the number of nodes in the cluster,
+     * as reported by the ES node, is as expected.
+     * @param clusterName the ES cluster name
+     * @param instanceCount the number of ES nodes in the cluster
+     * @param client the ES client to use to connect to ES
+     * @return true if the cluster is running, false otherwise
+     */
+	public static boolean isClusterRunning(String clusterName,
+    		int nodes,
+    		ElasticsearchClient client)
+    {
+        boolean result;
+        try
+        {
+            @SuppressWarnings("unchecked")
+			Map<String, Object> response = client.get("/_nodes", Map.class);
+            result = clusterName.equals(response.get("cluster_name"));
+            
+            @SuppressWarnings("unchecked")
+			Map<String, Object> nodesInfo = (Map<String, Object>)response.get("_nodes");
+            result &= nodes == (int)(nodesInfo.get("successful"));
+        }
+        catch (ElasticsearchClientException e)
+        {
+            // failure is allowed
+            result = false;
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Verify that the cluster name and the number of nodes in the cluster,
+     * as reported by the ES node, is as expected.
+     * @param clusterName the ES cluster name
+     * @param instanceCount the number of ES nodes in the cluster
+     * @param httpPort the HTTP port to connect to ES
+     * @return true if the cluster is running, false otherwise
+     */
+    public static boolean isClusterRunning(String clusterName, int nodes, int httpPort)
+    {
+        Log log = Mockito.mock(Log.class);
+        ElasticsearchClient client = new ElasticsearchClient(log, "localhost", httpPort);
+        return isClusterRunning(clusterName, nodes, client);
     }
 }

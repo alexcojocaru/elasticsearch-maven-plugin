@@ -68,7 +68,7 @@ public class ItVerification
                     "The ES process in %s is not running", path));
         }
         
-        if (Monitor.isClusterRunning(clusterName, httpPort) == false)
+        if (Monitor.isInstanceRunning(clusterName, httpPort) == false)
         {
             throw new IllegalStateException(String.format(
                     "ES did not respond as expected to GET / request on port %d", httpPort));
@@ -91,7 +91,7 @@ public class ItVerification
                     "The ES process in %s appears to be running", path));
         }
         
-        if (Monitor.isClusterRunning(clusterName, httpPort))
+        if (Monitor.isInstanceRunning(clusterName, httpPort))
         {
             throw new IllegalStateException(String.format(
                     "ES responded with valid response to GET / request on port %d", httpPort));

@@ -23,7 +23,7 @@ public class DefaultsTest extends ItBase
     @Test
     public void testClusterRunning()
     {
-        boolean isRunning = Monitor.isClusterRunning(clusterName, client);
+        boolean isRunning = Monitor.isClusterRunning(clusterName, instanceCount, client);
         Assert.assertTrue("The ES cluster should be running", isRunning);
     }
     

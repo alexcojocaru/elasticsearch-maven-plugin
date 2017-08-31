@@ -19,6 +19,7 @@ public abstract class ItBase
 {
     protected static int httpPort;
     protected static String clusterName;
+    protected static int instanceCount;
     
     protected ElasticsearchClient client;
     
@@ -35,6 +36,7 @@ public abstract class ItBase
             props.load(new FileInputStream("test.properties"));
             httpPort = Integer.parseInt(props.getProperty("es.httpPort"));
             clusterName = props.getProperty("es.clusterName");
+            instanceCount = Integer.parseInt(props.getProperty("es.instanceCount"));
         }
         catch (IOException e)
         {

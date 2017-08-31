@@ -1,6 +1,9 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.io.File;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.StringUtils;
@@ -60,9 +63,24 @@ public class ForkedInstance
         cmd.addArgument("-p", false);
         cmd.addArgument("pid", false);
 
-        cmd.addArgument("-Ecluster.name=" + config.getClusterConfiguration().getClusterName(), false);
+        cmd.addArgument(
+        		"-Ecluster.name=" + config.getClusterConfiguration().getClusterName(),
+        		false);
         cmd.addArgument("-Ehttp.port=" + config.getHttpPort(), false);
         cmd.addArgument("-Etransport.tcp.port=" + config.getTransportPort(), false);
+        
+        // If there are multiple nodes, I need to tell each about the other,
+        // in order to form a cluster.
+        List<String> hosts = config.getClusterConfiguration().getInstanceConfigurationList()
+        		.stream()
+        		.filter(config -> config != this.config)
+        		.map(config -> "127.0.0.1:" + config.getTransportPort())
+        		.collect(Collectors.toList());
+		if (hosts.isEmpty() == false)
+		{
+			String hostsString = StringUtils.join(hosts, ',');
+			cmd.addArgument("-Ediscovery.zen.ping.unicast.hosts=" + hostsString, false);
+		}
 
         if (config.getClusterConfiguration().isAutoCreateIndex() == false)
         {
