@@ -43,7 +43,7 @@ public abstract class AbstractElasticsearchBaseMojo
     /**
      * The plugin log level.
      */
-    @Parameter(property="es.logLevel", defaultValue = "DEBUG")
+    @Parameter(property="es.logLevel", defaultValue = "INFO")
     protected String logLevel;
     
     private Log log;
