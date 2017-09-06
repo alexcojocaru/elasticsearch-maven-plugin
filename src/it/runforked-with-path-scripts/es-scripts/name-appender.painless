@@ -1,5 +1,0 @@
-if (ctx._source.containsKey("name"))
-{
-	String name = ctx._source.get("name");
-	ctx._source.put("name", name + "-bar");
-}

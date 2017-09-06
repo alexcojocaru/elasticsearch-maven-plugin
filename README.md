@@ -41,9 +41,6 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **pathLogs** [defaultValue=""] - work in progress (note: per instance !!!)
     > the custom logs directory to configure in Elasticsearch
 
-*   **pathScripts** [defaultValue=""]
-    > the absolute path (or relative to the maven project) of the custom directory containing file-based scripts, to be used in Elasticsearch
-
 *   **plugins** [defaultValue=""]
     > the list of plugins to install in each Elasticsearch instance before starting it (see the [Plugins](#plugins) section for details)
 

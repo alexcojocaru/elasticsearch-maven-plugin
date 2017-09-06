@@ -18,6 +18,5 @@ public class PreStartClusterSequence
         add(new ValidateUniquePortsStep());
         add(new ValidatePortsStep());
         add(new ValidatePathConfStep());
-        add(new ValidatePathScriptsStep());
     }
 }

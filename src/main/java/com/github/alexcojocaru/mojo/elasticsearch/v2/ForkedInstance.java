@@ -87,13 +87,6 @@ public class ForkedInstance
             cmd.addArgument("-Eaction.auto_create_index=false", false);
         }
         
-        String pathScripts = config.getClusterConfiguration().getPathScripts();
-        if (StringUtils.isNotBlank(pathScripts))
-        {
-            File scriptsDir = new File(pathScripts);
-            cmd.addArgument("-Epath.scripts=" + scriptsDir.getAbsolutePath(), false);
-        }
-
         cmd.addArgument("-Ehttp.cors.enabled=true");
 
         return cmd;
