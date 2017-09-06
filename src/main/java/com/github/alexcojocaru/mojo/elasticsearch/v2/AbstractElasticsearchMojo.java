@@ -43,7 +43,7 @@ public abstract class AbstractElasticsearchMojo
     /**
      * The version of Elasticsearch to install
      */
-    @Parameter(property="es.version", defaultValue = "5.0.0")
+    @Parameter(property="es.version", defaultValue = "6.0.0-beta2")
     protected String version;
 
     /**
