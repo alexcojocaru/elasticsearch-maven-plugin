@@ -6,7 +6,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 public class ElasticsearchArtifact
         extends AbstractArtifact
 {
-    public static final String DEFAULT_ELASTICSEARCH_VERSION = "6.0.0-beta2";
+    public static final String DEFAULT_ELASTICSEARCH_VERSION = "5.0.0";
     public static final String ELASTICSEARCH_GROUPID = "org.elasticsearch.distribution.zip";
     public static final String ELASTICSEARCH_ARTIFACTID = "elasticsearch";
     public static final String ELASTICSEARCH_TYPE = "zip";

@@ -23,7 +23,7 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **clusterName** [defaultValue="test"]
     > the name of the cluster to create
 
-*   **version** [defaultValue="6.0.0-beta2"]
+*   **version** [defaultValue="5.0.0"]
     > the version of Elasticsearch to install
 
 *   **httpPort** [defaultValue=9200]
@@ -73,7 +73,7 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
     <version>5.11</version>
     <configuration>
         <!-- REPLACE THE FOLLOWING WITH THE ELASTICSEARCH VERSION YOU NEED -->
-        <version>6.0.0-beta2</version>
+        <version>5.5.2</version>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
         <httpPort>9200</httpPort>
