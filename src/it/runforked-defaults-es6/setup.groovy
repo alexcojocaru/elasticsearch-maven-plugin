@@ -7,7 +7,6 @@ def instanceCount = 1
 
 def setup = new ItSetup(basedir)
 def props = setup.generateProperties(instanceCount)
-props.put("es.pathScripts", "es-scripts");
 setup.saveProperties("test.properties", props)
 context.putAll(props);
 

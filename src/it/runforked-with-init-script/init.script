@@ -3,7 +3,7 @@
 PUT:load_test_index:{ "settings" : { "number_of_shards" : 1, "number_of_replicas" : 0 } }
 
 # create the mapping
-POST:load_test_index/test_type/_mapping:{ "test_type" : { "properties" : { "name" : { "type" : "string" }, "lastModified" : { "type" : "date" } } } }
+POST:load_test_index/test_type/_mapping:{ "test_type" : { "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } } }
 
 # index a document
 PUT:load_test_index/test_type/1:{ "name" : "alex" }

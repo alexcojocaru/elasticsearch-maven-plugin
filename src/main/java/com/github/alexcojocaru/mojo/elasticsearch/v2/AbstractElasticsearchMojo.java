@@ -87,12 +87,6 @@ public abstract class AbstractElasticsearchMojo
     protected String pathLogs;
 
     /**
-     * The path to the scripts directory.
-     */
-    @Parameter(property="es.pathScripts")
-    protected String pathScripts;
-    
-    /**
      * The list of plugins to install into each Elasticsearch instance.
      */
     @Parameter
@@ -230,16 +224,6 @@ public abstract class AbstractElasticsearchMojo
         this.pathLogs = pathLogs;
     }
 
-    public String getPathScripts()
-    {
-        return pathScripts;
-    }
-
-    public void setPathScripts(String pathScripts)
-    {
-        this.pathScripts = pathScripts;
-    }
-
     public ArrayList<PluginConfiguration> getPlugins()
     {
         return plugins;
@@ -310,7 +294,6 @@ public abstract class AbstractElasticsearchMojo
                 .withVersion(version)
                 .withClusterName(clusterName)
                 .withPathConf(pathConf)
-                .withPathScripts(pathScripts)
                 .withElasticsearchPlugins(plugins)
                 .withPathInitScript(pathInitScript)
                 .withKeepExistingData(keepExistingData)

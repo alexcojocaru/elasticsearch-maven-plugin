@@ -41,9 +41,6 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **pathLogs** [defaultValue=""] - work in progress (note: per instance !!!)
     > the custom logs directory to configure in Elasticsearch
 
-*   **pathScripts** [defaultValue=""]
-    > the absolute path (or relative to the maven project) of the custom directory containing file-based scripts, to be used in Elasticsearch
-
 *   **plugins** [defaultValue=""]
     > the list of plugins to install in each Elasticsearch instance before starting it (see the [Plugins](#plugins) section for details)
 
@@ -73,10 +70,10 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
     <!-- REPLACE THE FOLLOWING WITH THE PLUGIN VERSION YOU NEED -->
-    <version>5.0</version>
+    <version>5.11</version>
     <configuration>
         <!-- REPLACE THE FOLLOWING WITH THE ELASTICSEARCH VERSION YOU NEED -->
-        <version>5.5.0</version>
+        <version>5.5.2</version>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
         <httpPort>9200</httpPort>
@@ -118,7 +115,7 @@ The way to enable plugins is as follows:
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>5.5</version
+    <version>5.11</version>
     <configuration>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
@@ -176,7 +173,7 @@ Each command has three parts, separated by colon.
 **Examples** (see the *src/it/runforked-with-init-script/init.script* file for a more complete example):
 
 * To send a *POST* request to *http://localhost:9200/test\_index/test\_type/\_mapping*:
-> POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "string" }, "lastModified" : { "type" : "date" } } } }
+> POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } } }
 
 * To send a *DELETE* request to *http://localhost:9200/test\_index/test\_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
 > DELETE:test\_index/test\_type/1:
