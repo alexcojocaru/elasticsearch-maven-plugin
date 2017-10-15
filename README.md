@@ -70,7 +70,7 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
     <!-- REPLACE THE FOLLOWING WITH THE PLUGIN VERSION YOU NEED -->
-    <version>5.11</version>
+    <version>6.0</version>
     <configuration>
         <!-- REPLACE THE FOLLOWING WITH THE ELASTICSEARCH VERSION YOU NEED -->
         <version>5.5.2</version>
@@ -115,7 +115,7 @@ The way to enable plugins is as follows:
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>5.11</version>
+    <version>6.0</version>
     <configuration>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
