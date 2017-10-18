@@ -5,3 +5,7 @@ target/
 elasticsearch-maven-plugin.iml
 .idea/
 rebel.xml
+*.iml
+*.iws
+*.ipr
+.DS_Store

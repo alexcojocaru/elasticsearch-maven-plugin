@@ -1,0 +1,26 @@
+machine:
+  java:
+    version: openjdk8
+
+  environment:
+    _JAVA_OPTIONS: "-Xmx512m -Xms512m"
+
+dependencies:
+  override:
+    - mvn dependency:go-offline -s settings.xml
+
+test:
+  override:
+    - mvn clean test -s settings.xml -q
+
+  post:
+    # Stick the surefire test reports where CircleCI can read them
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+
+deployment:
+  releases:
+    branch: v5.x
+    commands:
+      - mvn deploy -s settings.xml
+      - ./mvn-release.sh
