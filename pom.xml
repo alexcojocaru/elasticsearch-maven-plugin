@@ -12,7 +12,7 @@
 
 	<groupId>com.github.alexcojocaru</groupId>
 	<artifactId>elasticsearch-maven-plugin</artifactId>
-	<version>5.11-dw1-SNAPSHOT</version>
+	<version>5.11-dw1</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Elasticsearch Maven Plugin</name>
@@ -30,7 +30,7 @@
 		<url>git@github.com:datadotworld/elasticsearch-maven-plugin.git</url>
 		<connection>scm:git:git@github.com:datadotworld/elasticsearch-maven-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:datadotworld/elasticsearch-maven-plugin.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>v5.11-dw1</tag>
 	</scm>
 	<developers>
 		<developer>
