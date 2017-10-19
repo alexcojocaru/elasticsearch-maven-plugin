@@ -1,11 +1,9 @@
 
 package com.github.alexcojocaru.mojo.elasticsearch.v2.client;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
 import org.apache.commons.lang3.Validate;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
@@ -26,9 +24,10 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.maven.plugin.logging.Log;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * A REST client for Elasticsearch.
@@ -293,8 +292,8 @@ public class ElasticsearchClient implements Closeable
         private static HttpClient buildHttpClient(HttpClientConnectionManager connectionManager)
         {
             RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectTimeout(1500)
-                    .setConnectionRequestTimeout(1500)
+                    .setConnectTimeout(5000)
+                    .setConnectionRequestTimeout(5000)
                     .build();
 
             CloseableHttpClient httpClient = HttpClients.custom()

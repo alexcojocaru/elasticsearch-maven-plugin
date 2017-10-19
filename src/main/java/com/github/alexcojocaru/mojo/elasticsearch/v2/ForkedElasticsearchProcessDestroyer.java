@@ -46,6 +46,7 @@ public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer, Ru
             throw new IllegalStateException(
                     "Can only remove the same process that was added; this Elasticsearch process destroyer does not support multiple processes");
         }
+        this.process = null;
         return true;
     }
 
