@@ -29,9 +29,11 @@ do_release() {
     mvn -B -Dtag=${MVN_RELEASE_TAG} release:clean release:prepare \
                -DreleaseVersion=${MVN_RELEASE_VER} \
                -DdevelopmentVersion=${MVN_RELEASE_DEV_VER} \
-               -DscmCommentPrefix='[maven-release-plugin] [skip ci]'
+               -DscmCommentPrefix='[maven-release-plugin] [skip ci] ' \
+               -Darguments="-DskipTests=true -Dinvoker.skip=true"
 
-    mvn -B -s settings.xml release:perform
+    mvn -B -s settings.xml release:perform \
+               -Darguments="-DskipTests=true -Dinvoker.skip=true"
 
     mvn release:clean
 }

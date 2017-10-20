@@ -11,7 +11,7 @@ dependencies:
 
 test:
   override:
-    - mvn clean test -s settings.xml -q
+    - mvn clean verify -s settings.xml
 
   post:
     # Stick the surefire test reports where CircleCI can read them
@@ -22,5 +22,5 @@ deployment:
   releases:
     branch: v5.x
     commands:
-      - mvn deploy -s settings.xml
+      - mvn deploy -DskipTests=true -Dinvoker.skip=true -s settings.xml
       - ./mvn-release.sh

@@ -12,7 +12,7 @@
 
 	<groupId>com.github.alexcojocaru</groupId>
 	<artifactId>elasticsearch-maven-plugin</artifactId>
-	<version>5.11-dw2-SNAPSHOT</version>
+	<version>5.11-dw4-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Elasticsearch Maven Plugin</name>
@@ -320,8 +320,8 @@
 								</contextUrl>
 								<username>{{ARTIFACTORY_USERNAME|"maven"}}</username>
 								<password>{{ARTIFACTORY_PASSWORD}}</password>
-								<repoKey>libs-release-local</repoKey>
-								<snapshotRepoKey>libs-snapshot-local</snapshotRepoKey>
+								<repoKey>plugins-release-local</repoKey>
+								<snapshotRepoKey>plugins-snapshot-local</snapshotRepoKey>
 							</publisher>
 						</configuration>
 					</execution>
