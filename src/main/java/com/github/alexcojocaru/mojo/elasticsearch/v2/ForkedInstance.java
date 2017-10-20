@@ -35,15 +35,26 @@ public class ForkedInstance
     @Override
     public void run()
     {
-        FilesystemUtil.setScriptPermission(config, "elasticsearch");
+        try
+        {
+            FilesystemUtil.setScriptPermission(config, "elasticsearch");
 
-        final ForkedElasticsearchProcessDestroyer processDestroyer = new ForkedElasticsearchProcessDestroyer(config);
-        Runtime.getRuntime().addShutdownHook(new Thread(processDestroyer));
+            final ForkedElasticsearchProcessDestroyer processDestroyer = new ForkedElasticsearchProcessDestroyer(config);
+            Runtime.getRuntime().addShutdownHook(new Thread(processDestroyer));
 
-        ProcessUtil.executeScript(config,
-                getStartScriptCommand(),
-                config.getEnvironmentVariables(),
-                processDestroyer);
+            ProcessUtil.executeScript(config,
+                    getStartScriptCommand(),
+                    config.getEnvironmentVariables(),
+                    processDestroyer);
+        }
+        catch (ElasticsearchSetupException e)
+        {
+            config.getClusterConfiguration().getLog().info(e.getMessage());
+        }
+        catch (Throwable e)
+        {
+            config.getClusterConfiguration().getLog().error(e);
+        }
     }
 
     private InstanceStepSequence getSetupSequence()
