@@ -1,11 +1,6 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import org.apache.commons.exec.CommandLine;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -54,33 +49,8 @@ public class StopMojo
 
     protected CommandLine getShutdownScriptCommand(String basePath)
     {
-        String pid;
-        try
-        {
-            pid = new String(Files.readAllBytes(Paths.get(basePath, "pid")));
-        }
-        catch (IOException e)
-        {
-            getLog().error("Cannot read the PID of the Elasticsearch process from the pid file");
-            throw new IllegalStateException(e);
-        }
-
-        CommandLine command;
-
-        if (SystemUtils.IS_OS_WINDOWS)
-        {
-            command = new CommandLine("taskkill")
-                    .addArgument("/F")
-                    .addArgument("/pid")
-                    .addArgument(pid);
-        }
-        else
-        {
-            command = new CommandLine("kill").addArgument(pid);
-        }
-        
-        return command;
-
+        String pid = ProcessUtil.getElasticsearchPid(basePath);
+        return ProcessUtil.buildKillCommandLine(pid);
     }
 
 }
