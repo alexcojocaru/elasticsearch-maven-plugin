@@ -73,7 +73,7 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
     <version>6.0</version>
     <configuration>
         <!-- REPLACE THE FOLLOWING WITH THE ELASTICSEARCH VERSION YOU NEED -->
-        <version>5.5.2</version>
+        <version>6.0.0</version>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
         <httpPort>9200</httpPort>
