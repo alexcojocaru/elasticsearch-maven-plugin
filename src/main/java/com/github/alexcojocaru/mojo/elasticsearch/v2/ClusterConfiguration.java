@@ -28,6 +28,7 @@ public class ClusterConfiguration
     private String pathInitScript;
     private boolean keepExistingData;
     private int timeout;
+    private int clientSocketTimeout;
     private boolean setAwait;
     private boolean autoCreateIndex;
 
@@ -90,6 +91,10 @@ public class ClusterConfiguration
         return timeout;
     }
 
+    public int getClientSocketTimeout() {
+        return clientSocketTimeout;
+    }
+
     public boolean isSetAwait()
     {
         return setAwait;
@@ -110,6 +115,7 @@ public class ClusterConfiguration
                 .append("pathInitScript", pathInitScript)
                 .append("keepExistingData", keepExistingData)
                 .append("timeout", timeout)
+                .append("clientSocketTimeout", clientSocketTimeout)
                 .append("setAwait", setAwait)
                 .append("autoCreateIndex", autoCreateIndex)
                 .append("instanceConfigurationList", StringUtils.join(instanceConfigurationList, ','))
@@ -129,6 +135,7 @@ public class ClusterConfiguration
         private String pathInitScript;
         private boolean keepExistingData;
         private int timeout;
+        private int clientSocketTimeout;
         private boolean setAwait;
         private boolean autoCreateIndex;
         
@@ -193,6 +200,12 @@ public class ClusterConfiguration
             return this;
         }
 
+        public Builder withClientSocketTimeout(int clientSocketTimeout)
+        {
+            this.clientSocketTimeout = clientSocketTimeout;
+            return this;
+        }
+
         public Builder withSetAwait(boolean setAwait)
         {
             this.setAwait = setAwait;
@@ -217,6 +230,7 @@ public class ClusterConfiguration
             config.pathInitScript = pathInitScript;
             config.keepExistingData = keepExistingData;
             config.timeout = timeout;
+            config.clientSocketTimeout = clientSocketTimeout;
             config.setAwait = setAwait;
             config.autoCreateIndex = autoCreateIndex;
             

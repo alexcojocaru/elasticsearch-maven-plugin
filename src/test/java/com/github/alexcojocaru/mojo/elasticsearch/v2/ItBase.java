@@ -47,7 +47,12 @@ public abstract class ItBase
     @Before
     public void before()
     {
-        client = new ElasticsearchClient(log, "localhost", httpPort);
+        client = new ElasticsearchClient.Builder()
+                .withLog(log)
+                .withHostname("localhost")
+                .withPort(httpPort)
+                .withSocketTimeout(5000)
+                .build();
     }
 
 }

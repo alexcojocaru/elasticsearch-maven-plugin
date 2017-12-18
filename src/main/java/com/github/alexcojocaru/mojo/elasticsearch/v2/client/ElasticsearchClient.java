@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -26,6 +27,7 @@ import org.apache.maven.plugin.logging.Log;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
 
 /**
  * A REST client for Elasticsearch.
@@ -34,59 +36,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class ElasticsearchClient
 {
+    private final ObjectMapper mapper;
+    private final HttpClient httpClient;
+
     private final Log log;
     private final String hostname;
     private final int port;
 
-    private final static ObjectMapper mapper = buildObjectMapper();
-    private final static HttpClient httpClient = buildHttpClient();
 
-    private static ObjectMapper buildObjectMapper()
-    {
-        return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                false);
-    }
-
-    private static HttpClientConnectionManager buildHttpClientManager()
-    {
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(3);
-        cm.setDefaultMaxPerRoute(2);
-
-        cm.setValidateAfterInactivity(1);
-
-        cm.setDefaultSocketConfig(SocketConfig.custom()
-                .setSoTimeout(5000)
-                .setSoLinger(0)
-                .setTcpNoDelay(true)
-                .build());
-
-        return cm;
-    }
-
-    private static HttpClient buildHttpClient()
-    {
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(1500)
-                .setConnectionRequestTimeout(1500)
-                .build();
-
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setConnectionManager(buildHttpClientManager())
-                .setDefaultRequestConfig(requestConfig)
-                // use the default retry handler:
-                // https://hc.apache.org/httpcomponents-client-ga/tutorial/html/fundamentals.html#d5e305
-                .build();
-
-        return httpClient;
-    }
-
-    public ElasticsearchClient(Log log, String hostname, int port)
+    private ElasticsearchClient(
+            Log log,
+            ObjectMapper mapper,
+            HttpClient httpClient,
+            String hostname,
+            int port)
     {
         this.log = log;
+        this.mapper = mapper;
+        this.httpClient = httpClient;
+        
         this.hostname = hostname;
         this.port = port;
     }
+
 
     public <T> T get(String path, Class<T> clazz) throws ElasticsearchClientException
     {
@@ -175,6 +147,8 @@ public class ElasticsearchClient
             return (T)content;
         }
 
+        Validate.notNull(mapper, "Has the ElasticsearchClient been initialized?");
+        
         try
         {
             return mapper.readValue(content, clazz);
@@ -188,6 +162,8 @@ public class ElasticsearchClient
 
     protected String executeRequest(HttpRequestBase request) throws ElasticsearchClientException
     {
+        Validate.notNull(httpClient, "Has the ElasticsearchClient been initialized?");
+        
         try
         {
             HttpResponse response = httpClient.execute(request);
@@ -212,6 +188,97 @@ public class ElasticsearchClient
         finally
         {
             request.releaseConnection();
+        }
+    }
+    
+    
+    public static class Builder
+    {
+        private Log log;
+        private String hostname;
+        private int port;
+        private int socketTimeout;
+        
+        public Builder withLog(Log log)
+        {
+            this.log = log;
+            return this;
+        }
+        
+        public Builder withHostname(String hostname)
+        {
+            this.hostname = hostname;
+            return this;
+        }
+        
+        public Builder withPort(int port)
+        {
+            this.port = port;
+            return this;
+        }
+        
+        public Builder withSocketTimeout(int socketTimeout)
+        {
+            this.socketTimeout = socketTimeout;
+            return this;
+        }
+        
+        public Builder withInstanceConfiguration(InstanceConfiguration config)
+        {
+            this.log = config.getClusterConfiguration().getLog();
+            this.socketTimeout = config.getClusterConfiguration().getClientSocketTimeout();
+            this.port = config.getHttpPort();
+            return this;
+        }
+        
+        public ElasticsearchClient build()
+        {
+            return new ElasticsearchClient(
+                    log,
+                    buildObjectMapper(),
+                    buildHttpClient(socketTimeout),
+                    hostname,
+                    port);
+        }
+        
+        private ObjectMapper buildObjectMapper()
+        {
+            return new ObjectMapper()
+                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        }
+    
+        private static HttpClientConnectionManager buildHttpClientManager(int socketTimeout)
+        {
+            PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+            cm.setMaxTotal(3);
+            cm.setDefaultMaxPerRoute(2);
+
+            cm.setValidateAfterInactivity(1);
+
+            cm.setDefaultSocketConfig(SocketConfig.custom()
+                    .setSoTimeout(socketTimeout)
+                    .setSoLinger(0)
+                    .setTcpNoDelay(true)
+                    .build());
+
+            return cm;
+        }
+
+        private static HttpClient buildHttpClient(int socketTimeout)
+        {
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(1500)
+                    .setConnectionRequestTimeout(1500)
+                    .build();
+
+            CloseableHttpClient httpClient = HttpClients.custom()
+                    .setConnectionManager(buildHttpClientManager(socketTimeout))
+                    .setDefaultRequestConfig(requestConfig)
+                    // use the default retry handler:
+                    // https://hc.apache.org/httpcomponents-client-ga/tutorial/html/fundamentals.html#d5e305
+                    .build();
+
+            return httpClient;
         }
     }
 }

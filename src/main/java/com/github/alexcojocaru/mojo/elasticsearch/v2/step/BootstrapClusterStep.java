@@ -37,10 +37,10 @@ public class BootstrapClusterStep
         validateFile(filePath);
         
         // we'll run all commands against the first node in the cluster
-        ElasticsearchClient client = new ElasticsearchClient(
-                config.getLog(),
-                "localhost",
-                config.getInstanceConfigurationList().get(0).getHttpPort());
+        ElasticsearchClient client = new ElasticsearchClient.Builder()
+                .withInstanceConfiguration(config.getInstanceConfigurationList().get(0))
+                .withHostname("localhost")
+                .build();
         
         Stream<String> stream = null;
         try

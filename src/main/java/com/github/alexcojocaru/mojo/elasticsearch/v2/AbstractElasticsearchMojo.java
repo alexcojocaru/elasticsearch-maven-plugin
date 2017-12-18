@@ -111,6 +111,12 @@ public abstract class AbstractElasticsearchMojo
     protected int timeout;
 
     /**
+     * The default socket timeout (in milliseconds) for requests sent to the Elasticsearch server.
+     */
+    @Parameter(property="es.clientSocketTimeout", defaultValue = "5000")
+    protected int clientSocketTimeout;
+
+    /**
      * Whether to block the execution once all Elasticsearch instances have started,
      * so that the maven build will not proceed to the next step. Use CTRL+C to abort the process.
      */
@@ -262,6 +268,14 @@ public abstract class AbstractElasticsearchMojo
     public void setTimeout(int timeout)
     {
         this.timeout = timeout;
+    }
+
+    public int getClientSocketTimeout() {
+        return clientSocketTimeout;
+    }
+
+    public void setClientSocketTimeout(int clientSocketTimeout) {
+        this.clientSocketTimeout = clientSocketTimeout;
     }
 
     public boolean isSetAwait()

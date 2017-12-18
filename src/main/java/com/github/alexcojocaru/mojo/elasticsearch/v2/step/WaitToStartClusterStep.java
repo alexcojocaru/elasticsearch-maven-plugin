@@ -15,16 +15,14 @@ public class WaitToStartClusterStep
     @Override
     public void execute(ClusterConfiguration config)
     {
-    	int firstInstanceHttpPort = config.getInstanceConfigurationList().get(0).getHttpPort();
-    	
     	// the instances have already started;
     	// waiting just 10 seconds for them to form the cluster
         int timeout = 10;
 
-        ElasticsearchClient client = new ElasticsearchClient(
-                config.getLog(),
-                "localhost",
-                firstInstanceHttpPort);
+        ElasticsearchClient client = new ElasticsearchClient.Builder()
+                .withInstanceConfiguration(config.getInstanceConfigurationList().get(0))
+                .withHostname("localhost")
+                .build();
 
         Monitor monitor = new Monitor(client, config.getLog());
         monitor.waitToStartCluster(

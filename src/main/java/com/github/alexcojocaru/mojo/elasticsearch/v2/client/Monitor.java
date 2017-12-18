@@ -93,7 +93,12 @@ public class Monitor
     public static boolean isInstanceRunning(String clusterName, int httpPort)
     {
         Log log = Mockito.mock(Log.class);
-        ElasticsearchClient client = new ElasticsearchClient(log, "localhost", httpPort);
+        ElasticsearchClient client = new ElasticsearchClient.Builder()
+                .withLog(log)
+                .withHostname("localhost")
+                .withPort(httpPort)
+                .withSocketTimeout(5000)
+                .build();
         return isInstanceRunning(clusterName, client);
     }
     
@@ -167,7 +172,12 @@ public class Monitor
     public static boolean isClusterRunning(String clusterName, int instanceCount, int httpPort)
     {
         Log log = Mockito.mock(Log.class);
-        ElasticsearchClient client = new ElasticsearchClient(log, "localhost", httpPort);
+        ElasticsearchClient client = new ElasticsearchClient.Builder()
+                .withLog(log)
+                .withHostname("localhost")
+                .withPort(httpPort)
+                .withSocketTimeout(5000)
+                .build();
         return isClusterRunning(clusterName, instanceCount, client);
     }
 }

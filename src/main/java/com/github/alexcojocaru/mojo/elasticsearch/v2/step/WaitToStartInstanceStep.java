@@ -15,13 +15,12 @@ public class WaitToStartInstanceStep
     @Override
     public void execute(InstanceConfiguration config)
     {
-        int httpPort = config.getHttpPort();
         int timeout = config.getClusterConfiguration().getTimeout();
 
-        ElasticsearchClient client = new ElasticsearchClient(
-                config.getClusterConfiguration().getLog(),
-                "localhost",
-                httpPort);
+        ElasticsearchClient client = new ElasticsearchClient.Builder()
+                .withInstanceConfiguration(config)
+                .withHostname("localhost")
+                .build();
 
         Monitor monitor = new Monitor(client, config.getClusterConfiguration().getLog());
         monitor.waitToStartInstance(
