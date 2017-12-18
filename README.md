@@ -53,6 +53,9 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **timeout** [defaultValue=30]
     > how long to wait (in seconds) for each Elasticsearch instance to start up
 
+*   **clientSocketTimeout** [defaultValue=5000]
+    > the default socket timeout (in milliseconds) for requests sent to the Elasticsearch server
+
 *   **setAwait** [defaultValue=false]
     > whether to block the execution once all Elasticsearch instances have started, so that the maven build will not proceed to the next step; use CTRL+C to abort the process
 
