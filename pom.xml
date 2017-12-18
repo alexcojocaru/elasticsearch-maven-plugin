@@ -10,7 +10,7 @@
 
 	<groupId>com.github.alexcojocaru</groupId>
 	<artifactId>elasticsearch-maven-plugin</artifactId>
-	<version>6.2</version>
+	<version>6.3-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Elasticsearch Maven Plugin</name>
@@ -28,7 +28,7 @@
 		<url>git@github.com:alexcojocaru/elasticsearch-maven-plugin.git</url>
 		<connection>scm:git:git@github.com:alexcojocaru/elasticsearch-maven-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:alexcojocaru/elasticsearch-maven-plugin.git</developerConnection>
-	  <tag>elasticsearch-maven-plugin-6.2</tag>
+	  <tag>HEAD</tag>
 	</scm>
 	<developers>
 		<developer>
