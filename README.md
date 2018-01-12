@@ -44,6 +44,9 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **plugins** [defaultValue=""]
     > the list of plugins to install in each Elasticsearch instance before starting it (see the [Plugins](#plugins) section for details)
 
+*   **instanceSettings** [defaultValue=""]
+    > the list of settings to apply to corresponding Elasticsearch instances before starting (eg. `<instanceSettings><first><name>NodeName</name></first></instanceSettings>`)
+
 *   **pathInitScript** [defaultValue=""]
     > the path of the initialization script (see the [Initialization script](#initScript) section for details)
 
