@@ -1,17 +1,17 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
 
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mojo to define extra maven parameters required by the run forked mojo.
@@ -91,6 +91,12 @@ public abstract class AbstractElasticsearchMojo
      */
     @Parameter
     protected ArrayList<PluginConfiguration> plugins = new ArrayList<>();
+
+    /**
+     * List of custom instance settings (should be the same size or smaller than instanceCount).
+     */
+    @Parameter
+    protected ArrayList<Map<String, String>> instanceSettings = new ArrayList<>();
 
     /**
      * The path to the initialization script file to execute after Elasticsearch has started.
@@ -317,6 +323,7 @@ public abstract class AbstractElasticsearchMojo
 
         for (int i = 0; i < instanceCount; i++)
         {
+            final Map<String, String> settings = instanceSettings.size() > i ? instanceSettings.get(i): null;
             clusterConfigBuilder.addInstanceConfiguration(new InstanceConfiguration.Builder()
                     .withId(i)
                     .withBaseDir(baseDir.getAbsolutePath() + i)
@@ -324,6 +331,7 @@ public abstract class AbstractElasticsearchMojo
                     .withTransportPort(transportPort + i)
                     .withPathData(pathData)
                     .withPathLogs(pathLogs)
+                    .withSettings(settings)
                     .build());
         }
         
