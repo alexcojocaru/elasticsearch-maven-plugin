@@ -89,6 +89,11 @@ public class ForkedInstance
         
         cmd.addArgument("-Ehttp.cors.enabled=true");
 
+        if (config.getSettings() != null)
+        {
+            config.getSettings().forEach((key, value) -> cmd.addArgument("-E" + key + '-' + value));
+        }
+
         return cmd;
     }
 
