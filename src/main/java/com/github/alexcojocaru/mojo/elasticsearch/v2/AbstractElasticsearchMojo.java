@@ -2,6 +2,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -91,6 +92,13 @@ public abstract class AbstractElasticsearchMojo
      */
     @Parameter
     protected ArrayList<PluginConfiguration> plugins = new ArrayList<>();
+
+    /**
+     * List of custom instance settings, applied to each instance up to `instanceCount` via the
+     * `-E` commandline argument. Extra entries are ignored.
+     */
+    @Parameter
+    protected ArrayList<Properties> instanceSettings = new ArrayList<>();
 
     /**
      * The path to the initialization script file to execute after Elasticsearch has started.
@@ -317,6 +325,7 @@ public abstract class AbstractElasticsearchMojo
 
         for (int i = 0; i < instanceCount; i++)
         {
+            final Properties settings = instanceSettings.size() > i ? instanceSettings.get(i): null;
             clusterConfigBuilder.addInstanceConfiguration(new InstanceConfiguration.Builder()
                     .withId(i)
                     .withBaseDir(baseDir.getAbsolutePath() + i)
@@ -324,6 +333,7 @@ public abstract class AbstractElasticsearchMojo
                     .withTransportPort(transportPort + i)
                     .withPathData(pathData)
                     .withPathLogs(pathLogs)
+                    .withSettings(settings)
                     .build());
         }
         

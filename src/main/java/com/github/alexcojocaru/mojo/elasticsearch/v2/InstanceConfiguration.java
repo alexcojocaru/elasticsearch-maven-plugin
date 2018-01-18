@@ -1,5 +1,7 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
+import java.util.Properties;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
@@ -17,6 +19,7 @@ public class InstanceConfiguration
     private int transportPort;
     private String pathData;
     private String pathLogs;
+    private Properties settings;
 
 
     public ClusterConfiguration getClusterConfiguration()
@@ -59,6 +62,11 @@ public class InstanceConfiguration
         return pathLogs;
     }
 
+    public Properties getSettings()
+    {
+        return settings;
+    }
+
     public String toString()
     {
         return new ToStringBuilder(this)
@@ -68,6 +76,7 @@ public class InstanceConfiguration
                 .append("transportPort", transportPort)
                 .append("pathData", pathData)
                 .append("pathLogs", pathLogs)
+                .append("settings", settings)
                 .toString();
     }
 
@@ -80,6 +89,7 @@ public class InstanceConfiguration
         private int transportPort;
         private String pathData;
         private String pathLogs;
+        private Properties settings;
         
 
         public Builder withClusterConfiguration(ClusterConfiguration clusterConfiguration)
@@ -124,6 +134,11 @@ public class InstanceConfiguration
             return this;
         }
 
+        public Builder withSettings(final Properties settings) {
+            this.settings = settings;
+            return this;
+        }
+
         public InstanceConfiguration build()
         {
             InstanceConfiguration config = new InstanceConfiguration();
@@ -135,6 +150,7 @@ public class InstanceConfiguration
             config.transportPort = transportPort;
             config.pathData = pathData;
             config.pathLogs = pathLogs;
+            config.settings = settings;
 
             return config;
         }

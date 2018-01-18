@@ -52,5 +52,12 @@ public final class FilesystemUtil
                 .addArgument("755")
                 .addArgument(String.format("bin/%s", scriptName));
         ProcessUtil.executeScript(config, command);
+
+        command = new CommandLine("sed")
+                .addArguments("-i''")
+                .addArgument("-e")
+                .addArgument("1s:.*:#!/usr/bin/env bash:", false)
+                .addArgument(String.format("bin/%s", scriptName));
+        ProcessUtil.executeScript(config, command);
     }
 }

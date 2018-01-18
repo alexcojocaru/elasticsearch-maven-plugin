@@ -44,6 +44,9 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **plugins** [defaultValue=""]
     > the list of plugins to install in each Elasticsearch instance before starting it (see the [Plugins](#plugins) section for details)
 
+*   **instanceSettings** [defaultValue=""]
+    > the list of settings to apply to corresponding Elasticsearch instances (see the [InstanceSettings](#instanceSettings) section for details)
+
 *   **pathInitScript** [defaultValue=""]
     > the path of the initialization script (see the [Initialization script](#initScript) section for details)
 
@@ -156,6 +159,38 @@ The plugin tag takes 2 parameters:
     > [additional Elasticsearch Java options](https://www.elastic.co/guide/en/elasticsearch/plugins/5.2/plugin-management-custom-url.html)
     to be passed to the plugin installation tool when installing the plugin
 
+## <a name="instanceSettings"></a>Instance settings
+
+Instance settings are applied to each corresponding elasticsearch instance (via [-E on the commandline](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/windows.html#msi-installer-command-line-configuration))
+during startup. If the list is smaller then `instanceCount` no extra settings
+are applied to the remaining instances. If it's larger, the extra items are ignored.
+
+Example:
+```xml
+<plugin>
+    <groupId>com.github.alexcojocaru</groupId>
+    <artifactId>elasticsearch-maven-plugin</artifactId>
+    <version>6.1</version>
+    <configuration>
+        ...
+        <instanceCount>2</clusterName>
+        <instanceSettings>
+            <properties>
+                <node.name>First</node.name>
+                <node.attr.data_type>ingest</node.attr.data_type>
+            </properties>
+            <properties>
+                <node.name>Second</node.name>
+                <node.attr.data_type>search</node.attr.data_type>
+            </properties>
+        </instanceSettings>
+        ...
+    </configuration>
+    <executions>
+        ...
+    </executions>
+</plugin>
+```
 
 ## <a name="initScript"></a>Initialization script
 An initialization script file can be provided using the **pathInitScript** parameter of the plugin, in which case it will be executed against the local Elasticsearch cluster.
