@@ -297,20 +297,26 @@ public class ProcessUtil
     {
         Map<String, String> result = null;
         
+        try
+        {
+            result = EnvironmentUtils.getProcEnvironment();
+        }
+        catch (IOException ex)
+        {
+            throw new ElasticsearchSetupException(
+                    "Cannot get the current process environment", ex);
+        }
+
         if (environment != null)
         {
-            try
-            {
-                result = EnvironmentUtils.getProcEnvironment();
-            }
-            catch (IOException ex)
-            {
-                throw new ElasticsearchSetupException(
-                        "Cannot get the current process environment", ex);
-            }
             result.putAll(environment);
         }
-        
+
+        // the elasticsearch start/plugin scripts print warnings if these environment variables are passed
+        // and unsets these. And because the scripts would print a warning, we can't rely on the output :(
+        result.remove("JAVA_TOOL_OPTIONS");
+        result.remove("JAVA_OPTS");
+
         return result;
     }
 
