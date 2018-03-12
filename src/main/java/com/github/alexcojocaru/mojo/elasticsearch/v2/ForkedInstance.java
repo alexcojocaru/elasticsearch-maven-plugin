@@ -64,7 +64,7 @@ public class ForkedInstance
         cmd.addArgument("pid", false);
 
         cmd.addArgument(
-        		"-Ecluster.name=" + config.getClusterConfiguration().getClusterName(),
+        		"-Ecluster.name=\"" + config.getClusterConfiguration().getClusterName()+"\"",
         		false);
         cmd.addArgument("-Ehttp.port=" + config.getHttpPort(), false);
         cmd.addArgument("-Etransport.tcp.port=" + config.getTransportPort(), false);
