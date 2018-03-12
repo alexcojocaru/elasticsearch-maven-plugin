@@ -20,13 +20,13 @@ public class ValidateClusterNameStep
         if (clusterName == null)
         {
             throw new ElasticsearchSetupException(String.format(
-                    "Please provide an alphanumeric cluster name."));
+                    "Please provide a cluster name."));
         }
-        
-        if (clusterName.matches("[a-zA-Z0-9]+") == false)
+
+        if (clusterName.matches("[a-zA-Z0-9.-]+") == false)
         {
             throw new ElasticsearchSetupException(String.format(
-                    "elasticsearch-maven-plugin supports only alphanumeric cluster names. You configured: %s.",
+                    "elasticsearch-maven-plugin supports only alphanumeric with dots and dashes cluster names. You configured: %s.",
                     clusterName));
         }
     }
