@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.maven.plugin.logging.Log;
 
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
 
 /**
@@ -19,9 +20,12 @@ public class ClusterConfiguration
 {
     private List<InstanceConfiguration> instanceConfigurationList;
     private PluginArtifactResolver artifactResolver;
+    private PluginArtifactInstaller artifactInstaller;
     private Log log;
 
+    private String flavour;
     private String version;
+    private String downloadUrl;
     private String clusterName;
     private String pathConf;
     private List<PluginConfiguration> plugins;
@@ -34,10 +38,12 @@ public class ClusterConfiguration
 
     public ClusterConfiguration(List<InstanceConfiguration> instanceConfigurationList,
             PluginArtifactResolver artifactResolver,
+            PluginArtifactInstaller artifactInstaller,
             Log log)
     {
         this.instanceConfigurationList = instanceConfigurationList;
         this.artifactResolver = artifactResolver;
+        this.artifactInstaller = artifactInstaller;
         this.log = log;
     }
 
@@ -51,14 +57,27 @@ public class ClusterConfiguration
         return artifactResolver;
     }
 
+    public PluginArtifactInstaller getArtifactInstaller() {
+        return artifactInstaller;
+    }
+
     public Log getLog()
     {
         return log;
     }
 
+    public String getFlavour() {
+        return flavour;
+    }
+
     public String getVersion()
     {
         return version;
+    }
+    
+    public String getDownloadUrl()
+    {
+        return downloadUrl;
     }
 
     public String getClusterName()
@@ -108,7 +127,9 @@ public class ClusterConfiguration
     public String toString()
     {
         return new ToStringBuilder(this)
+                .append("flavour", flavour)
                 .append("version", version)
+                .append("downloadUrl", downloadUrl)
                 .append("clusterName", clusterName)
                 .append("pathConfigFile", pathConf)
                 .append("plugins", plugins)
@@ -125,10 +146,13 @@ public class ClusterConfiguration
     public static class Builder
     {
         private List<InstanceConfiguration> instanceConfigurationList = new ArrayList<>();
-        private  PluginArtifactResolver artifactResolver;
+        private PluginArtifactResolver artifactResolver;
+        private PluginArtifactInstaller artifactInstaller;
         private  Log log;
 
+        private String flavour;
         private String version;
+        private String downloadUrl;
         private String clusterName;
         private String pathConf;
         private List<PluginConfiguration> plugins;
@@ -151,6 +175,12 @@ public class ClusterConfiguration
             this.artifactResolver = artifactResolver;
             return this;
         }
+        
+        public Builder withArtifactInstaller(PluginArtifactInstaller artifactInstaller)
+        {
+            this.artifactInstaller = artifactInstaller;
+            return this;
+        }
 
         public Builder withLog(Log log)
         {
@@ -158,9 +188,21 @@ public class ClusterConfiguration
             return this;
         }
 
+        public Builder withFlavour(String flavour)
+        {
+            this.flavour = flavour;
+            return this;
+        }
+
         public Builder withVersion(String version)
         {
             this.version = version;
+            return this;
+        }
+        
+        public Builder withDownloadUrl(String downloadUrl)
+        {
+            this.downloadUrl = downloadUrl;
             return this;
         }
 
@@ -221,9 +263,11 @@ public class ClusterConfiguration
         public ClusterConfiguration build()
         {
             ClusterConfiguration config = new ClusterConfiguration(
-                    instanceConfigurationList, artifactResolver, log);
+                    instanceConfigurationList, artifactResolver, artifactInstaller, log);
 
+            config.flavour = flavour;
             config.version = version;
+            config.downloadUrl = downloadUrl;
             config.clusterName = clusterName;
             config.pathConf = pathConf;
             config.plugins = plugins;

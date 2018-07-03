@@ -34,6 +34,11 @@ public final class FilesystemUtil
     {
         return new File(base, "/logs/");
     }
+    
+    public static File getTempDirectory()
+    {
+        return new File(System.getProperty("java.io.tmpdir"));
+    }
 
     /**
      * Set the 755 permissions on the given script.

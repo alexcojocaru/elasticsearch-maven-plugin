@@ -30,7 +30,7 @@ public final class SystemPathArtifactResolver
 {
 
     @Override
-    public File resolveArtifact(String coordinates) throws ResolutionException
+    public File resolveArtifact(String coordinates) throws ArtifactException
     {
         Validate.notNull(coordinates);
         File file = new File(coordinates);
@@ -38,7 +38,8 @@ public final class SystemPathArtifactResolver
         {
             return file;
         }
-        throw new ResolutionException("Could not find artifact with coordinates: " + coordinates);
+        throw new ArtifactException(
+                "Could not find artifact with coordinates: " + coordinates);
     }
 
 }

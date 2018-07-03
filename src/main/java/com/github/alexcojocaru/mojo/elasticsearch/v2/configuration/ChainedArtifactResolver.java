@@ -39,7 +39,7 @@ public class ChainedArtifactResolver
     }
 
     @Override
-    public File resolveArtifact(final String coordinates) throws ResolutionException
+    public File resolveArtifact(final String coordinates) throws ArtifactException
     {
         File result = null;
         for (PluginArtifactResolver resolver : resolverChain)
@@ -53,14 +53,14 @@ public class ChainedArtifactResolver
                 }
                 // CHECKSTYLE:OFF: Empty catch block
             }
-            catch (ResolutionException e)
+            catch (ArtifactException e)
             {
             }
             // CHECKSTYLE:ON: Empty catch block
         }
         if (result == null)
         {
-            throw new ResolutionException(
+            throw new ArtifactException(
                     "Could not resolve artifact with coordinates " + coordinates);
         }
         return result;

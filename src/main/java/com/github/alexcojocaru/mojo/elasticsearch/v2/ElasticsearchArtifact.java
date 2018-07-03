@@ -6,23 +6,19 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 public class ElasticsearchArtifact
         extends AbstractArtifact
 {
-    public static final String DEFAULT_ELASTICSEARCH_VERSION = "5.0.0";
-    public static final String ELASTICSEARCH_GROUPID = "org.elasticsearch.distribution.zip";
-    public static final String ELASTICSEARCH_ARTIFACTID = "elasticsearch";
+    public static final String ELASTICSEARCH_GROUPID = "com.github.alexcojocaru";
     public static final String ELASTICSEARCH_TYPE = "zip";
 
-    public ElasticsearchArtifact()
+    public ElasticsearchArtifact(final String artifactId, final String version)
     {
-        this(DEFAULT_ELASTICSEARCH_VERSION);
+        this(ELASTICSEARCH_GROUPID, artifactId, version, ELASTICSEARCH_TYPE);
     }
 
-    public ElasticsearchArtifact(final String version)
-    {
-        this(ELASTICSEARCH_GROUPID, ELASTICSEARCH_ARTIFACTID, version, ELASTICSEARCH_TYPE);
-    }
-
-    public ElasticsearchArtifact(final String groupId, final String artifactId,
-            final String version, final String type)
+    public ElasticsearchArtifact(
+            final String groupId,
+            final String artifactId,
+            final String version,
+            final String type)
     {
         super(groupId, artifactId, version, null, type);
     }
@@ -30,7 +26,7 @@ public class ElasticsearchArtifact
     @Override
     public String getType()
     {
-        return "zip";
+        return ELASTICSEARCH_TYPE;
     }
 
     @Override

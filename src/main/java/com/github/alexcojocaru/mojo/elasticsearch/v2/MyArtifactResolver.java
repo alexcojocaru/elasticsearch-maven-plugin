@@ -29,7 +29,7 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ResolutionException;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ArtifactException;
 
 /**
  * Copied from the t7mp project.
@@ -59,9 +59,10 @@ public class MyArtifactResolver
      * 
      * @param coordinates The artifact coordinates
      * @return The local file resolved/downloaded for the given coordinates
-     * @throws ResolutionException If the artifact cannot be resolved
+     * @throws ArtifactException If the artifact cannot be resolved
      */
-    public File resolveArtifact(String coordinates) throws ResolutionException
+    @Override
+    public File resolveArtifact(String coordinates) throws ArtifactException
     {
         ArtifactRequest request = new ArtifactRequest();
         Artifact artifact = new DefaultArtifact(coordinates);
@@ -77,7 +78,7 @@ public class MyArtifactResolver
         }
         catch (ArtifactResolutionException e)
         {
-            throw new ResolutionException(e.getMessage(), e);
+            throw new ArtifactException(e.getMessage(), e);
         }
 
         log.debug(String.format("Resolved artifact %s to %s from %s",

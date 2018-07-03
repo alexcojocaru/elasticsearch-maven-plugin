@@ -12,6 +12,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
 
 /**
@@ -42,10 +43,22 @@ public abstract class AbstractElasticsearchMojo
     protected List<RemoteRepository> remoteRepositories;
 
     /**
+     * The flavour of Elasticsearch to install (default, oss).
+     */
+    @Parameter(property="es.flavour", defaultValue = "")
+    protected String flavour;
+
+    /**
      * The version of Elasticsearch to install
      */
     @Parameter(property="es.version", defaultValue = "5.0.0")
     protected String version;
+
+    /**
+     * The Elasticsearch download URL
+     */
+    @Parameter(property="es.downloadUrl", defaultValue = "")
+    protected String downloadUrl;
 
     /**
      * The Elasticsearch cluster name to set up; alphanumeric.
@@ -312,8 +325,11 @@ public abstract class AbstractElasticsearchMojo
     {
         ClusterConfiguration.Builder clusterConfigBuilder = new ClusterConfiguration.Builder()
                 .withArtifactResolver(buildArtifactResolver())
+                .withArtifactInstaller(buildArtifactInstaller())
                 .withLog(getLog())
+                .withFlavour(flavour)
                 .withVersion(version)
+                .withDownloadUrl(downloadUrl)
                 .withClusterName(clusterName)
                 .withPathConf(pathConf)
                 .withElasticsearchPlugins(plugins)
@@ -352,5 +368,10 @@ public abstract class AbstractElasticsearchMojo
                 remoteRepositories,
                 getLog()));
         return artifactResolver;
+    }
+    
+    public  PluginArtifactInstaller buildArtifactInstaller()
+    {
+        return new MyArtifactInstaller(repositorySystem, repositorySession, getLog());
     }
 }

@@ -1,8 +1,6 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import java.io.File;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.exec.CommandLine;

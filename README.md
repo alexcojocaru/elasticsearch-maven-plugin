@@ -23,8 +23,14 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **clusterName** [defaultValue="test"]
     > the name of the cluster to create
 
+*   **flavour** [defaultValue="oss"]
+    > the flavour of Elasticsearch to install (`oss`, `default`); the `default` is not supported currently, due to x-pack issues; applicable only to Elasticsearch 6.3.0+
+
 *   **version** [defaultValue="5.0.0"]
     > the version of Elasticsearch to install
+
+*   **downloadUrl** [defaultValue=""]
+    > the Elasticsearch download URL (eg. https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-6.3.0.zip); if provided, it overrides the default download URL (https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${flavour}-${version}.zip); the flavour and version plugin properties are still required for building the coordinates of the maven artifact to install in the local repository
 
 *   **httpPort** [defaultValue=9200]
     > the port to configure Elasticsearch to listen to HTTP traffic to; when configuring multiple instances, they will be assigned subsequent HTTP ports starting with this value (mind the conflicts with the transport ports)

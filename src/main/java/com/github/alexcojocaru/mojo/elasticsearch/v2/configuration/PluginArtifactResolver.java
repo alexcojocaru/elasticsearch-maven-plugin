@@ -25,7 +25,5 @@ import java.io.File;
  */
 public interface PluginArtifactResolver
 {
-
-    File resolveArtifact(String coordinates) throws ResolutionException;
-
+    File resolveArtifact(String coordinates) throws ArtifactException;
 }

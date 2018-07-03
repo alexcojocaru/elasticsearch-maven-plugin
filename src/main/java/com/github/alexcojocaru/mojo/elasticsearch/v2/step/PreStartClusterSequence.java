@@ -13,6 +13,7 @@ public class PreStartClusterSequence
     {
         add(new ValidateInstanceCountStep());
         add(new ValidateBaseDirectoryStep());
+        add(new ValidateFlavourStep());
         add(new ValidateVersionStep());
         add(new ValidateClusterNameStep());
         add(new ValidateUniquePortsStep());

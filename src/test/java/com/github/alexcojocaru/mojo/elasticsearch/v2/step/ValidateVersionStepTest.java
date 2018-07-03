@@ -36,7 +36,7 @@ public class ValidateVersionStepTest
     }
 
     /**
-     * Test the version check with correct version
+     * Test the version check with incorrect version
      */
     @Test(expected = ElasticsearchSetupException.class)
     public void testCheckVersionWithIncorrectVersion()

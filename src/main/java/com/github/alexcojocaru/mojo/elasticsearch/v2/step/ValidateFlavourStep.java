@@ -11,26 +11,23 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
  * 
  * @author Alex Cojocaru
  */
-public class ValidateVersionStep
+public class ValidateFlavourStep
         implements ClusterStep
 {
 
     @Override
     public void execute(ClusterConfiguration config)
     {
+        String flavour = config.getFlavour();
         String version = config.getVersion();
         
-        if (StringUtils.isBlank(version))
-        {
-            throw new ElasticsearchSetupException(String.format(
-                    "Please provide a valid Elasticsearch version."));
-        }
+        config.getLog().debug(
+                "Checking flavour '" + flavour + "' against version '" + version + "'");
         
-        if (VersionUtil.isUnder_5_0_0(version))
+        if (StringUtils.isNotBlank(flavour) && VersionUtil.isBetween_5_0_0_and_6_2_x(version))
         {
             throw new ElasticsearchSetupException(String.format(
-                    "elasticsearch-maven-plugin supports only versions 5+ of Elasticsearch. You configured: %s.",
-                    version));
+                    "The flavour property is not supported for Elasticsearch [5.0.0 - 6.3.0)."));
         }
     }
 
