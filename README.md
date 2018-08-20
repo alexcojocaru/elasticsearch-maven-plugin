@@ -41,10 +41,10 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **pathConf** [defaultValue=""] (note: common to all instances !!!)
     > the absolute path (or relative to the maven project) of the custom directory containing configuration files, to be copied to Elasticsearch instances
 
-*   **pathData** [defaultValue=""] - work in progress (note: per instance !!!)
+*   **pathData** [defaultValue=""] - work in progress (note: per instance !!!); while support for this is being implemented, use `pathConf` to configure this option
     > the custom data directory to configure in Elasticsearch
 
-*   **pathLogs** [defaultValue=""] - work in progress (note: per instance !!!)
+*   **pathLogs** [defaultValue=""] - work in progress (note: per instance !!!); while support for this is being implemented, use `pathConf` to configure this option
     > the custom logs directory to configure in Elasticsearch
 
 *   **plugins** [defaultValue=""]
@@ -200,27 +200,79 @@ Example:
 
 ## <a name="initScript"></a>Initialization script
 An initialization script file can be provided using the **pathInitScript** parameter of the plugin, in which case it will be executed against the local Elasticsearch cluster.
+The file extension defines the file format: *json* for JSON format, anything else for custom format.
 
-Empty lines are ignored, as well as lines starting with the '#' sign.
+#### JSON format
 
-Each command has three parts, separated by colon.
+The provided JSON file should contain a list of requests to be sent, one by one, to the Elasticsearch cluster.
+Each request definition has three properties:
 
-* the request method: one of *PUT*, *POST*, *DELETE*
+* the request **method**: one of `PUT`, `POST`, `DELETE`
+    > the name (in uppercase) of the request method to be used for the current command
+
+* the **path** part of the URL (should not start with slash)
+    > will be appended to the protocol, hostname and port parts when the full URL is constructed
+
+* the **payload**
+    > it should not be defined for `DELETE` commands
+
+
+**Examples** (see the *src/it/runforked-with-init-script-json/init.json* file for a more complete example):
+
+```json
+[
+    {
+        "method": "POST",
+        "path": "test\_index/test\_type/\_mapping",
+        "payload": {
+            "test\_type": {
+                "properties": {
+                    "name": {
+                        "type": "keyword"
+                    },
+                    "lastModified": {
+                        "type": "date"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "method": "DELETE",
+        "path": "test\_index/test\_type/1"
+    }
+]
+```
+
+* To send a `POST` request to *http://localhost:9200/test\_index/test\_type/\_mapping*:
+> `POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } } }`
+
+* To send a `DELETE` request to *http://localhost:9200/test\_index/test\_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
+> `DELETE:test\_index/test\_type/1:`
+
+#### Custom format
+
+Each line defines a request to be sent to the Elasticsearch cluster, and it has three parts separated by colon:
+
+* the request method: one of `PUT`, `POST`, `DELETE`
     > the name (in uppercase) of the request method to be used for the current command
 
 * the path part of the URL (should not start with slash)
     > will be appended to the protocol, hostname and port parts when the full URL is constructed
 
-* the JSON to send to Elasticsearch; for DELETE commands it should be empty for a DELETE
+* the JSON to send to Elasticsearch as payload
+    > it should be empty for `DELETE` commands
+
+Note: Empty lines are ignored, as well as lines starting with the '#' sign.
 
 
 **Examples** (see the *src/it/runforked-with-init-script/init.script* file for a more complete example):
 
-* To send a *POST* request to *http://localhost:9200/test\_index/test\_type/\_mapping*:
-> POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } } }
+* To send a `POST` request to *http://localhost:9200/test\_index/test\_type/\_mapping*:
+> `POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } } }`
 
-* To send a *DELETE* request to *http://localhost:9200/test\_index/test\_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
-> DELETE:test\_index/test\_type/1:
+* To send a `DELETE` request to *http://localhost:9200/test\_index/test\_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
+> `DELETE:test\_index/test\_type/1:`
 
 ## FAQ
 

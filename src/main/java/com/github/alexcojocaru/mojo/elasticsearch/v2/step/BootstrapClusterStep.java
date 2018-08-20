@@ -3,12 +3,19 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.maven.plugin.logging.Log;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
@@ -42,22 +49,12 @@ public class BootstrapClusterStep
                 .withHostname("localhost")
                 .build();
         
-        Stream<String> stream = null;
-        try
-        {
-            stream = Files.lines(Paths.get(filePath));
-            stream.forEach(command -> executeInitCommand(client, config.getLog(), command));
+        Path path = Paths.get(filePath);
+        if ("json".equalsIgnoreCase(FilenameUtils.getExtension(filePath))) {
+            parseJson(client, config.getLog(), path);
         }
-        catch (IOException e)
-        {
-            throw new ElasticsearchSetupException("Cannot read the init script file", e);
-        }
-        finally
-        {
-            if (stream != null)
-            {
-                stream.close();
-            }
+        else {
+            parseScript(client, config.getLog(), path);
         }
     }
     
@@ -74,42 +71,80 @@ public class BootstrapClusterStep
         }
     }
     
-    private void executeInitCommand(ElasticsearchClient client, Log log, String command)
-    {
-        log.debug(String.format("Parsing command: %s", command));
-        
-        ElasticsearchCommand esCommand = parseStringCommand(command);
-        if (esCommand.isSkip())
-        {
-            return;
-        }
-
-        String url = "/" + esCommand.getRelativeUrl();
-        String content = esCommand.getJson();
-
+    private void parseJson(ElasticsearchClient client, Log log, Path path) {
         try
         {
-            switch (esCommand.getRequestMethod())
+            String json = new String(Files.readAllBytes(path));
+
+            List<Map<String, String>> commands  = new ObjectMapper().readValue(
+                    json,
+                    new TypeReference<List<Map<String, String>>>(){});
+            commands.forEach(command ->
             {
-                case PUT:
-                    client.put(url, content);
-                    break;
-                case POST:
-                    client.post(url, content, String.class);
-                    break;
-                case DELETE:
-                    client.delete(url);
-                    break;
-                default:
-                    throw new IllegalStateException(String.format(
-                            "Unsupported request method: %s", esCommand.getRequestMethod()));
-            }
+                log.debug(String.format("Parsing command: %s", command));
+                
+                ElasticsearchCommand esCommand = parseMapCommand(command);
+                executeInitCommand(client, log, esCommand);
+            });
         }
-        catch (ElasticsearchClientException e)
+        catch (IOException e)
         {
-            throw new ElasticsearchSetupException(
-                    String.format("Cannot execute command %s", command),
-                    e);
+            throw new ElasticsearchSetupException("Cannot read the init json file", e);
+        }
+    }
+    
+    private ElasticsearchCommand parseMapCommand(Map<String, String> command)
+    {
+        ElasticsearchCommand esCommand = new ElasticsearchCommand();
+        
+        String methodName = (String)command.get("method");
+        esCommand.setRequestMethod(ElasticsearchCommand.RequestMethod.fromName(methodName));
+
+        String path = (String)command.get("path");
+        esCommand.setRelativeUrl(path);
+        
+        String payload = command.get("payload");
+        if (ElasticsearchCommand.RequestMethod.DELETE == esCommand.getRequestMethod())
+        {
+            Validate.isTrue(payload == null);
+        }
+        else
+        {
+            esCommand.setJson(payload);
+            /*
+            try
+            {
+                esCommand.setJson(new ObjectMapper().writeValueAsString(payloadObject));
+            }
+            catch (JsonProcessingException e)
+            {
+                throw new ElasticsearchSetupException(
+                        "Cannot serialize the JSON payload for command '" + command + "'",
+                        e);
+            }
+            */
+        }
+        
+        return esCommand;
+    }
+    
+    private void parseScript(ElasticsearchClient client, Log log, Path path) {
+        try (Stream<String> stream = Files.lines(path))
+        {
+            stream.forEach(command ->
+            { 
+                log.debug(String.format("Parsing command: %s", command));
+                
+                ElasticsearchCommand esCommand = parseStringCommand(command);
+                if (esCommand.isSkip() == false)
+                {
+                    executeInitCommand(client, log, esCommand);
+                }
+            });
+        }
+        catch (IOException e)
+        {
+            throw new ElasticsearchSetupException("Cannot read the init script file", e);
         }
     }
     
@@ -154,5 +189,36 @@ public class BootstrapClusterStep
         }
 
         return esCommand;
+    }
+    
+    private void executeInitCommand(ElasticsearchClient client, Log log, ElasticsearchCommand command)
+    {
+        String url = "/" + command.getRelativeUrl();
+        String content = command.getJson();
+
+        try
+        {
+            switch (command.getRequestMethod())
+            {
+                case PUT:
+                    client.put(url, content);
+                    break;
+                case POST:
+                    client.post(url, content, String.class);
+                    break;
+                case DELETE:
+                    client.delete(url);
+                    break;
+                default:
+                    throw new IllegalStateException(String.format(
+                            "Unsupported request method: %s", command.getRequestMethod()));
+            }
+        }
+        catch (ElasticsearchClientException e)
+        {
+            throw new ElasticsearchSetupException(
+                    String.format("Cannot execute command %s", command),
+                    e);
+        }
     }
 }
