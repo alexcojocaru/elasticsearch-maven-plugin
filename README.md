@@ -217,7 +217,10 @@ Each request definition has three properties:
     > it should not be defined for *DELETE* commands
 
 
-**Examples** (see the *src/it/runforked-with-init-script-json/init.json* file for a more complete example):
+**Example** (see the *src/it/runforked-with-init-script-json/init.json* file for a more complete example):
+
+To send a *POST* request to *http://localhost:9200/test\_index/test\_type/\_mapping*,
+followed by a *DELETE* request to *http://localhost:9200/test\_index/test\_type/1*.
 
 ```json
 [
@@ -243,12 +246,6 @@ Each request definition has three properties:
     }
 ]
 ```
-
-* To send a *POST* request to *http://localhost:9200/test\_index/test\_type/\_mapping*:
-> `POST:test\_index/test\_type/\_mapping:{ "test\_type" : { "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } } }`
-
-* To send a *DELETE* request to *http://localhost:9200/test\_index/test\_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
-> `DELETE:test\_index/test\_type/1:`
 
 #### Custom format
 
