@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.maven.plugin.logging.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
@@ -62,7 +63,7 @@ public class BootstrapClusterStep
      * Verify that the given file path is a valid reference to an existing file on the disk.
      * @param filePath
      */
-    private void validateFile(String filePath)
+    protected void validateFile(String filePath)
     {
         if (new File(filePath).isFile() == false)
         {
@@ -71,14 +72,15 @@ public class BootstrapClusterStep
         }
     }
     
-    private void parseJson(ElasticsearchClient client, Log log, Path path) {
+    protected void parseJson(ElasticsearchClient client, Log log, Path path)
+    {
         try
         {
             String json = new String(Files.readAllBytes(path));
 
-            List<Map<String, String>> commands  = new ObjectMapper().readValue(
+            List<Map<String, Object>> commands = new ObjectMapper().readValue(
                     json,
-                    new TypeReference<List<Map<String, String>>>(){});
+                    new TypeReference<List<Map<String, Object>>>(){});
             commands.forEach(command ->
             {
                 log.debug(String.format("Parsing command: %s", command));
@@ -93,7 +95,7 @@ public class BootstrapClusterStep
         }
     }
     
-    private ElasticsearchCommand parseMapCommand(Map<String, String> command)
+    protected ElasticsearchCommand parseMapCommand(Map<String, Object> command)
     {
         ElasticsearchCommand esCommand = new ElasticsearchCommand();
         
@@ -103,18 +105,16 @@ public class BootstrapClusterStep
         String path = (String)command.get("path");
         esCommand.setRelativeUrl(path);
         
-        String payload = command.get("payload");
+        Object payload = command.get("payload");
         if (ElasticsearchCommand.RequestMethod.DELETE == esCommand.getRequestMethod())
         {
-            Validate.isTrue(payload == null);
+            Validate.isTrue(payload == null, "For DELETE commands the payload should be undefined");
         }
         else
         {
-            esCommand.setJson(payload);
-            /*
             try
             {
-                esCommand.setJson(new ObjectMapper().writeValueAsString(payloadObject));
+                esCommand.setJson(new ObjectMapper().writeValueAsString(payload));
             }
             catch (JsonProcessingException e)
             {
@@ -122,13 +122,12 @@ public class BootstrapClusterStep
                         "Cannot serialize the JSON payload for command '" + command + "'",
                         e);
             }
-            */
         }
         
         return esCommand;
     }
     
-    private void parseScript(ElasticsearchClient client, Log log, Path path) {
+    protected void parseScript(ElasticsearchClient client, Log log, Path path) {
         try (Stream<String> stream = Files.lines(path))
         {
             stream.forEach(command ->
@@ -148,7 +147,7 @@ public class BootstrapClusterStep
         }
     }
     
-    private ElasticsearchCommand parseStringCommand(String command)
+    protected ElasticsearchCommand parseStringCommand(String command)
     {
         ElasticsearchCommand esCommand = new ElasticsearchCommand();
 
@@ -191,7 +190,7 @@ public class BootstrapClusterStep
         return esCommand;
     }
     
-    private void executeInitCommand(ElasticsearchClient client, Log log, ElasticsearchCommand command)
+    protected void executeInitCommand(ElasticsearchClient client, Log log, ElasticsearchCommand command)
     {
         String url = "/" + command.getRelativeUrl();
         String content = command.getJson();
