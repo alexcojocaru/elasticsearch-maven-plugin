@@ -1,0 +1,13 @@
+[
+    {
+        "method": "PUT",
+        "path": "load_test_index/test_type/1",
+        "payload": { "name" : "alex" }
+    },
+
+    {
+        "method": "POST",
+        "path" :"load_test_index/_refresh",
+        "payload": {}
+    }
+]

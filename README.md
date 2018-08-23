@@ -214,7 +214,7 @@ Each request definition has three properties:
     > will be appended to the protocol, hostname and port parts when the full URL is constructed
 
 * the **payload**
-    > it should not be defined for *DELETE* requests; some Elasticsearch request do not require a payload (eg. POST *index/_refresh*), in which case define the payload as `{}`
+    > it should not be defined for *DELETE* requests; some Elasticsearch requests do not require a payload (eg. POST *index/_refresh*), in which case define the payload as `{}`
 
 
 **Example** (see the *src/main/test/resources/init.json* file for a more complete example):
@@ -266,10 +266,10 @@ Note: Empty lines are ignored, as well as lines starting with the '#' sign.
 **Examples** (see the *src/it/runforked-with-init-script/init.script* file for a more complete example):
 
 * To send a *POST* request to *http://localhost:9200/test_index/test_type/_mapping*:
-> `POST:test_index/test_type/_mapping:{ "test_type" : { "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } } }`
+    > `POST:test_index/test_type/_mapping:{ "test_type" : { "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } } }`
 
 * To send a *DELETE* request to *http://localhost:9200/test_index/test_type/1* without content; note the colon at the end, for there is no JSON data in case of a DELETE.
-> `DELETE:test_index/test_type/1:`
+    > `DELETE:test_index/test_type/1:`
 
 ## FAQ
 
