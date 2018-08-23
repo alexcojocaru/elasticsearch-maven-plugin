@@ -276,10 +276,10 @@ Note: Empty lines are ignored, as well as lines starting with the '#' sign.
 #### Error: Could not find or load main class (on OSX 10.13.6)
 There seems to be an issue when starting certain versions of Elasticsearch (eg. 5.6.8) on OSX 10.13.6,
 directly or via the plugin. The issue is caused by the incorrect quoting of the *-cp* argument
-on the Java command built by the `bin/elasticsearch` scrippt inside the Elasticsearch package.
+on the Java command built by the `bin/elasticsearch` script inside the Elasticsearch package.
 A workaround is described [here](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/69).
 In summary, set the *ES_JVM_OPTIONS* environment variable to `-cp "./target/elasticsearch0/lib/*"`
-in the IDE's run configuration or in the shell environment where maven/Elasticsearch is executed.
+in the IDE's run configuration or on the shell environment where maven/Elasticsearch is executed.
 
 
 #### Node is killed when running in TravisCI
