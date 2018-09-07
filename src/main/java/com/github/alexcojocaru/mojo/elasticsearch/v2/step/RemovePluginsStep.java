@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.Log;
@@ -48,6 +49,9 @@ public class RemovePluginsStep
         {
             log.debug("The plugins directory exists; removing all installed plugins");
 
+            if(VersionUtil.isEqualOrGreater_6_4_0(config.getClusterConfiguration().getVersion())) {
+                FilesystemUtil.setScriptPermission(config, "elasticsearch-cli");
+            }
             FilesystemUtil.setScriptPermission(config, "elasticsearch-plugin");
 
             CommandLine cmd = ProcessUtil.buildCommandLine("bin/elasticsearch-plugin")
