@@ -3,6 +3,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.logging.Log;
@@ -25,6 +26,9 @@ public class InstallPluginsStep
     {
         if (config.getClusterConfiguration().getPlugins().size() > 0)
         {
+            if(VersionUtil.isEqualOrGreater_6_4_0(config.getClusterConfiguration().getVersion())) {
+                FilesystemUtil.setScriptPermission(config, "elasticsearch-cli");
+            }
             FilesystemUtil.setScriptPermission(config, "elasticsearch-plugin");
         }
 

@@ -11,4 +11,8 @@ public class VersionUtil {
         return version.matches("5\\..*") || version.matches("6\\.[0-2]\\..*");
     }
 
+    public static boolean isEqualOrGreater_6_4_0(String version) {
+        return version.matches("6\\.[4-9]\\..*") || version.matches("[7-9]\\..*")  ;
+    }
+
 }
