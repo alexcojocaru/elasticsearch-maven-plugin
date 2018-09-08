@@ -26,7 +26,8 @@ public class InstallPluginsStep
     {
         if (config.getClusterConfiguration().getPlugins().size() > 0)
         {
-            if(VersionUtil.isEqualOrGreater_6_4_0(config.getClusterConfiguration().getVersion())) {
+            if (VersionUtil.isEqualOrGreater_6_4_0(config.getClusterConfiguration().getVersion()))
+            {
                 FilesystemUtil.setScriptPermission(config, "elasticsearch-cli");
             }
             FilesystemUtil.setScriptPermission(config, "elasticsearch-plugin");

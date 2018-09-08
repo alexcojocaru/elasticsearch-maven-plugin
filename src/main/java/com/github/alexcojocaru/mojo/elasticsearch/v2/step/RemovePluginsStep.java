@@ -49,7 +49,8 @@ public class RemovePluginsStep
         {
             log.debug("The plugins directory exists; removing all installed plugins");
 
-            if(VersionUtil.isEqualOrGreater_6_4_0(config.getClusterConfiguration().getVersion())) {
+            if (VersionUtil.isEqualOrGreater_6_4_0(config.getClusterConfiguration().getVersion()))
+            {
                 FilesystemUtil.setScriptPermission(config, "elasticsearch-cli");
             }
             FilesystemUtil.setScriptPermission(config, "elasticsearch-plugin");
