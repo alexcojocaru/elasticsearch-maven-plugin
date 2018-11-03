@@ -113,29 +113,45 @@ public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer
                 config.getId()));
         
         CommandLine command = ProcessUtil.buildKillCommandLine(pid);
-        try
-        {
-            ProcessUtil.executeScript(config, command, true);
-
-            log.info(String.format(
-                    "... the Elasticsearch process [%d] has stopped.",
-                    config.getId()));
-        }
-        catch (Exception e)
-        {
-            if (e.getMessage().contains("no running instance"))
+        for (int retry = 0; retry < 3; ++retry) {
+            try
             {
+                ProcessUtil.executeScript(config, command, true);
+    
                 log.info(String.format(
                         "... the Elasticsearch process [%d] has stopped.",
                         config.getId()));
+                ProcessUtil.cleanupPid(config.getBaseDir());
             }
-            else
+            catch (Exception e)
             {
-                log.error(String.format(
-                        "Error while destroying the Elasticsearch process [%d]",
-                        config.getId()),
-                        e);
+                if (e.getMessage().contains("no running instance"))
+                {
+                    log.info(String.format(
+                            "... the Elasticsearch process [%d] has stopped.",
+                            config.getId()));
+                    ProcessUtil.cleanupPid(config.getBaseDir());
+                }
+                else
+                {
+                    // sometimes taskkill fails with "The operation attempted is not supported."
+                    // https://blogs.technet.microsoft.com/markrussinovich/2005/08/17/unkillable-processes/
+                    // in that case, retry
+                    if (retry < 2) {
+                        try {
+                            Thread.sleep(500);
+                            continue;
+                        } catch (InterruptedException e1) {
+                            /* ignore */
+                        }
+                    }
+                    log.error(String.format(
+                            "Error while destroying the Elasticsearch process [%d]",
+                            config.getId()),
+                            e);
+                }
             }
+            break;
         }
     }
     

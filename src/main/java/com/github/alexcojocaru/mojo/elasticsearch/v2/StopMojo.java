@@ -39,6 +39,7 @@ public class StopMojo
                 ProcessUtil.executeScript(config, getShutdownScriptCommand(baseDir));
 
                 getLog().info(String.format("Elasticsearch [%d] stopped", config.getId()));
+                ProcessUtil.cleanupPid(baseDir);
             }
             catch (Exception e)
             {
