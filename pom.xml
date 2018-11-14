@@ -55,6 +55,7 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.version>3.2.5</maven.version>
 		<aether.version>1.1.0</aether.version>
+		<integrationTest>*</integrationTest>
 	</properties>
 
 	<dependencies>
@@ -214,7 +215,7 @@
 					<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
 					<!-- execute these files -->
 					<pomIncludes>
-						<pomInclude>*/pom.xml</pomInclude>
+						<pomInclude>${integrationTest}/pom.xml</pomInclude>
 					</pomIncludes>
 					<preBuildHookScript>setup</preBuildHookScript>
 					<postBuildHookScript>verify</postBuildHookScript>

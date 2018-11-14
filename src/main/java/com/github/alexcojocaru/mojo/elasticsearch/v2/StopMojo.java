@@ -13,7 +13,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.util.ProcessUtil;
  * 
  * @author Alex Cojocaru
  */
-@Mojo(name = "stop", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
+@Mojo(name = "stop", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, threadSafe = true)
 public class StopMojo
         extends AbstractElasticsearchBaseMojo
 {

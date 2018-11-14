@@ -410,11 +410,9 @@ Copy one of the existing integration tests and modify as needed. It will be pick
 by the invoker plugin due to the wildcard definition in the plugin config in pom.xml.
 
 #### How to run single integration test
-Change the pomInclude definition to the relative path of the pom.xml of the test you want to run, eg.
-```xml
-<pomIncludes>
-    <pomInclude>runforked-defaults/pom.xml</pomInclude>
-</pomIncludes>
+Set the `integrationTest` env variable to the integration test name when running maven, eg:
+```
+$ mvn clean verify -DintegrationTest=runforked-defaults-es6
 ```
 
 #### How to debug an integration test
