@@ -14,7 +14,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.step.PreStartClusterSequenc
  * 
  * @author Alex Cojocaru
  */
-@Mojo(name = "runforked", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST)
+@Mojo(name = "runforked", defaultPhase = LifecyclePhase.PRE_INTEGRATION_TEST, threadSafe = true)
 public class RunForkedMojo
         extends AbstractElasticsearchMojo
 {
