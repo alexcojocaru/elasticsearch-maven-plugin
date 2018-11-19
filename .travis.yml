@@ -3,4 +3,6 @@ jdk:
   - oraclejdk8
 os:
   - linux
-script: "mvn clean verify"
+script:
+  - export MAVEN_OPTS="-Xmx512m"
+  - mvn clean verify
