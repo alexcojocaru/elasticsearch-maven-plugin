@@ -39,7 +39,7 @@ public class ForkedInstance
 
         ProcessUtil.executeScript(config,
                 getStartScriptCommand(),
-                ProcessUtil.createEnvironment(null),
+                null,
                 new ForkedElasticsearchProcessDestroyer(config));
     }
 

@@ -318,21 +318,25 @@ public class ProcessUtil
             throw new ElasticsearchSetupException(
                     "Cannot get the current process environment", ex);
         }
+        
+        // Clean up the base environment:
 
-        if (environment != null)
-        {
-            result.putAll(environment);
-        }
-
-        // the elasticsearch start/plugin scripts print warnings if these environment variables are passed
-        // and unsets these. And because the scripts would print a warning, we can't rely on the output :(
+        // The elasticsearch start and plugin scripts print warnings if these environment variables
+        // are set, so lets unset them.
         result.remove("JAVA_TOOL_OPTIONS");
         result.remove("JAVA_OPTS");
-        // the following environment variables may interfere with the elasticsearch instance.
+
+        // The following environment variables may interfere with the elasticsearch instance.
         result.remove("ES_HOME");
         result.remove("ES_JAVA_OPTS");
         result.remove("ES_PATH_CONF");
         result.remove("ES_TMPDIR");
+
+        // Now that we have a clean environment, set the provided variables on it.
+        if (environment != null)
+        {
+            result.putAll(environment);
+        }
 
         return result;
     }

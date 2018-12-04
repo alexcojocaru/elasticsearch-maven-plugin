@@ -104,7 +104,8 @@ public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer
             isAlive = true;
         }
         
-        if (isAlive == false) {
+        if (isAlive == false)
+        {
             return;
         }
         
@@ -113,7 +114,8 @@ public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer
                 config.getId()));
         
         CommandLine command = ProcessUtil.buildKillCommandLine(pid);
-        for (int retry = 0; retry < 3; ++retry) {
+        for (int retry = 0; retry < 3; ++retry)
+        {
             try
             {
                 ProcessUtil.executeScript(config, command, true);
