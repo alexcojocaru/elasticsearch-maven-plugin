@@ -101,7 +101,7 @@ public class BootstrapClusterStepTest
         
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
         verify(step).parseJson(any(ElasticsearchClient.class), eq(log), pathCaptor.capture());
-        assertEquals(filePath, pathCaptor.getValue().toString());
+        assertEquals(filePath, pathCaptor.getValue().toString().replace('\\', '/'));
     }
 
     @Test
@@ -121,7 +121,7 @@ public class BootstrapClusterStepTest
         
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
         verify(step).parseScript(any(ElasticsearchClient.class), eq(log), pathCaptor.capture());
-        assertEquals(filePath, pathCaptor.getValue().toString());
+        assertEquals(filePath, pathCaptor.getValue().toString().replace('\\', '/'));
     }
     
     @Test(expected = ElasticsearchSetupException.class)
