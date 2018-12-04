@@ -4,3 +4,4 @@
 target/
 elasticsearch-maven-plugin.iml
 .idea/
+rebel.xml

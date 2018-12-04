@@ -76,6 +76,18 @@ public class ProcessUtil
         
         return command;
     }
+    
+    /**
+     * After forcibly killing the ES instance, remove the pid file.
+     * @param baseDir the base directory where the pid file is
+     */
+    public static void cleanupPid(String baseDir)
+    {
+        if (SystemUtils.IS_OS_WINDOWS)
+        {
+            new File(baseDir, "pid").delete();
+        }        
+    }
 
     /**
      * Read the ES PID from the pid file and return it.
@@ -293,7 +305,7 @@ public class ProcessUtil
      * @param environment
      * @return an execution environment
      */
-    private static Map<String, String> createEnvironment(Map<String, String> environment)
+    public static Map<String, String> createEnvironment(Map<String, String> environment)
     {
         Map<String, String> result = null;
         
@@ -306,16 +318,25 @@ public class ProcessUtil
             throw new ElasticsearchSetupException(
                     "Cannot get the current process environment", ex);
         }
+        
+        // Clean up the base environment:
 
+        // The elasticsearch start and plugin scripts print warnings if these environment variables
+        // are set, so lets unset them.
+        result.remove("JAVA_TOOL_OPTIONS");
+        result.remove("JAVA_OPTS");
+
+        // The following environment variables may interfere with the elasticsearch instance.
+        result.remove("ES_HOME");
+        result.remove("ES_JAVA_OPTS");
+        result.remove("ES_PATH_CONF");
+        result.remove("ES_TMPDIR");
+
+        // Now that we have a clean environment, set the provided variables on it.
         if (environment != null)
         {
             result.putAll(environment);
         }
-
-        // the elasticsearch start/plugin scripts print warnings if these environment variables are passed
-        // and unsets these. And because the scripts would print a warning, we can't rely on the output :(
-        result.remove("JAVA_TOOL_OPTIONS");
-        result.remove("JAVA_OPTS");
 
         return result;
     }
