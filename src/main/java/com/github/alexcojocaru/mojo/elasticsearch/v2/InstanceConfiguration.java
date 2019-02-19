@@ -1,5 +1,6 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -19,6 +20,7 @@ public class InstanceConfiguration
     private int transportPort;
     private String pathData;
     private String pathLogs;
+    private Map<String, String> environmentVariables;
     private Properties settings;
 
 
@@ -62,6 +64,10 @@ public class InstanceConfiguration
         return pathLogs;
     }
 
+    public Map<String, String> getEnvironmentVariables() {
+        return environmentVariables;
+    }
+
     public Properties getSettings()
     {
         return settings;
@@ -89,6 +95,7 @@ public class InstanceConfiguration
         private int transportPort;
         private String pathData;
         private String pathLogs;
+        private Map<String, String> environmentVariables;
         private Properties settings;
         
 
@@ -134,6 +141,11 @@ public class InstanceConfiguration
             return this;
         }
 
+        public Builder withEnvironmentVariables(final Map<String, String> environmentVariables) {
+            this.environmentVariables = environmentVariables;
+            return this;
+        }
+
         public Builder withSettings(final Properties settings) {
             this.settings = settings;
             return this;
@@ -150,6 +162,7 @@ public class InstanceConfiguration
             config.transportPort = transportPort;
             config.pathData = pathData;
             config.pathLogs = pathLogs;
+            config.environmentVariables = environmentVariables;
             config.settings = settings;
 
             return config;

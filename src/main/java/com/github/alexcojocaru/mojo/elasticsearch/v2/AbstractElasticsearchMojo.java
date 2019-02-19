@@ -1,7 +1,9 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.plugins.annotations.Component;
@@ -118,6 +120,13 @@ public abstract class AbstractElasticsearchMojo
      */
     @Parameter(property="es.pathInitScript")
     protected String pathInitScript;
+
+    /**
+     * Custom environment variables, to be set before launching an instance.
+     * Allows to set `JAVA_HOME` in particular.
+     */
+    @Parameter
+    protected Map<String, String> environmentVariables = new HashMap<>();
 
     /**
      * Whether to keep existing data (data and logs directories).
@@ -349,6 +358,7 @@ public abstract class AbstractElasticsearchMojo
                     .withTransportPort(transportPort + i)
                     .withPathData(pathData)
                     .withPathLogs(pathLogs)
+                    .withEnvironmentVariables(environmentVariables)
                     .withSettings(settings)
                     .build());
         }

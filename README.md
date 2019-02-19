@@ -41,6 +41,9 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **pathConf** [defaultValue=""] (note: common to all instances !!!)
     > the absolute path (or relative to the maven project) of the custom directory containing configuration files, to be copied to Elasticsearch instances
 
+*   **environmentVariables** [defaultValue=""]
+    > the environment variables to set before starting each Elasticsearch instance (see the [Environment variables](#environmentVariables) section for details) 
+
 *   **pathData** [defaultValue=""] - work in progress (note: per instance !!!); while support for this is being implemented, use `pathConf` to configure this option
     > the custom data directory to configure in Elasticsearch
 
@@ -113,6 +116,37 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
 </plugin>
 ```
 
+## <a name="environmentVariables"></a>Environment variables
+The environment variables to set before starting each Elasticsearch instance.
+
+Environment variables
+[may be referenced from the Elasticsearch configuration](https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html#_environment_variable_substitution),
+but the main use case for defining environment variables is to set `JAVA_HOME`,
+so that Elasticsearch is run with a different JDK than the one used to run Maven.
+
+The way to define environment variables is as follows:
+
+```xml
+<plugin>
+    <groupId>com.github.alexcojocaru</groupId>
+    <artifactId>elasticsearch-maven-plugin</artifactId>
+    <version>6.0</version>
+    <configuration>
+        <clusterName>test</clusterName>
+        <transportPort>9300</transportPort>
+        <httpPort>9200</httpPort>
+        ...
+        <environmentVariables>
+            <SOME_CUSTOM_VARIABLE>somevalue</SOME_CUSTOM_VARIABLE>
+            <JAVA_HOME>${path-to-java-home-configured-through-maven-profiles}</JAVA_HOME>
+        </environmentVariables>
+        ...
+    </configuration>
+    <executions>
+        ...
+    </executions>
+</plugin>
+```
 
 ## <a name="plugins"></a>Plugins
 A list of Elasticsearch plugins can be provided to the elasticsearch-maven-plugin.
