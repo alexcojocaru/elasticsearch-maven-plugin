@@ -316,6 +316,10 @@ In summary, set the *ES_JVM_OPTIONS* environment variable to `-cp "./target/elas
 in the IDE's run configuration or on the shell environment where maven/Elasticsearch is executed.
 
 
+#### Error: Could not reserve enough space for x object heap (on Win 10)
+This has the same root cause as the OSX specific error described above, and can be fixed using the same workaround.
+
+
 #### Node is killed when running in TravisCI
 When running your build job in [TravisCI](https://travis-ci.org/), it can happen that your node is being killed without any notice.
 To fix that you may have to modify the `.travis.yml` file as follows:
