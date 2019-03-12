@@ -1,6 +1,13 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.SystemUtils;
@@ -41,6 +48,34 @@ public final class FilesystemUtil
     }
 
     /**
+     * Copy a directory recursively, preserving attributes, in particular permissions.
+     */
+    public static void copyRecursively(Path source, Path destination) throws IOException {
+        if (Files.isDirectory(source))
+        {
+            Files.createDirectories(destination);
+            final Set<Path> sources = listFiles(source);
+
+            for (Path srcFile : sources)
+            {
+                Path destFile = destination.resolve(srcFile.getFileName());
+                copyRecursively(srcFile, destFile);
+            }
+        }
+        else
+        {
+            Files.copy(source, destination, StandardCopyOption.COPY_ATTRIBUTES);
+        }
+    }
+
+    private static Set<Path> listFiles(Path directory) throws IOException {
+        try (Stream<Path> stream = Files.list(directory))
+        {
+            return stream.collect(Collectors.toSet());
+        }
+    }
+
+    /**
      * Set the 755 permissions on the given script.
      * @param config - the instance config
      * @param scriptName - the name of the script (located in the bin directory) to make executable
@@ -50,6 +85,10 @@ public final class FilesystemUtil
         if (SystemUtils.IS_OS_WINDOWS)
         {
             // we do not have file permissions on windows
+            return;
+        }
+        if (VersionUtil.isEqualOrGreater_7_0_0(config.getClusterConfiguration().getVersion())) {
+            // ES7 and above is packaged as a .tar.gz, and as such the permissions are preserved
             return;
         }
         

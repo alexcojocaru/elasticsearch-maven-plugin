@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.UUID;
 
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.ArchiveUtil;
+import com.google.common.base.Joiner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.zeroturnaround.zip.ZipUtil;
+import org.apache.commons.lang3.SystemUtils;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchArtifact;
@@ -26,7 +28,6 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
 public class ResolveElasticsearchStep
         implements InstanceStep
 {
-    private final String ELASTICSEARCH_FILENAME = "%s-%s.zip";
     private final String ELASTICSEARCH_DOWNLOAD_URL =
             "https://artifacts.elastic.co/downloads/elasticsearch/%s";
     
@@ -61,8 +62,10 @@ public class ResolveElasticsearchStep
         String flavour = config.getFlavour();
         String version = config.getVersion();
         String artifactId = getArtifactId(flavour, version);
+        String classifier = getArtifactClassifier(version);
+        String type = getArtifactType(version);
 
-        ElasticsearchArtifact artifactReference = new ElasticsearchArtifact(artifactId, version);
+        ElasticsearchArtifact artifactReference = new ElasticsearchArtifact(artifactId, version, classifier, type);
         config.getLog().debug("Artifact ref: " + artifactReference);
 
         PluginArtifactResolver artifactResolver = config.getArtifactResolver();
@@ -113,6 +116,58 @@ public class ResolveElasticsearchStep
         }
     }
 
+    private String getArtifactClassifier(String version)
+    {
+        if (VersionUtil.isEqualOrGreater_7_0_0(version))
+        {
+            if (SystemUtils.IS_OS_WINDOWS)
+            {
+                return "windows-x86_64";
+            }
+            else if (SystemUtils.IS_OS_MAC)
+            {
+                return "darwin-x86_64";
+            }
+            else if (SystemUtils.IS_OS_LINUX)
+            {
+                return "linux-x86_64";
+            }
+            else {
+                throw new IllegalStateException("Unknown OS, cannot determine the Elasticsearch classifier.");
+            }
+        }
+        else // No classifier for ES below 7.0.0
+        {
+            return null;
+        }
+    }
+
+    private String getArtifactType(String version)
+    {
+        if (VersionUtil.isEqualOrGreater_7_0_0(version))
+        {
+            if (SystemUtils.IS_OS_WINDOWS)
+            {
+                return "zip";
+            }
+            else if (SystemUtils.IS_OS_MAC)
+            {
+                return "tar.gz";
+            }
+            else if (SystemUtils.IS_OS_LINUX)
+            {
+                return "tar.gz";
+            }
+            else {
+                throw new IllegalStateException("Unknown OS, cannot determine the Elasticsearch classifier.");
+            }
+        }
+        else // Only a single artifact type below 7.0.0
+        {
+            return "zip";
+        }
+    }
+
     /**
      * Download the artifact from the download repository.
      * @param artifactReference
@@ -125,10 +180,14 @@ public class ResolveElasticsearchStep
             ClusterConfiguration config)
             throws IOException
     {
-        String filename = String.format(
-                ELASTICSEARCH_FILENAME,
-                artifactReference.getArtifactId(),
-                artifactReference.getVersion());
+        String filename = Joiner.on("-").skipNulls()
+                .join(
+                        artifactReference.getArtifactId(),
+                        artifactReference.getVersion(),
+                        artifactReference.getClassifier() // May be null
+                )
+                + "." + artifactReference.getType();
+
         File tempFile = new File(FilesystemUtil.getTempDirectory(), filename);
         tempFile.deleteOnExit();
         FileUtils.deleteQuietly(tempFile);
@@ -179,7 +238,7 @@ public class ResolveElasticsearchStep
             throws IOException
     {
         File unpackDirectory = getUnpackDirectory();
-        ZipUtil.unpack(artifact, unpackDirectory);
+        ArchiveUtil.autodetectAndExtract(artifact, unpackDirectory);
         File baseDir = new File(config.getBaseDir());
         moveToElasticsearchDirectory(unpackDirectory, baseDir);
 
@@ -198,7 +257,7 @@ public class ResolveElasticsearchStep
         });
 
         // should only be one
-        FileUtils.copyDirectory(files[0], dest);
+        FilesystemUtil.copyRecursively(files[0].toPath(), dest.toPath());
     }
 
     protected File getUnpackDirectory()

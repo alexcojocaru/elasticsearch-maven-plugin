@@ -52,4 +52,22 @@ public class VersionUtilTest {
         assertFalse(VersionUtil.isEqualOrGreater_6_4_0("4.11.1"));
     }
 
+    @Test
+    public void testIsEqualOrGreater_7_0_0()
+    {
+        assertTrue(VersionUtil.isEqualOrGreater_7_0_0("7.0.0-beta1"));
+        assertTrue(VersionUtil.isEqualOrGreater_7_0_0("7.0.0"));
+        assertTrue(VersionUtil.isEqualOrGreater_7_0_0("11.2.1"));
+
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("6.11.3"));
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("6.5.0"));
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("6.4.1"));
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("6.4.0"));
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("6.3.1"));
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("6.3.0"));
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("6.0.0"));
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("5.1.1"));
+        assertFalse(VersionUtil.isEqualOrGreater_7_0_0("4.11.1"));
+    }
+
 }
