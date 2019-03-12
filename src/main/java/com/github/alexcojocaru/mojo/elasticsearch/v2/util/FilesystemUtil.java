@@ -87,6 +87,10 @@ public final class FilesystemUtil
             // we do not have file permissions on windows
             return;
         }
+        if (VersionUtil.isEqualOrGreater_7_0_0(config.getClusterConfiguration().getVersion())) {
+            // ES7 and above is packaged as a .tar.gz, and as such the permissions are preserved
+            return;
+        }
         
         CommandLine command = new CommandLine("chmod")
                 .addArgument("755")
