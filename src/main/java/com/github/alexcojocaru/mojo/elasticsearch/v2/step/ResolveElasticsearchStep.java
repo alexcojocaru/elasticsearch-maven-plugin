@@ -198,7 +198,7 @@ public class ResolveElasticsearchStep
         });
 
         // should only be one
-        FileUtils.copyDirectory(files[0], dest);
+        FilesystemUtil.copyRecursively(files[0].toPath(), dest.toPath());
     }
 
     protected File getUnpackDirectory()

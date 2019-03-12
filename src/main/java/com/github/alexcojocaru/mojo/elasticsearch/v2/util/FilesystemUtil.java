@@ -1,6 +1,13 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.lang3.SystemUtils;
@@ -38,6 +45,34 @@ public final class FilesystemUtil
     public static File getTempDirectory()
     {
         return new File(System.getProperty("java.io.tmpdir"));
+    }
+
+    /**
+     * Copy a directory recursively, preserving attributes, in particular permissions.
+     */
+    public static void copyRecursively(Path source, Path destination) throws IOException {
+        if (Files.isDirectory(source))
+        {
+            Files.createDirectories(destination);
+            final Set<Path> sources = listFiles(source);
+
+            for (Path srcFile : sources)
+            {
+                Path destFile = destination.resolve(srcFile.getFileName());
+                copyRecursively(srcFile, destFile);
+            }
+        }
+        else
+        {
+            Files.copy(source, destination, StandardCopyOption.COPY_ATTRIBUTES);
+        }
+    }
+
+    private static Set<Path> listFiles(Path directory) throws IOException {
+        try (Stream<Path> stream = Files.list(directory))
+        {
+            return stream.collect(Collectors.toSet());
+        }
     }
 
     /**
