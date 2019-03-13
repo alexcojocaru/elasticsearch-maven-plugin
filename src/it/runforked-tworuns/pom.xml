@@ -1,0 +1,99 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.github.alexcojocaru.mojo.elasticsearch.its.ra</groupId>
+	<artifactId>test</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.2.17</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.alexcojocaru</groupId>
+			<artifactId>elasticsearch-maven-plugin</artifactId>
+			<version>${elasticsearch.maven.plugin.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.alexcojocaru</groupId>
+			<artifactId>elasticsearch-maven-plugin</artifactId>
+			<version>${elasticsearch.maven.plugin.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>${maven.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.github.alexcojocaru</groupId>
+				<artifactId>elasticsearch-maven-plugin</artifactId>
+				<version>@project.version@</version>
+				<configuration>
+				</configuration>
+				<executions>
+					<!--
+					    Simulate a previous run/stop before the actual one, whose created directories were not removed.
+					    Ideally we'd want to run "mvn verify" twice without a "clean",
+					    but that's not easy to do with the current maven-invoker-plugin configuration.
+					 -->
+					<execution>
+						<id>run1</id>
+						<!-- Use a phase before the one used in stop1 -->
+						<phase>process-classes</phase>
+						<goals>
+							<goal>runforked</goal>
+						</goals>
+					</execution>
+					<execution>
+						<!-- Use a phase after the one used in run1 and before the one used in run2 -->
+						<id>stop1</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+					<!--
+					    And perform the second execution, with the tests.
+					    This used to file due to the file copy encountering pre-existing files and aborting.
+					 -->
+					<execution>
+						<id>run2</id>
+						<!-- the tests execute in the "test" phase, start ES before that phase -->
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>runforked</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>stop2</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
