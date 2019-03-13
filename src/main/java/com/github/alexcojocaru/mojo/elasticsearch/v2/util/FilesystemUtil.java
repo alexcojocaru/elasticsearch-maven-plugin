@@ -64,7 +64,7 @@ public final class FilesystemUtil
         }
         else
         {
-            Files.copy(source, destination, StandardCopyOption.COPY_ATTRIBUTES);
+            Files.copy(source, destination, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 
