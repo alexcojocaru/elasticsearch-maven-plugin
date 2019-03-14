@@ -15,19 +15,20 @@ public class WaitToStartClusterStep
     @Override
     public void execute(ClusterConfiguration config)
     {
-    	// the instances have already started;
-    	// waiting just 10 seconds for them to form the cluster
+        // the instances have already started;
+        // waiting just 10 seconds for them to form the cluster
         int timeout = 10;
 
-        ElasticsearchClient client = new ElasticsearchClient.Builder()
+        try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withInstanceConfiguration(config.getInstanceConfigurationList().get(0))
                 .withHostname("localhost")
-                .build();
-
-        Monitor monitor = new Monitor(client, config.getLog());
-        monitor.waitToStartCluster(
-                config.getClusterName(),
-                config.getInstanceConfigurationList().size(),
-                timeout);
+                .build())
+        {
+            Monitor monitor = new Monitor(client, config.getLog());
+            monitor.waitToStartCluster(
+                    config.getClusterName(),
+                    config.getInstanceConfigurationList().size(),
+                    timeout);
+        }
     }
 }

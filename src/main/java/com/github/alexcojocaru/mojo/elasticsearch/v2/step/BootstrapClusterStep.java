@@ -45,17 +45,18 @@ public class BootstrapClusterStep
         validateFile(filePath);
         
         // we'll run all commands against the first node in the cluster
-        ElasticsearchClient client = new ElasticsearchClient.Builder()
+        try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withInstanceConfiguration(config.getInstanceConfigurationList().get(0))
                 .withHostname("localhost")
-                .build();
-        
-        Path path = Paths.get(filePath);
-        if ("json".equalsIgnoreCase(FilenameUtils.getExtension(filePath))) {
-            parseJson(client, config.getLog(), path);
-        }
-        else {
-            parseScript(client, config.getLog(), path);
+                .build())
+        {
+            Path path = Paths.get(filePath);
+            if ("json".equalsIgnoreCase(FilenameUtils.getExtension(filePath))) {
+                parseJson(client, config.getLog(), path);
+            }
+            else {
+                parseScript(client, config.getLog(), path);
+            }
         }
     }
     

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.maven.plugin.logging.Log;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
@@ -53,6 +54,11 @@ public abstract class ItBase
                 .withPort(httpPort)
                 .withSocketTimeout(5000)
                 .build();
+    }
+    @After
+    public void after()
+    {
+        client.close();
     }
 
 }
