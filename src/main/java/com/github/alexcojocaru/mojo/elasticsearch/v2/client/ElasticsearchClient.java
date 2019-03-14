@@ -2,6 +2,7 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.client;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -34,10 +35,11 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
  *
  * @author Alex Cojocaru
  */
-public class ElasticsearchClient
+public class ElasticsearchClient implements Closeable
 {
     private final ObjectMapper mapper;
     private final HttpClient httpClient;
+    private final PoolingHttpClientConnectionManager connectionManager;
 
     private final Log log;
     private final String hostname;
@@ -48,15 +50,24 @@ public class ElasticsearchClient
             Log log,
             ObjectMapper mapper,
             HttpClient httpClient,
+            PoolingHttpClientConnectionManager connectionManager,
             String hostname,
             int port)
     {
         this.log = log;
         this.mapper = mapper;
         this.httpClient = httpClient;
+        this.connectionManager = connectionManager;
         
         this.hostname = hostname;
         this.port = port;
+    }
+
+
+    @Override
+    public void close()
+    {
+        connectionManager.close();
     }
 
 
@@ -127,16 +138,18 @@ public class ElasticsearchClient
     protected String readContent(HttpEntity entity)
             throws UnsupportedOperationException, IOException
     {
-        BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent()));
-        StringBuilder content = new StringBuilder();
-
-        String line;
-        while ((line = br.readLine()) != null)
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(entity.getContent())))
         {
-            content.append(line);
-        }
+            StringBuilder content = new StringBuilder();
 
-        return content.toString();
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                content.append(line);
+            }
+
+            return content.toString();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -233,10 +246,14 @@ public class ElasticsearchClient
         
         public ElasticsearchClient build()
         {
+            PoolingHttpClientConnectionManager connectionManager = buildHttpClientManager(
+                    socketTimeout);
+
             return new ElasticsearchClient(
                     log,
                     buildObjectMapper(),
-                    buildHttpClient(socketTimeout),
+                    buildHttpClient(connectionManager),
+                    connectionManager,
                     hostname,
                     port);
         }
@@ -247,7 +264,7 @@ public class ElasticsearchClient
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }
     
-        private static HttpClientConnectionManager buildHttpClientManager(int socketTimeout)
+        private static PoolingHttpClientConnectionManager buildHttpClientManager(int socketTimeout)
         {
             PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
             cm.setMaxTotal(3);
@@ -261,10 +278,19 @@ public class ElasticsearchClient
                     .setTcpNoDelay(true)
                     .build());
 
+            Runtime.getRuntime().addShutdownHook(new Thread()
+            {
+                @Override
+                public void run()
+                {
+                    cm.close();
+                }
+            });
+
             return cm;
         }
 
-        private static HttpClient buildHttpClient(int socketTimeout)
+        private static HttpClient buildHttpClient(HttpClientConnectionManager connectionManager)
         {
             RequestConfig requestConfig = RequestConfig.custom()
                     .setConnectTimeout(1500)
@@ -272,7 +298,7 @@ public class ElasticsearchClient
                     .build();
 
             CloseableHttpClient httpClient = HttpClients.custom()
-                    .setConnectionManager(buildHttpClientManager(socketTimeout))
+                    .setConnectionManager(connectionManager)
                     .setDefaultRequestConfig(requestConfig)
                     // use the default retry handler:
                     // https://hc.apache.org/httpcomponents-client-ga/tutorial/html/fundamentals.html#d5e305

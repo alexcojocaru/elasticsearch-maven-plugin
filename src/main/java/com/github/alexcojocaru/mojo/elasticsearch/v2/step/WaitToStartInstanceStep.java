@@ -17,15 +17,16 @@ public class WaitToStartInstanceStep
     {
         int timeout = config.getClusterConfiguration().getTimeout();
 
-        ElasticsearchClient client = new ElasticsearchClient.Builder()
+        try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withInstanceConfiguration(config)
                 .withHostname("localhost")
-                .build();
-
-        Monitor monitor = new Monitor(client, config.getClusterConfiguration().getLog());
-        monitor.waitToStartInstance(
-                config.getBaseDir(),
-                config.getClusterConfiguration().getClusterName(),
-                timeout);
+                .build())
+        {
+            Monitor monitor = new Monitor(client, config.getClusterConfiguration().getLog());
+            monitor.waitToStartInstance(
+                    config.getBaseDir(),
+                    config.getClusterConfiguration().getClusterName(),
+                    timeout);
+        }
     }
 }

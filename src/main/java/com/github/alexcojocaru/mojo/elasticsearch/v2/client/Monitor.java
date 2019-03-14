@@ -41,7 +41,7 @@ public class Monitor
                             public Boolean call() throws Exception
                             {
                                 return isProcessRunning(baseDir)
-                                        && isInstanceRunning(clusterName, client);
+                                        && isInstanceRunning(clusterName);
                             }
                         }
                 );
@@ -61,12 +61,11 @@ public class Monitor
     }
     
     /**
-     * Check whether the cluster with the given name exists in the ES referenced by the client.
+     * Check whether the cluster with the given name exists in the current ES instance.
      * @param clusterName the ES cluster name
-     * @param client the ES client to use to connect to ES
      * @return true if the instance is running, false otherwise
      */
-    public static boolean isInstanceRunning(String clusterName, ElasticsearchClient client)
+    public boolean isInstanceRunning(String clusterName)
     {
         boolean result;
         try
@@ -86,6 +85,8 @@ public class Monitor
     
     /**
      * Check whether the cluster with the given name exists in the ES running on the given port.
+     * <br><br>
+     * This is an expensive method, for it initializes a new ES client.
      * @param clusterName the ES cluster name
      * @param httpPort the HTTP port to connect to ES
      * @return true if the instance is running, false otherwise
@@ -93,13 +94,16 @@ public class Monitor
     public static boolean isInstanceRunning(String clusterName, int httpPort)
     {
         Log log = Mockito.mock(Log.class);
-        ElasticsearchClient client = new ElasticsearchClient.Builder()
+        
+        try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withLog(log)
                 .withHostname("localhost")
                 .withPort(httpPort)
                 .withSocketTimeout(5000)
-                .build();
-        return isInstanceRunning(clusterName, client);
+                .build())
+        {
+            return new Monitor(client, log).isInstanceRunning(clusterName);
+        }
     }
     
     /**
@@ -172,12 +176,15 @@ public class Monitor
     public static boolean isClusterRunning(String clusterName, int instanceCount, int httpPort)
     {
         Log log = Mockito.mock(Log.class);
-        ElasticsearchClient client = new ElasticsearchClient.Builder()
+        
+        try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withLog(log)
                 .withHostname("localhost")
                 .withPort(httpPort)
                 .withSocketTimeout(5000)
-                .build();
-        return isClusterRunning(clusterName, instanceCount, client);
+                .build())
+        {
+            return isClusterRunning(clusterName, instanceCount, client);
+        }
     }
 }
