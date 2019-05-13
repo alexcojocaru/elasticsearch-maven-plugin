@@ -213,7 +213,7 @@ Example:
     <version>6.1</version>
     <configuration>
         ...
-        <instanceCount>2</clusterName>
+        <instanceCount>2</instanceCount>
         <instanceSettings>
             <properties>
                 <node.name>First</node.name>
