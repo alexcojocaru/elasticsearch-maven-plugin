@@ -170,14 +170,14 @@ The way to enable plugins is as follows:
         <plugins>
             <plugin>
                 <uri>analysis-icu</uri>
-            <plugin>
+            </plugin>
             <plugin>
                 <uri>https://github.com/alexcojocaru/plugin.zip</uri>
                 <esJavaOpts>-Djavax.net.ssl.trustStore=/home/alex/trustStore.jks</esJavaOpts>
-            <plugin>
+            </plugin>
             <plugin>
                 <uri>file:///home/alex/foo.zip</uri>
-            <plugin>
+            </plugin>
         </plugins>
         ...
     </configuration>
