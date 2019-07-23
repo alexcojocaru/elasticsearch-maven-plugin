@@ -4,5 +4,4 @@ jdk:
 os:
   - linux
 script:
-  - export MAVEN_OPTS="-Xms768m -Xmx768m -XX:MaxMetaspaceSize=256m"
   - mvn clean verify
