@@ -50,15 +50,11 @@
 				<version>@project.version@</version>
 				<configuration>
 					<version>6.1.1</version>
-					<instanceCount>3</instanceCount>
+					<instanceCount>2</instanceCount>
 					<instanceSettings>
 						<properties>
 							<node.name>first</node.name>
 							<node.attr.data_type>hot</node.attr.data_type>
-						</properties>
-						<properties>
-							<node.name>second</node.name>
-							<node.attr.data_type>warm</node.attr.data_type>
 						</properties>
 					</instanceSettings>
 				</configuration>

@@ -25,7 +25,7 @@ public class InstanceSettingsTest extends ItBase
     public void testInstanceSettings() throws ElasticsearchClientException
     {
         final Map nodes = (Map)client.get("/_nodes/settings", HashMap.class).get("nodes");
-        Assert.assertEquals(3, nodes.size());
+        Assert.assertEquals(2, nodes.size());
         final Set<String> nodeNames = new HashSet<String>();
         for (final Object nodeObj : nodes.values()) {
             final Map node = (Map)nodeObj;
@@ -34,13 +34,10 @@ public class InstanceSettingsTest extends ItBase
             final Map attributes = (Map)node.get("attributes");
             if ("first".equals(name)) {
                 Assert.assertEquals("hot", attributes.get("data_type"));
-            } else if ("second".equals(name)) {
-                Assert.assertEquals("warm", attributes.get("data_type"));
             } else {
                 Assert.assertNull(attributes);
             }
         }
         Assert.assertTrue(nodeNames.contains("first"));
-        Assert.assertTrue(nodeNames.contains("second"));
     }
 }
