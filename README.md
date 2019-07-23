@@ -84,11 +84,14 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <!-- REPLACE THE FOLLOWING WITH THE PLUGIN VERSION YOU NEED -->
-    <version>6.0</version>
+    <!--
+        THE PLUGIN VERSION; FOR THE LIST OF AVAILABLE VERSIONS, SEE
+        https://github.com/alexcojocaru/elasticsearch-maven-plugin/releases
+    -->
+    <version>6.13</version>
     <configuration>
-        <!-- REPLACE THE FOLLOWING WITH THE ELASTICSEARCH VERSION YOU NEED -->
-        <version>6.0.0</version>
+        <!-- THE ELASTICSEARCH VERSION; REPLACE WITH THE VERSION YOU NEED -->
+        <version>7.2.0</version>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
         <httpPort>9200</httpPort>
