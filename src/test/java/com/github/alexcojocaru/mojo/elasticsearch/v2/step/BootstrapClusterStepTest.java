@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -18,9 +16,7 @@ import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import org.apache.maven.plugin.logging.Log;
@@ -71,12 +67,11 @@ public class BootstrapClusterStepTest
         when(instanceConfig.getClusterConfiguration()).thenReturn(config);
         when(config.getInstanceConfigurationList()).thenReturn(Arrays.asList(instanceConfig));
     }
-    
 
     @Test
     public void testExecuteWithoutFile()
     {
-        when(config.getPathInitScript()).thenReturn("");
+        when(config.getPathInitScripts()).thenReturn(new ArrayList<>());
         
         step.execute(config);
         
@@ -88,8 +83,10 @@ public class BootstrapClusterStepTest
     public void testExecuteJsonFile()
     {
         String filePath = "folder/init.json";
+        List<String> filePaths = new ArrayList<>(1);
+        filePaths.add(filePath);
         
-        when(config.getPathInitScript()).thenReturn(filePath);
+        when(config.getPathInitScripts()).thenReturn(filePaths);
         doNothing().when(step).validateFile(filePath);
         doNothing()
                 .when(step)
@@ -105,11 +102,33 @@ public class BootstrapClusterStepTest
     }
 
     @Test
+    public void testExecuteJsonFiles()
+    {
+        String filePath1 = "folder/init.json";
+        String filePath2 = "folder/otherInit.json";
+        List<String> filePaths = new ArrayList<>(2);
+        filePaths.add(filePath1);
+        filePaths.add(filePath2);
+
+        when(config.getPathInitScripts()).thenReturn(filePaths);
+        doNothing().when(step).validateFile(anyString());
+        doNothing()
+                .when(step)
+                .parseJson(any(ElasticsearchClient.class), eq(log), any(Path.class));
+
+        step.execute(config);
+
+        verify(step, times(2)).validateFile(anyString());
+    }
+
+    @Test
     public void testExecuteScriptFile()
     {
         String filePath = "folder/init.script";
+        List<String> filePaths = new ArrayList<>(1);
+        filePaths.add(filePath);
         
-        when(config.getPathInitScript()).thenReturn(filePath);
+        when(config.getPathInitScripts()).thenReturn(filePaths);
         doNothing().when(step).validateFile(filePath);
         doNothing()
                 .when(step)
@@ -122,6 +141,26 @@ public class BootstrapClusterStepTest
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
         verify(step).parseScript(any(ElasticsearchClient.class), eq(log), pathCaptor.capture());
         assertEquals(filePath, pathCaptor.getValue().toString().replace('\\', '/'));
+    }
+
+    @Test
+    public void testExecuteScriptFiles()
+    {
+        String filePath1 = "folder/init.script";
+        String filePath2 = "folder/otherInit.script";
+        List<String> filePaths = new ArrayList<>(2);
+        filePaths.add(filePath1);
+        filePaths.add(filePath2);
+
+        when(config.getPathInitScripts()).thenReturn(filePaths);
+        doNothing().when(step).validateFile(anyString());
+        doNothing()
+                .when(step)
+                .parseScript(any(ElasticsearchClient.class), eq(log), any(Path.class));
+
+        step.execute(config);
+
+        verify(step, times(2)).validateFile(anyString());
     }
     
     @Test(expected = ElasticsearchSetupException.class)

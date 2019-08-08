@@ -57,7 +57,7 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > the list of settings to apply to corresponding Elasticsearch instances (see the [InstanceSettings](#instanceSettings) section for details)
 
 *   **pathInitScript** [defaultValue=""]
-    > the path of the initialization script (see the [Initialization script](#initScript) section for details)
+    > the path of the initialization scripts (see the [Initialization scripts](#initScripts) section for details)
 
 *   **keepExistingData** [defaultValue=false] - work in progress
     > whether to keep the data and log directories if they already exist
@@ -235,13 +235,13 @@ Example:
 </plugin>
 ```
 
-## <a name="initScript"></a>Initialization script
-An initialization script file can be provided using the **pathInitScript** parameter of the plugin, in which case it will be executed against the local Elasticsearch cluster.
+## <a name="initScripts"></a>Initialization scripts
+A comma-separated list of initialization script files can be provided using the **pathInitScript** parameter of the plugin, in which case they will be executed against the local Elasticsearch cluster.
 The file extension defines the file format: *json* for JSON format, anything else for custom format.
 
 #### JSON format
 
-The provided JSON file should contain a list of requests to be sent, one by one, to the Elasticsearch cluster.
+The provided JSON files should contain a list of requests to be sent, one by one, to the Elasticsearch cluster.
 Each request definition has three properties:
 
 * the request **method**: one of *PUT*, *POST*, *DELETE*

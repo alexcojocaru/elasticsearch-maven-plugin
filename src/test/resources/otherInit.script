@@ -1,0 +1,12 @@
+# create the index
+# the index name is hardcoded
+PUT:load_test_other_index:{ "settings" : { "number_of_shards" : 1, "number_of_replicas" : 0 } }
+
+# index a document
+PUT:load_test_other_index/test_type/1:{ "name" : "otherAlex" }
+
+# delete the 2nd document
+DELETE:load_test_other_index/test_type/2:
+
+# refresh the index
+POST:load_test_other_index/_refresh:{}

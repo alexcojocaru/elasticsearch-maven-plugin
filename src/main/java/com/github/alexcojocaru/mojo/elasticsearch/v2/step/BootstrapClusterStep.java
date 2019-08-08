@@ -35,14 +35,17 @@ public class BootstrapClusterStep
     @Override
     public void execute(ClusterConfiguration config)
     {
-        if (StringUtils.isBlank(config.getPathInitScript()))
+        if (config.getPathInitScripts().isEmpty())
         {
             // nothing to do; return
             return;
         }
         
-        String filePath = config.getPathInitScript();
-        validateFile(filePath);
+        List<String> filePaths = config.getPathInitScripts();
+
+        for(String filePath : filePaths) {
+            validateFile(filePath);
+        }
         
         // we'll run all commands against the first node in the cluster
         try (ElasticsearchClient client = new ElasticsearchClient.Builder()
@@ -50,12 +53,13 @@ public class BootstrapClusterStep
                 .withHostname("localhost")
                 .build())
         {
-            Path path = Paths.get(filePath);
-            if ("json".equalsIgnoreCase(FilenameUtils.getExtension(filePath))) {
-                parseJson(client, config.getLog(), path);
-            }
-            else {
-                parseScript(client, config.getLog(), path);
+            for(String filePath : filePaths) {
+                Path path = Paths.get(filePath);
+                if ("json".equalsIgnoreCase(FilenameUtils.getExtension(filePath))) {
+                    parseJson(client, config.getLog(), path);
+                } else {
+                    parseScript(client, config.getLog(), path);
+                }
             }
         }
     }
