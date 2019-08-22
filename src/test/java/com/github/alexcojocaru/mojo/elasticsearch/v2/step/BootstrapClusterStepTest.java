@@ -1,24 +1,12 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.IntStream;
-
+import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClientException;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCommand;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCommand.RequestMethod;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,13 +16,31 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClientException;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCommand;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCommand.RequestMethod;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Alex Cojocaru
@@ -83,8 +89,7 @@ public class BootstrapClusterStepTest
     public void testExecuteJsonFile()
     {
         String filePath = "folder/init.json";
-        List<String> filePaths = new ArrayList<>(1);
-        filePaths.add(filePath);
+        List<String> filePaths = Arrays.asList(filePath);
         
         when(config.getPathInitScripts()).thenReturn(filePaths);
         doNothing().when(step).validateFile(filePath);
@@ -106,9 +111,7 @@ public class BootstrapClusterStepTest
     {
         String filePath1 = "folder/init.json";
         String filePath2 = "folder/otherInit.json";
-        List<String> filePaths = new ArrayList<>(2);
-        filePaths.add(filePath1);
-        filePaths.add(filePath2);
+        List<String> filePaths = Arrays.asList(filePath1, filePath2);
 
         when(config.getPathInitScripts()).thenReturn(filePaths);
         doNothing().when(step).validateFile(anyString());
@@ -118,15 +121,18 @@ public class BootstrapClusterStepTest
 
         step.execute(config);
 
-        verify(step, times(2)).validateFile(anyString());
+        ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
+        verify(step, times(2)).parseJson(any(ElasticsearchClient.class), eq(log), pathCaptor.capture());
+        List<Path> capturedPaths = pathCaptor.getAllValues();
+        assertTrue(capturedPaths.get(0).toString().replace('\\', '/').equalsIgnoreCase(filePath1));
+        assertTrue(capturedPaths.get(1).toString().replace('\\', '/').equalsIgnoreCase(filePath2));
     }
 
     @Test
     public void testExecuteScriptFile()
     {
         String filePath = "folder/init.script";
-        List<String> filePaths = new ArrayList<>(1);
-        filePaths.add(filePath);
+        List<String> filePaths = Arrays.asList(filePath);
         
         when(config.getPathInitScripts()).thenReturn(filePaths);
         doNothing().when(step).validateFile(filePath);
@@ -148,9 +154,7 @@ public class BootstrapClusterStepTest
     {
         String filePath1 = "folder/init.script";
         String filePath2 = "folder/otherInit.script";
-        List<String> filePaths = new ArrayList<>(2);
-        filePaths.add(filePath1);
-        filePaths.add(filePath2);
+        List<String> filePaths = Arrays.asList(filePath1, filePath2);
 
         when(config.getPathInitScripts()).thenReturn(filePaths);
         doNothing().when(step).validateFile(anyString());
@@ -160,7 +164,11 @@ public class BootstrapClusterStepTest
 
         step.execute(config);
 
-        verify(step, times(2)).validateFile(anyString());
+        ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
+        verify(step, times(2)).parseScript(any(ElasticsearchClient.class), eq(log), pathCaptor.capture());
+        List<Path> capturedPaths = pathCaptor.getAllValues();
+        assertTrue(capturedPaths.get(0).toString().replace('\\', '/').equalsIgnoreCase(filePath1));
+        assertTrue(capturedPaths.get(1).toString().replace('\\', '/').equalsIgnoreCase(filePath2));
     }
     
     @Test(expected = ElasticsearchSetupException.class)

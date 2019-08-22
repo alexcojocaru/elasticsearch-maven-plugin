@@ -239,6 +239,8 @@ Example:
 A comma-separated list of initialization script files can be provided using the **pathInitScript** parameter of the plugin, in which case they will be executed against the local Elasticsearch cluster.
 The file extension defines the file format: *json* for JSON format, anything else for custom format.
 
+The script paths will be trimmed and executed in the order they are provided.
+
 #### JSON format
 
 The provided JSON files should contain a list of requests to be sent, one by one, to the Elasticsearch cluster.

@@ -1,17 +1,22 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import java.util.*;
-
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
 
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Mojo to define extra maven parameters required by the run forked mojo.
@@ -269,7 +274,9 @@ public abstract class AbstractElasticsearchMojo
 
     public List<String> getPathInitScripts()
     {
-        return pathInitScripts.isEmpty() ? new ArrayList<>() : Arrays.asList(pathInitScripts.split(","));
+        return Stream.of(pathInitScripts.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
     }
 
     public void setPathInitScripts(String pathInitScripts)
