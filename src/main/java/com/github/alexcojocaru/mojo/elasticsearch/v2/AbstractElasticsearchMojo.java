@@ -274,9 +274,15 @@ public abstract class AbstractElasticsearchMojo
 
     public List<String> getPathInitScripts()
     {
-        return Stream.of(pathInitScripts.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
+        if (pathInitScripts != null && !pathInitScripts.isEmpty()) {
+            return Stream.of(pathInitScripts.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+        }
+        else
+        {
+            return new ArrayList<>();
+        }
     }
 
     public void setPathInitScripts(String pathInitScripts)

@@ -27,6 +27,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -123,8 +124,12 @@ public class BootstrapClusterStepTest
 
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
         verify(step, times(2)).parseJson(any(ElasticsearchClient.class), eq(log), pathCaptor.capture());
+
         List<Path> capturedPaths = pathCaptor.getAllValues();
+        assertEquals(2, capturedPaths.size());
+        assertNotNull(capturedPaths.get(0));
         assertTrue(capturedPaths.get(0).toString().replace('\\', '/').equalsIgnoreCase(filePath1));
+        assertNotNull(capturedPaths.get(1));
         assertTrue(capturedPaths.get(1).toString().replace('\\', '/').equalsIgnoreCase(filePath2));
     }
 
@@ -166,8 +171,12 @@ public class BootstrapClusterStepTest
 
         ArgumentCaptor<Path> pathCaptor = ArgumentCaptor.forClass(Path.class);
         verify(step, times(2)).parseScript(any(ElasticsearchClient.class), eq(log), pathCaptor.capture());
+
         List<Path> capturedPaths = pathCaptor.getAllValues();
+        assertEquals(2, capturedPaths.size());
+        assertNotNull(capturedPaths.get(0));
         assertTrue(capturedPaths.get(0).toString().replace('\\', '/').equalsIgnoreCase(filePath1));
+        assertNotNull(capturedPaths.get(1));
         assertTrue(capturedPaths.get(1).toString().replace('\\', '/').equalsIgnoreCase(filePath2));
     }
     
