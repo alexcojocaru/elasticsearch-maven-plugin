@@ -1,5 +1,6 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -12,69 +13,75 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractElasticsearchMojoTest {
 
-    private final AbstractElasticsearchMojo abstractElasticsearchMojo = Mockito.mock(
-                                                                  AbstractElasticsearchMojo.class,
-                                                                  Mockito.CALLS_REAL_METHODS);
+    private AbstractElasticsearchMojo abstractElasticsearchMojo;
+    
+    @Before
+    public void setup()
+    {
+        abstractElasticsearchMojo = Mockito.mock(
+                AbstractElasticsearchMojo.class,
+                Mockito.CALLS_REAL_METHODS);
+    }
 
     @Test
-    public void testGetPathInitScriptsNullInput()
+    public void testGetPathInitScriptNullInput()
     {
-        abstractElasticsearchMojo.setPathInitScripts(null);
-        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScripts();
+        abstractElasticsearchMojo.setPathInitScript(null);
+        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScript();
         assertEquals(0, pathInitScripts.size());
     }
 
     @Test
-    public void testGetPathInitScriptsEmptyInput()
+    public void testGetPathInitScriptEmptyInput()
     {
-        abstractElasticsearchMojo.setPathInitScripts("");
-        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScripts();
+        abstractElasticsearchMojo.setPathInitScript("");
+        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScript();
         assertEquals(0, pathInitScripts.size());
     }
 
     @Test
-    public void testGetPathInitScriptsSingleInputTrimmed()
+    public void testGetPathInitScriptSingleInputTrimmed()
     {
         final String script = "script.json";
 
-        abstractElasticsearchMojo.setPathInitScripts(script);
-        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScripts();
+        abstractElasticsearchMojo.setPathInitScript(script);
+        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScript();
         assertEquals(1, pathInitScripts.size());
         assertEquals(script, pathInitScripts.get(0));
     }
 
     @Test
-    public void testGetPathInitScriptsSingleInputNotTrimmed()
+    public void testGetPathInitScriptSingleInputNotTrimmed()
     {
         final String script = "    script.json    ";
 
-        abstractElasticsearchMojo.setPathInitScripts(script);
-        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScripts();
+        abstractElasticsearchMojo.setPathInitScript(script);
+        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScript();
         assertEquals(1, pathInitScripts.size());
         assertEquals(script.trim(), pathInitScripts.get(0));
     }
 
     @Test
-    public void testGetPathInitScriptsMultipleInputTrimmed()
+    public void testGetPathInitScriptMultipleInputTrimmed()
     {
         final String script1 = "script.json";
         final String script2 = "other.script";
 
-        abstractElasticsearchMojo.setPathInitScripts(script1 + "," + script2);
-        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScripts();
+        abstractElasticsearchMojo.setPathInitScript(script1 + "," + script2);
+        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScript();
         assertEquals(2, pathInitScripts.size());
         assertEquals(script1, pathInitScripts.get(0));
         assertEquals(script2, pathInitScripts.get(1));
     }
 
     @Test
-    public void testGetPathInitScriptsMultipleInputNotTrimmed()
+    public void testGetPathInitScriptMultipleInputNotTrimmed()
     {
         final String script1 = "script.json";
         final String script2 = "other.script";
 
-        abstractElasticsearchMojo.setPathInitScripts(script1 + " , \n" + script2 + "\n");
-        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScripts();
+        abstractElasticsearchMojo.setPathInitScript(script1 + " , \n" + script2 + "\n");
+        final List<String> pathInitScripts = abstractElasticsearchMojo.getPathInitScript();
         assertEquals(2, pathInitScripts.size());
         assertEquals(script1, pathInitScripts.get(0));
         assertEquals(script2, pathInitScripts.get(1));

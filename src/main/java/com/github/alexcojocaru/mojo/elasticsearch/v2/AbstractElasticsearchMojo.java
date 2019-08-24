@@ -4,6 +4,8 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifa
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipse.aether.RepositorySystem;
@@ -121,7 +123,7 @@ public abstract class AbstractElasticsearchMojo
      * Comma-separated list
      */
     @Parameter(property="es.pathInitScript")
-    protected String pathInitScripts;
+    protected String pathInitScript;
 
     /**
      * Custom environment variables, to be set before launching an instance.
@@ -272,10 +274,11 @@ public abstract class AbstractElasticsearchMojo
         this.plugins = plugins;
     }
 
-    public List<String> getPathInitScripts()
+    public List<String> getPathInitScript()
     {
-        if (pathInitScripts != null && !pathInitScripts.isEmpty()) {
-            return Stream.of(pathInitScripts.split(","))
+        if (StringUtils.isNotBlank(pathInitScript))
+        {
+            return Stream.of(pathInitScript.split(","))
                     .map(String::trim)
                     .collect(Collectors.toList());
         }
@@ -285,9 +288,9 @@ public abstract class AbstractElasticsearchMojo
         }
     }
 
-    public void setPathInitScripts(String pathInitScripts)
+    public void setPathInitScript(String pathInitScript)
     {
-        this.pathInitScripts = pathInitScripts;
+        this.pathInitScript = pathInitScript;
     }
 
     public boolean isKeepExistingData()
@@ -352,7 +355,7 @@ public abstract class AbstractElasticsearchMojo
                 .withClusterName(clusterName)
                 .withPathConf(pathConf)
                 .withElasticsearchPlugins(plugins)
-                .withPathInitScripts(getPathInitScripts())
+                .withPathInitScripts(getPathInitScript())
                 .withKeepExistingData(keepExistingData)
                 .withTimeout(timeout)
                 .withSetAwait(setAwait)

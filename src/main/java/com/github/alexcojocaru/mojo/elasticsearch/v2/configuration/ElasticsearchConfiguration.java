@@ -28,7 +28,7 @@ public interface ElasticsearchConfiguration extends ElasticsearchBaseConfigurati
     
     List<PluginConfiguration> getPlugins();
     
-    List<String> getPathInitScripts();
+    List<String> getPathInitScript();
     
     boolean isKeepExistingData();
     

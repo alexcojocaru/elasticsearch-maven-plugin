@@ -242,17 +242,15 @@ The file extension defines the file format: *json* for JSON format, anything els
 The script paths will be trimmed and executed in the order they are provided. For example:
 
 ```
-<pathInitScript>
-script1.json,script2.script
-</pathInitScript>
+<pathInitScript>script1.json,script2.script</pathInitScript>
 ```
 
 is equivalent to
 
 ```
 <pathInitScript>
-script1.json,
-script2.script
+    script1.json,
+    script2.script
 </pathInitScript>
 ```
 
