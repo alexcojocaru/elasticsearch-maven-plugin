@@ -1,19 +1,5 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.maven.plugin.logging.Log;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +8,18 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClientException;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCommand;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.maven.plugin.logging.Log;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Bootstrap the ES cluster with the provided initialization script, if provided.
@@ -35,14 +33,18 @@ public class BootstrapClusterStep
     @Override
     public void execute(ClusterConfiguration config)
     {
-        if (StringUtils.isBlank(config.getPathInitScript()))
+        if (config.getPathInitScripts().isEmpty())
         {
             // nothing to do; return
             return;
         }
         
-        String filePath = config.getPathInitScript();
-        validateFile(filePath);
+        List<String> filePaths = config.getPathInitScripts();
+
+        for (String filePath : filePaths)
+        {
+            validateFile(filePath);
+        }
         
         // we'll run all commands against the first node in the cluster
         try (ElasticsearchClient client = new ElasticsearchClient.Builder()
@@ -50,12 +52,16 @@ public class BootstrapClusterStep
                 .withHostname("localhost")
                 .build())
         {
-            Path path = Paths.get(filePath);
-            if ("json".equalsIgnoreCase(FilenameUtils.getExtension(filePath))) {
-                parseJson(client, config.getLog(), path);
-            }
-            else {
-                parseScript(client, config.getLog(), path);
+            for(String filePath : filePaths) {
+                Path path = Paths.get(filePath);
+                if ("json".equalsIgnoreCase(FilenameUtils.getExtension(filePath)))
+                {
+                    parseJson(client, config.getLog(), path);
+                }
+                else
+                {
+                    parseScript(client, config.getLog(), path);
+                }
             }
         }
     }

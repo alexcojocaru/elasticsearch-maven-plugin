@@ -29,7 +29,7 @@ public class ClusterConfiguration
     private String clusterName;
     private String pathConf;
     private List<PluginConfiguration> plugins;
-    private String pathInitScript;
+    private List<String> pathInitScripts;
     private boolean keepExistingData;
     private int timeout;
     private int clientSocketTimeout;
@@ -95,9 +95,9 @@ public class ClusterConfiguration
         return plugins;
     }
 
-    public String getPathInitScript()
+    public List<String> getPathInitScripts()
     {
-        return pathInitScript;
+        return pathInitScripts;
     }
 
     public boolean isKeepExistingData()
@@ -133,7 +133,7 @@ public class ClusterConfiguration
                 .append("clusterName", clusterName)
                 .append("pathConfigFile", pathConf)
                 .append("plugins", plugins)
-                .append("pathInitScript", pathInitScript)
+                .append("pathInitScripts", pathInitScripts)
                 .append("keepExistingData", keepExistingData)
                 .append("timeout", timeout)
                 .append("clientSocketTimeout", clientSocketTimeout)
@@ -156,7 +156,7 @@ public class ClusterConfiguration
         private String clusterName;
         private String pathConf;
         private List<PluginConfiguration> plugins;
-        private String pathInitScript;
+        private List<String> pathInitScripts;
         private boolean keepExistingData;
         private int timeout;
         private int clientSocketTimeout;
@@ -224,9 +224,9 @@ public class ClusterConfiguration
             return this;
         }
 
-        public Builder withPathInitScript(String pathInitScript)
+        public Builder withPathInitScripts(List<String> pathInitScripts)
         {
-            this.pathInitScript = pathInitScript;
+            this.pathInitScripts = pathInitScripts;
             return this;
         }
 
@@ -271,7 +271,7 @@ public class ClusterConfiguration
             config.clusterName = clusterName;
             config.pathConf = pathConf;
             config.plugins = plugins;
-            config.pathInitScript = pathInitScript;
+            config.pathInitScripts = pathInitScripts;
             config.keepExistingData = keepExistingData;
             config.timeout = timeout;
             config.clientSocketTimeout = clientSocketTimeout;

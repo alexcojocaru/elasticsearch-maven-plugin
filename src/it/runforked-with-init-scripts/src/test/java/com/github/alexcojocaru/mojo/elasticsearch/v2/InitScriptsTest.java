@@ -25,7 +25,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.client.Monitor;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class InitScriptTest extends ItBase
+public class InitScriptsTest extends ItBase
 {    
     @Test
     public void testClusterRunning()
@@ -35,14 +35,17 @@ public class InitScriptTest extends ItBase
     }
     
     @Test
-    public void testIndexExist() throws ElasticsearchClientException
+    public void testIndexesExist() throws ElasticsearchClientException
     {
         Map index = client.get("/load_test_index", HashMap.class);
         Assert.assertTrue(index.containsKey("load_test_index"));
+
+        index = client.get("/load_test_other_index", HashMap.class);
+        Assert.assertTrue(index.containsKey("load_test_other_index"));
     }
     
     @Test
-    public void testUser1Exists() throws ElasticsearchClientException
+    public void testUser1ExistsInIndex1() throws ElasticsearchClientException
     {
         Map user = client.get("/load_test_index/test_type/1", HashMap.class);
 
@@ -57,11 +60,24 @@ public class InitScriptTest extends ItBase
         Assert.assertEquals("alexc", userData.get("name"));
         Assert.assertEquals(new Long(1388000499000L), userData.get("lastModified"));
     }
-    
+
     @Test(expected = ElasticsearchClientException.class)
-    public void testUser2DoesNotExists() throws ElasticsearchClientException
+    public void testUser2DoesNotExistInIndex1() throws ElasticsearchClientException
     {
         client.get("/load_test_index/test_type/2", HashMap.class);
+    }
+
+    @Test
+    public void testUser2ExistsInIndex2() throws ElasticsearchClientException
+    {
+        Map user = client.get("/load_test_other_index/test_type/1", HashMap.class);
+
+        // the user must exist
+        Assert.assertEquals(Boolean.TRUE, user.get("found"));
+
+        // verify the user attributes
+        Map userData = (Map)user.get("_source");
+        Assert.assertEquals("otherAlex", userData.get("name"));
     }
     
 }
