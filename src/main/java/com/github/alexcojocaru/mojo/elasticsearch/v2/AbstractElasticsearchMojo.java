@@ -1,21 +1,24 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
 
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Mojo to define extra maven parameters required by the run forked mojo.
@@ -116,7 +119,8 @@ public abstract class AbstractElasticsearchMojo
     protected ArrayList<Properties> instanceSettings = new ArrayList<>();
 
     /**
-     * The path to the initialization script file to execute after Elasticsearch has started.
+     * The path to the initialization script files to execute after Elasticsearch has started.
+     * Comma-separated list
      */
     @Parameter(property="es.pathInitScript")
     protected String pathInitScript;
@@ -159,7 +163,7 @@ public abstract class AbstractElasticsearchMojo
     @Parameter(property="es.autoCreateIndex", defaultValue = "true")
     protected boolean autoCreateIndex;
 
-    
+
     public RepositorySystem getRepositorySystem()
     {
         return repositorySystem;
@@ -270,9 +274,18 @@ public abstract class AbstractElasticsearchMojo
         this.plugins = plugins;
     }
 
-    public String getPathInitScript()
+    public List<String> getPathInitScript()
     {
-        return pathInitScript;
+        if (StringUtils.isNotBlank(pathInitScript))
+        {
+            return Stream.of(pathInitScript.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+        }
+        else
+        {
+            return new ArrayList<>();
+        }
     }
 
     public void setPathInitScript(String pathInitScript)
@@ -327,7 +340,7 @@ public abstract class AbstractElasticsearchMojo
     {
         this.autoCreateIndex = autoCreateIndex;
     }
-    
+
 
     @Override
     public ClusterConfiguration buildClusterConfiguration()
@@ -342,7 +355,7 @@ public abstract class AbstractElasticsearchMojo
                 .withClusterName(clusterName)
                 .withPathConf(pathConf)
                 .withElasticsearchPlugins(plugins)
-                .withPathInitScript(pathInitScript)
+                .withPathInitScripts(getPathInitScript())
                 .withKeepExistingData(keepExistingData)
                 .withTimeout(timeout)
                 .withSetAwait(setAwait)
