@@ -1,5 +1,6 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
@@ -162,7 +163,7 @@ public class InstanceConfiguration
             config.transportPort = transportPort;
             config.pathData = pathData;
             config.pathLogs = pathLogs;
-            config.environmentVariables = environmentVariables;
+            config.environmentVariables = environmentVariables == null ? Collections.emptyMap() : environmentVariables;
             config.settings = settings;
 
             return config;
