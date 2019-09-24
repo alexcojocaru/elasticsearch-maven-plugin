@@ -73,7 +73,7 @@ public class RemovePluginsStep
                         .addArgument("remove")
                         .addArgument(pluginName);
                 
-                ProcessUtil.executeScript(config, removeCmd);
+                ProcessUtil.executeScript(config, removeCmd, config.getEnvironmentVariables(), null);
             }
         }
         else
