@@ -41,11 +41,10 @@ public class InstallPluginsStep
                     "Installing plugin '%s' with options '%s'",
                     plugin.getUri(), plugin.getEsJavaOpts()));
             
-            Map<String, String> environment = null;
+            Map<String, String> environment = new HashMap<>(config.getEnvironmentVariables());
             
             if (StringUtils.isNotBlank(plugin.getEsJavaOpts()))
             {
-                environment = new HashMap<>();
                 environment.put("ES_JAVA_OPTS", plugin.getEsJavaOpts());
             }
 
