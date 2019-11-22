@@ -28,8 +28,8 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
 public class ResolveElasticsearchStep
         implements InstanceStep
 {
-	private final String ELASTICSEARCH_FILE_PARAM ="/%s";
-	
+    private final String ELASTICSEARCH_FILE_PARAM ="/%s";
+
     private final String ELASTICSEARCH_DOWNLOAD_URL =
             "https://artifacts.elastic.co/downloads/elasticsearch/%s";
     
@@ -198,8 +198,8 @@ public class ResolveElasticsearchStep
                 StringUtils.isBlank(config.getDownloadUrl())
                         ? String.format(ELASTICSEARCH_DOWNLOAD_URL, filename)
                         : config.getDownloadUrl().endsWith(ELASTICSEARCH_FILE_PARAM) 
-                        	? String.format(config.getDownloadUrl(), filename) 
-                        	: config.getDownloadUrl());
+                            ? String.format(config.getDownloadUrl(), filename) 
+                            : config.getDownloadUrl());
 
         config.getLog().debug("Downloading " + downloadUrl + " to " + tempFile);
         FileUtils.copyURLToFile(downloadUrl, tempFile);
