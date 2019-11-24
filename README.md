@@ -372,7 +372,7 @@ before_script:
 When running the build in Docker, depending on the Docker image, the current user in the container
 maybe be the root user and, because of this, Elasticsearch will fail to start.
 The fix is to use a Docker image which does not use the root user. See 
-[this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/69)
+[this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/72)
 for details.
 
 
