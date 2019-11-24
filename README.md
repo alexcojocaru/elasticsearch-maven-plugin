@@ -30,8 +30,21 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > the version of Elasticsearch to install
 
 *   **downloadUrl** [defaultValue=""]
-    > the Elasticsearch download URL (eg. https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-6.3.0.zip); if provided, it overrides the default download URL (https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${flavour}-${version}.zip); the flavour and version plugin properties are still required for building the coordinates of the maven artifact to install in the local repository
-
+    > the Elasticsearch download URL (eg. https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-6.3.0.zip); if provided, it overrides the default download URL (https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${flavour}-${version}.zip); the flavour and version plugin properties are still required for building the coordinates of the maven artifact to install in the local repository. 
+    <br/>You can also end your url with "/%s", it will indicate to the plugin to replace the "%s" value by his own computed filename (ideal for proxy like nexus,Artifactory, ...)
+    <br/><br/>Ex: By providing the following configuration<br/>
+    `<downloadUrl>http://my_private_repository/elasticsearch-downloads/%s</downloadUrl>`<br/>
+    `<flavour>oss</flavour>`<br/>
+    `<version>7.4.2</version>`<br/>
+    <br/>
+    The computed binary filename would be:<br/>
+    On Linux: `elasticsearch-oss-7.4.2.tar.gz`<br/>
+    On Windows: `elasticsearch-oss-7.4.2.zip`<br/>
+    <br/>
+    And the resulting download url would be:<br/>
+    On Linux: `http://my_private_repository/elasticsearch-downloads/elasticsearch-oss-7.4.2.tar.gz`<br/>
+    On Windows: `http://my_private_repository/elasticsearch-downloads/elasticsearch-oss-7.4.2.zip`<br/>
+    <br/>
 *   **httpPort** [defaultValue=9200]
     > the port to configure Elasticsearch to listen to HTTP traffic to; when configuring multiple instances, they will be assigned subsequent HTTP ports starting with this value (mind the conflicts with the transport ports)
 
