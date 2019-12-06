@@ -436,6 +436,25 @@ Then just tell the elasticsearch-maven-plugin to use the local URI.
 </plugin>
 ```
 
+
+#### Why does the plugin uses a lock file and why does it need to open a server socket?
+The plugin, at runtime, looks for the Elasticsearch artifact in the local maven repository and,
+if not found, it downloads it into the system temp directory and installs it from there into the
+local maven repo. When several Elasticsearch maven plugins are executed at the same time
+on a single machine (eg. during parallel builds), and the ES artifact hasn't already been installed
+in the local repo, it is not desirable that each plugin downloads and installs the same artifact;
+that is because the ES artifact is a large file (~ 250 Mb), and downloading the same file
+multiple times would be a waste of bandwidth.
+
+Because of this, the plugin is capable to synchronize with other plugins running at the same time
+on the same machine, so that a single one downloads and installs, while the rest wait
+for the *master* plugin to complete in order to move forward with using the artifact.
+The synchronization mechanism is described by
+[this diagram](https://github.com/alexcojocaru/elasticsearch-maven-plugin/blob/master/doc/elasticsearch-maven-plugin-inter_process_sync).
+
+This is related to this [plugin issue](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/105).
+
+
 ## Integration Tests
 The integration tests exist as maven plugins in the src/it directory and are executed via the maven invoker plugin
 (see the pom.xml for details on its configuration).

@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 
 /**
  * A monitor on an Elasticsearch instance.
- * 
+ *
  * @author Alex Cojocaru
  *
  */
@@ -19,17 +19,17 @@ public class Monitor
 {
     private final ElasticsearchClient client;
     private final Log log;
-    
+
     public Monitor(ElasticsearchClient client, Log log)
     {
         this.client = client;
         this.log = log;
     }
-    
+
     public void waitToStartInstance(final String baseDir, final String clusterName, int timeout)
     {
         log.debug(String.format(
-                "Waiting  up to %ds for the Elasticsearch instance to start ...",
+                "Waiting up to %ds for the Elasticsearch instance to start ...",
                 timeout));
         Awaitility.await()
                 .atMost(timeout, TimeUnit.SECONDS)
@@ -47,7 +47,7 @@ public class Monitor
                 );
         log.info("The Elasticsearch instance has started");
     }
-    
+
     /**
      * Check whether the PID file created by the ES process exists or not.
      * @param baseDir the ES base directory
@@ -59,7 +59,7 @@ public class Monitor
         boolean exists = pidFile.isFile();
         return exists;
     }
-    
+
     /**
      * Check whether the cluster with the given name exists in the current ES instance.
      * @param clusterName the ES cluster name
@@ -79,10 +79,10 @@ public class Monitor
             // failure is allowed
             result = false;
         }
-        
+
         return result;
     }
-    
+
     /**
      * Check whether the cluster with the given name exists in the ES running on the given port.
      * <br><br>
@@ -94,7 +94,7 @@ public class Monitor
     public static boolean isInstanceRunning(String clusterName, int httpPort)
     {
         Log log = Mockito.mock(Log.class);
-        
+
         try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withLog(log)
                 .withHostname("localhost")
@@ -105,7 +105,7 @@ public class Monitor
             return new Monitor(client, log).isInstanceRunning(clusterName);
         }
     }
-    
+
     /**
      * Wait until the cluster has fully started (ie. all nodes have joined).
      * @param clusterName the ES cluster name
@@ -115,7 +115,7 @@ public class Monitor
     public void waitToStartCluster(final String clusterName, int nodesCount, int timeout)
     {
         log.debug(String.format(
-                "Waiting  up to %ds for the Elasticsearch cluster to start ...",
+                "Waiting up to %ds for the Elasticsearch cluster to start ...",
                 timeout));
         Awaitility.await()
                 .atMost(timeout, TimeUnit.SECONDS)
@@ -132,7 +132,7 @@ public class Monitor
                 );
         log.info("The Elasticsearch cluster has started");
     }
-    
+
     /**
      * Verify that the cluster name and the number of nodes in the cluster,
      * as reported by the ES node, is as expected.
@@ -151,7 +151,7 @@ public class Monitor
             @SuppressWarnings("unchecked")
             Map<String, Object> response = client.get("/_nodes", Map.class);
             result = clusterName.equals(response.get("cluster_name"));
-            
+
             @SuppressWarnings("unchecked")
             Map<String, Object> nodesInfo = (Map<String, Object>)response.get("_nodes");
             result &= instanceCount == (int)(nodesInfo.get("successful"));
@@ -161,10 +161,10 @@ public class Monitor
             // failure is allowed
             result = false;
         }
-        
+
         return result;
     }
-    
+
     /**
      * Verify that the cluster name and the number of nodes in the cluster,
      * as reported by the ES node, is as expected.
@@ -176,7 +176,7 @@ public class Monitor
     public static boolean isClusterRunning(String clusterName, int instanceCount, int httpPort)
     {
         Log log = Mockito.mock(Log.class);
-        
+
         try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withLog(log)
                 .withHostname("localhost")

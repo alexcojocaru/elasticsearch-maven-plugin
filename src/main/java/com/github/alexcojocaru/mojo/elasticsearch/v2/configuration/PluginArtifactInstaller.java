@@ -2,6 +2,8 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.configuration;
 
 import java.io.File;
 
+import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchArtifact;
+
 /**
  * @author Alex Cojocaru
  *
@@ -9,13 +11,6 @@ import java.io.File;
 public interface PluginArtifactInstaller
 {
 
-    void installArtifact(
-            String groupId,
-            String artifactId,
-            String version,
-            String classifier,
-            String extension,
-            File file)
-            throws ArtifactException;
+    void installArtifact(ElasticsearchArtifact artifact, File file) throws ArtifactException;
 
 }
