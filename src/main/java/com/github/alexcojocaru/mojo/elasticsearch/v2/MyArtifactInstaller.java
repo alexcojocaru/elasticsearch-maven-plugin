@@ -31,29 +31,24 @@ public class MyArtifactInstaller
         this.repositorySession = repositorySession;
         this.log = log;
     }
-    
+
     @Override
-    public void installArtifact(
-            String groupId,
-            String artifactId,
-            String version,
-            String classifier,
-            String extension,
-            File file)
-            throws ArtifactException
+    public void installArtifact(ElasticsearchArtifact artifact, File file) throws ArtifactException
     {
+        log.debug("Installing '" + file.getAbsolutePath() + "' in the local maven repo");
+
         InstallRequest request = new InstallRequest();
-        Artifact artifact = new DefaultArtifact(
-                groupId,
-                artifactId,
-                classifier,
-                extension,
-                version,
+        Artifact defaultArtifact = new DefaultArtifact(
+                artifact.getGroupId(),
+                artifact.getArtifactId(),
+                artifact.getClassifier(),
+                artifact.getType(),
+                artifact.getVersion(),
                 null,
                 file);
-        request.addArtifact(artifact);
-        
-        log.debug(String.format("Installing artifact: %s", artifact));
+        request.addArtifact(defaultArtifact);
+
+        log.info(String.format("Installing maven artifact: %s", artifact));
 
         try
         {
