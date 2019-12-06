@@ -34,9 +34,9 @@ public class ElasticsearchArtifactResolverSlave
     /**
      * Attempt to read the server port from the given lock file.
      * Throws a timeout exception if the port cannot be read.
-     * @param lockFile
+     * @param lockFile The lock file to monitor
      * @return the server port (greater than 0), or -1 if the lock file has disappeared.
-     * @throws ConditionTimeoutException
+     * @throws ConditionTimeoutException if we time out waiting
      */
     public int readPort(File lockFile) throws ConditionTimeoutException
     {
@@ -104,8 +104,8 @@ public class ElasticsearchArtifactResolverSlave
 
     /**
      * Wait until the master resolver server has closed.
-     * @param serverPort
-     * @throws ConditionTimeoutException
+     * @param serverPort The server port to connect to
+     * @throws ConditionTimeoutException if we time out waiting
      */
     public void waitForMasterResolverServer(int serverPort) throws ConditionTimeoutException
     {
