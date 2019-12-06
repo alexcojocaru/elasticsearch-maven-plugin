@@ -450,7 +450,7 @@ Because of this, the plugin is capable to synchronize with other plugins running
 on the same machine, so that a single one downloads and installs, while the rest wait
 for the *master* plugin to complete in order to move forward with using the artifact.
 The synchronization mechanism is described by
-[this diagram](https://github.com/alexcojocaru/elasticsearch-maven-plugin/blob/master/doc/elasticsearch-maven-plugin-inter_process_sync).
+[this diagram](https://github.com/alexcojocaru/elasticsearch-maven-plugin/blob/master/doc/inter_process_sync.png).
 
 This is related to this [plugin issue](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/105).
 
