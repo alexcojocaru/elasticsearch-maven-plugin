@@ -49,6 +49,9 @@ public final class FilesystemUtil
 
     /**
      * Copy a directory recursively, preserving attributes, in particular permissions.
+     * @param source The source directory
+     * @param destination The destination directory
+     * @throws IOException if an IO error occurs
      */
     public static void copyRecursively(Path source, Path destination) throws IOException {
         if (Files.isDirectory(source))

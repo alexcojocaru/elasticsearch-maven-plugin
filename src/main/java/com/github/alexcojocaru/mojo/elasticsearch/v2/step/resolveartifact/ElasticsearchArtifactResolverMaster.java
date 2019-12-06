@@ -51,11 +51,11 @@ public class ElasticsearchArtifactResolverMaster
      * start a server and write its port to the lock file,
      * then download and install the artifact.
      * The server is always closed at the end, even on exception.
-     * @param lockFile
-     * @throws IOException
-     * @throws ArtifactException
+     * @param lockFile The lock file to maintain
+     * @throws ArtifactException when an artifact exception occurs
+     * @throws IOException when an IO exception occurs
      */
-    public void resolve(File lockFile) throws IOException, ArtifactException
+    public void resolve(File lockFile) throws ArtifactException, IOException
     {
         // open a non-blocking server which will stay alive
         // until the artifact download is complete
@@ -128,7 +128,7 @@ public class ElasticsearchArtifactResolverMaster
     /**
      * Download the artifact from the download repository.
      * @return the downloaded file
-     * @throws IOException
+     * @throws IOException when an IO exception occurs
      */
     private File downloadArtifact() throws IOException
     {

@@ -57,6 +57,8 @@ public class ProcessUtil
     
     /**
      * Build an OS dependent command line to kill the process with the given PID.
+     * @param pid The ID of the process to kill
+     * @return the command line required to kill the given process
      */
     public static CommandLine buildKillCommandLine(String pid)
     {
@@ -92,7 +94,7 @@ public class ProcessUtil
     /**
      * Read the ES PID from the pid file and return it.
      * @param baseDir the base directory where the pid file is
-     * @return
+     * @return the Id of the ES process
      */
     public static String getElasticsearchPid(String baseDir)
     {
@@ -302,7 +304,7 @@ public class ProcessUtil
     /**
      * Create an environment by merging the current environment and the supplied one.
      * If the supplied environment is null, null is returned.
-     * @param environment
+     * @param environment the environment properties to append
      * @return an execution environment
      */
     public static Map<String, String> createEnvironment(Map<String, String> environment)

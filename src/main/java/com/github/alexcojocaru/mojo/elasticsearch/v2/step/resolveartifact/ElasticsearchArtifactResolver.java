@@ -12,7 +12,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.util.FilesystemUtil;
 
 /**
  * Resolver for the Elasticsearch artifact.
- * <p/>
+ * <p></p>
  * This class is not thread safe.
  *
  * @author Alex Cojocaru
@@ -39,8 +39,8 @@ public class ElasticsearchArtifactResolver
     /**
      * Resolve the Elasticsearch reference, downloading and installing it if necessary.
      * @return the Elasticsearch artifact file in the local filesystem
-     * @throws ArtifactException
-     * @throws IOException
+     * @throws ArtifactException when an artifact exception occurs
+     * @throws IOException when an IO exception occurs
      */
     public File resolve() throws ArtifactException, IOException
     {
@@ -54,8 +54,8 @@ public class ElasticsearchArtifactResolver
      *     time out waiting for the master process to clean up the lock file,
      *     etc)
      * @return the Elasticsearch artifact file in the local filesystem
-     * @throws ArtifactException
-     * @throws IOException
+     * @throws ArtifactException when an artifact exception occurs
+     * @throws IOException when an IO exception occurs
      */
     private File resolve(boolean retryOnFail) throws ArtifactException, IOException
     {
@@ -133,6 +133,7 @@ public class ElasticsearchArtifactResolver
 
     /**
      * Build the global lock file reference. Do not attempt to resolve it against the filesystem.
+     * @return the lock file reference
      */
     private File buildLockFile()
     {
@@ -147,8 +148,8 @@ public class ElasticsearchArtifactResolver
 
     /**
      * Remove the lock file, and retry the artifact resolution.
-     * @throws IOException
-     * @throws ArtifactException
+     * @throws ArtifactException when an artifact exception occurs
+     * @throws IOException when an IO exception occurs
      */
     private File cleanupLockFileAndRetry(File lockFile, boolean retryOnFail)
             throws ArtifactException, IOException
@@ -175,8 +176,8 @@ public class ElasticsearchArtifactResolver
 
     /**
      * Resolve the given artifact reference against the local maven repository.
-     * @return
-     * @throws ArtifactException
+     * @return the maven artifact file in the local filesystem
+     * @throws ArtifactException when an artifact exception occurs
      */
     private File resolveMavenArtifact() throws ArtifactException
     {

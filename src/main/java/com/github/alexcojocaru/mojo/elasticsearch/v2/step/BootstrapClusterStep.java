@@ -68,7 +68,7 @@ public class BootstrapClusterStep
     
     /**
      * Verify that the given file path is a valid reference to an existing file on the disk.
-     * @param filePath
+     * @param filePath The path of the file to validate
      */
     protected void validateFile(String filePath)
     {
