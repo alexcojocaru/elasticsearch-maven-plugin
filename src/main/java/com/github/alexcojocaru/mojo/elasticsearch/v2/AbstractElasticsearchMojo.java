@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 /**
  * Mojo to define extra maven parameters required by the run forked mojo.
- * 
+ *
  * @author Alex Cojocaru
  */
 public abstract class AbstractElasticsearchMojo
@@ -64,6 +64,18 @@ public abstract class AbstractElasticsearchMojo
      */
     @Parameter(property="es.downloadUrl", defaultValue = "")
     protected String downloadUrl;
+
+    /**
+     * The Elasticsearch download URL Username
+     */
+    @Parameter(property="es.downloadUrlUsername", defaultValue = "")
+    protected String downloadUrlUsername;
+
+    /**
+     * The Elasticsearch download URL Password
+     */
+    @Parameter(property="es.downloadUrlPassword", defaultValue = "")
+    protected String downloadUrlPassword;
 
     /**
      * The Elasticsearch cluster name to set up; alphanumeric.
@@ -352,6 +364,8 @@ public abstract class AbstractElasticsearchMojo
                 .withFlavour(flavour)
                 .withVersion(version)
                 .withDownloadUrl(downloadUrl)
+                .withDownloadUrlUsername(downloadUrlUsername)
+                .withDownloadUrlPassword(downloadUrlPassword)
                 .withClusterName(clusterName)
                 .withPathConf(pathConf)
                 .withElasticsearchPlugins(plugins)
@@ -375,9 +389,9 @@ public abstract class AbstractElasticsearchMojo
                     .withSettings(settings)
                     .build());
         }
-        
+
         ClusterConfiguration clusterConfig = clusterConfigBuilder.build();
-        
+
         return clusterConfig;
     }
 
@@ -392,7 +406,7 @@ public abstract class AbstractElasticsearchMojo
                 getLog()));
         return artifactResolver;
     }
-    
+
     public  PluginArtifactInstaller buildArtifactInstaller()
     {
         return new MyArtifactInstaller(repositorySystem, repositorySession, getLog());

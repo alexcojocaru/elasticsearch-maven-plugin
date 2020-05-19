@@ -49,6 +49,12 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > * on Linux: *http://my_private_repository/elasticsearch-downloads/elasticsearch-oss-7.4.2.tar.gz*
     > * on Windows: *http://my_private_repository/elasticsearch-downloads/elasticsearch-oss-7.4.2.zip*
 
+*   **downloadUrlUsername** [defaultValue=""]
+    > username supplied as part of basic authentication when downloading 
+
+*   **downloadUrlPassword** [defaultValue=""]
+    > password supplied as part of basic authentication when downloading
+
 *   **httpPort** [defaultValue=9200]
     > the port to configure Elasticsearch to listen to HTTP traffic to; when configuring multiple instances, they will be assigned subsequent HTTP ports starting with this value (mind the conflicts with the transport ports)
 
