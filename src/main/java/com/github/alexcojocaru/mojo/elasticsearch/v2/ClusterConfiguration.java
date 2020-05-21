@@ -2,6 +2,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,7 +14,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifac
 /**
  * The cluster configuration, containing the list of ES configurations,
  * the artifact resolver, the logger, and other cluster specific attributes.
- * 
+ *
  * @author Alex Cojocaru
  */
 public class ClusterConfiguration
@@ -26,6 +27,8 @@ public class ClusterConfiguration
     private String flavour;
     private String version;
     private String downloadUrl;
+    private String downloadUrlUsername;
+    private String downloadUrlPassword;
     private String clusterName;
     private String pathConf;
     private List<PluginConfiguration> plugins;
@@ -74,17 +77,27 @@ public class ClusterConfiguration
     {
         return version;
     }
-    
+
     public String getDownloadUrl()
     {
         return downloadUrl;
+    }
+
+    public String getDownloadUrlUsername()
+    {
+        return downloadUrlUsername;
+    }
+
+    public String getDownloadUrlPassword()
+    {
+        return downloadUrlPassword;
     }
 
     public String getClusterName()
     {
         return clusterName;
     }
-    
+
     public String getPathConf()
     {
         return pathConf;
@@ -130,6 +143,8 @@ public class ClusterConfiguration
                 .append("flavour", flavour)
                 .append("version", version)
                 .append("downloadUrl", downloadUrl)
+                .append("downloadUrlUsername", downloadUrlUsername)
+                .append("downloadUrlPassword", Optional.ofNullable(downloadUrlPassword).map(p -> "****").orElse(null))
                 .append("clusterName", clusterName)
                 .append("pathConfigFile", pathConf)
                 .append("plugins", plugins)
@@ -153,6 +168,8 @@ public class ClusterConfiguration
         private String flavour;
         private String version;
         private String downloadUrl;
+        private String downloadUrlUsername;
+        private String downloadUrlPassword;
         private String clusterName;
         private String pathConf;
         private List<PluginConfiguration> plugins;
@@ -162,20 +179,20 @@ public class ClusterConfiguration
         private int clientSocketTimeout;
         private boolean setAwait;
         private boolean autoCreateIndex;
-        
-        
+
+
         public Builder addInstanceConfiguration(InstanceConfiguration config)
         {
             this.instanceConfigurationList.add(config);
             return this;
         }
-        
+
         public Builder withArtifactResolver(PluginArtifactResolver artifactResolver)
         {
             this.artifactResolver = artifactResolver;
             return this;
         }
-        
+
         public Builder withArtifactInstaller(PluginArtifactInstaller artifactInstaller)
         {
             this.artifactInstaller = artifactInstaller;
@@ -199,10 +216,22 @@ public class ClusterConfiguration
             this.version = version;
             return this;
         }
-        
+
         public Builder withDownloadUrl(String downloadUrl)
         {
             this.downloadUrl = downloadUrl;
+            return this;
+        }
+
+        public Builder withDownloadUrlUsername(String downloadUrlUsername)
+        {
+            this.downloadUrlUsername = downloadUrlUsername;
+            return this;
+        }
+
+        public Builder withDownloadUrlPassword(String downloadUrlPassword)
+        {
+            this.downloadUrlPassword = downloadUrlPassword;
             return this;
         }
 
@@ -268,6 +297,8 @@ public class ClusterConfiguration
             config.flavour = flavour;
             config.version = version;
             config.downloadUrl = downloadUrl;
+            config.downloadUrlUsername = downloadUrlUsername;
+            config.downloadUrlPassword = downloadUrlPassword;
             config.clusterName = clusterName;
             config.pathConf = pathConf;
             config.plugins = plugins;
@@ -277,7 +308,7 @@ public class ClusterConfiguration
             config.clientSocketTimeout = clientSocketTimeout;
             config.setAwait = setAwait;
             config.autoCreateIndex = autoCreateIndex;
-            
+
             config.getInstanceConfigurationList().forEach(c -> c.setClusterConfiguration(config));
 
             return config;

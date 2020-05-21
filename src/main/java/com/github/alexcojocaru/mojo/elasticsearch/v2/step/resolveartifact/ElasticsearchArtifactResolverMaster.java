@@ -2,15 +2,21 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.step.resolveartifact;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
@@ -148,7 +154,14 @@ public class ElasticsearchArtifactResolverMaster
                             : config.getDownloadUrl());
 
         config.getLog().info("Downloading " + downloadUrl + " to " + tempFile);
-        FileUtils.copyURLToFile(downloadUrl, tempFile);
+        URLConnection connection = downloadUrl.openConnection();
+        Optional.ofNullable(config.getDownloadUrlUsername()).ifPresent(username -> {
+            String basicAuthenticationEncoded = Base64.getEncoder().encodeToString((config.getDownloadUrlUsername() + ":" + config.getDownloadUrlPassword()).getBytes(StandardCharsets.UTF_8));
+            connection.setRequestProperty("Authorization", "Basic " + basicAuthenticationEncoded);
+        });
+        try (OutputStream out = FileUtils.openOutputStream(tempFile)) {
+            IOUtils.copyLarge(connection.getInputStream(), out);
+        }
 
         return tempFile;
     }
