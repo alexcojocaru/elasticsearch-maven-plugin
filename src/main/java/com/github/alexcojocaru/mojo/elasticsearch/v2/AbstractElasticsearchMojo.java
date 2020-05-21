@@ -5,6 +5,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.Elasticsearch
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -357,6 +358,7 @@ public abstract class AbstractElasticsearchMojo
     @Override
     public ClusterConfiguration buildClusterConfiguration()
     {
+        Preconditions.checkState((downloadUrlUsername == null) == (downloadUrlPassword == null), "both username and password must be supplied");
         ClusterConfiguration.Builder clusterConfigBuilder = new ClusterConfiguration.Builder()
                 .withArtifactResolver(buildArtifactResolver())
                 .withArtifactInstaller(buildArtifactInstaller())

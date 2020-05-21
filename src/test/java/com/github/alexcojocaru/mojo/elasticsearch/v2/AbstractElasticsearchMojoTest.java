@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class AbstractElasticsearchMojoTest {
 
     private AbstractElasticsearchMojo abstractElasticsearchMojo;
-    
+
     @Before
     public void setup()
     {
@@ -85,5 +85,29 @@ public class AbstractElasticsearchMojoTest {
         assertEquals(2, pathInitScripts.size());
         assertEquals(script1, pathInitScripts.get(0));
         assertEquals(script2, pathInitScripts.get(1));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testDownloadUsernameButNoPassword() {
+        abstractElasticsearchMojo.downloadUrlUsername = "foo";
+        abstractElasticsearchMojo.buildClusterConfiguration();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testDownloadPasswordButNoUsername() {
+        abstractElasticsearchMojo.downloadUrlPassword = "bar";
+        abstractElasticsearchMojo.buildClusterConfiguration();
+    }
+
+    @Test
+    public void testDownloadUsernameAndPassword() {
+        final String username = "foo";
+        final String password = "bar";
+        abstractElasticsearchMojo.downloadUrlUsername = username;
+        abstractElasticsearchMojo.downloadUrlPassword = password;
+        abstractElasticsearchMojo.logLevel = "INFO";
+        final ClusterConfiguration configuration = abstractElasticsearchMojo.buildClusterConfiguration();
+        assertEquals(username, configuration.getDownloadUrlUsername());
+        assertEquals(password, configuration.getDownloadUrlPassword());
     }
 }
