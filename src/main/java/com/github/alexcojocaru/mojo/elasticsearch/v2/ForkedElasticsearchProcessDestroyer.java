@@ -9,74 +9,76 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.util.ProcessUtil;
 
 /**
  * Shutdown hook to stop the ES process on JVM shut down.
- * 
+ *
  * @author Alex Cojocaru
  */
-public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer
+public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer, Runnable
 {
     private final Log log;
+    private final InstanceConfiguration config;
     private Process process;
 
     public ForkedElasticsearchProcessDestroyer(final InstanceConfiguration config)
     {
         this.log = config.getClusterConfiguration().getLog();
-        Runtime.getRuntime().addShutdownHook(new Thread()
-        {
-            @Override
-            public void run()
-            {
-                ForkedElasticsearchProcessDestroyer.this.terminateProcess(config);
-            }
-        });
+        this.config = config;
     }
-    
+
     @Override
-    public boolean add(Process process)
+    public synchronized boolean add(Process process)
     {
         if (this.process != null)
         {
             throw new IllegalStateException(
                     "A process was already added; this Elasticsearch process destroyer does not support multiple processes");
         }
-        
+
         this.process = process;
         return true;
     }
 
 
     @Override
-    public boolean remove(Process process)
+    public synchronized boolean remove(Process process)
     {
-        throw new IllegalStateException(
-                "This Elasticsearch process destroyer does not support this operation");
+        if(this.process != process)
+        {
+            throw new IllegalStateException(
+                    "Can only remove the same process that was added; this Elasticsearch process destroyer does not support multiple processes");
+        }
+        return true;
     }
 
 
     @Override
     public int size()
     {
-        return process != null ? 1 : 0;
+        return process != null && process.isAlive() ? 1 : 0;
     }
-    
-    private void terminateProcess(InstanceConfiguration config)
+
+    @Override
+    public void run()
     {
-        if (SystemUtils.IS_OS_WINDOWS)
-        {
-            terminateWindowsProcess(config);
-        }
-        else
-        {
-            terminateUnixProcess(config);
+        if (process != null) {
+            if (SystemUtils.IS_OS_WINDOWS)
+            {
+                terminateWindowsProcess();
+            }
+            else
+            {
+                terminateUnixProcess();
+            }
+            process = null;
         }
     }
-    
+
     /*
      * On Windows, the process is started as a subprocess of the shell script.
      * Process.destroy will terminate the main process (ie. the shell),
      * but not the subprocess, therefore it cannot be used.
      * Instead, lets use the PID saved by ES into the pid file.
      */
-    private void terminateWindowsProcess(InstanceConfiguration config)
+    private void terminateWindowsProcess()
     {
         log.info("Cleaning up at application shutdown...");
 
@@ -91,7 +93,7 @@ public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer
             log.debug("Cannot read the PID from file; assuming the process is not running", ex);
             return;
         }
-        
+
         boolean isAlive;
         try
         {
@@ -103,23 +105,23 @@ public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer
             log.debug("Cannot determine if the process is running; assuming it is", ex);
             isAlive = true;
         }
-        
+
         if (isAlive == false)
         {
             return;
         }
-        
+
         log.info(String.format(
                 "The Elasticsearch process [%d] is still running; stopping it...",
                 config.getId()));
-        
+
         CommandLine command = ProcessUtil.buildKillCommandLine(pid);
         for (int retry = 0; retry < 3; ++retry)
         {
             try
             {
                 ProcessUtil.executeScript(config, command, true);
-    
+
                 log.info(String.format(
                         "... the Elasticsearch process [%d] has stopped.",
                         config.getId()));
@@ -156,8 +158,8 @@ public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer
             break;
         }
     }
-    
-    private void terminateUnixProcess(InstanceConfiguration config)
+
+    private void terminateUnixProcess()
     {
         log.info("Cleaning up at application shutdown...");
 
@@ -188,7 +190,7 @@ public class ForkedElasticsearchProcessDestroyer implements ProcessDestroyer
         else
         {
             log.info("The Elasticsearch process has already stopped. Nothing to clean up");
-        } 
+        }
     }
 
 }
