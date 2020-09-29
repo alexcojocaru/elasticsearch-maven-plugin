@@ -11,6 +11,8 @@ public class InstanceSetupSequence
 
     public InstanceSetupSequence()
     {
+        add (new RemoveExistingDataStep());
+
         add(new ResolveElasticsearchStep());
         
         add(new RemovePluginsStep());

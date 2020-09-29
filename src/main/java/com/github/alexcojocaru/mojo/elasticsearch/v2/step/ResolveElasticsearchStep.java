@@ -3,12 +3,8 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.io.FileSystemUtils;
 import org.apache.commons.io.FileUtils;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
@@ -38,7 +34,6 @@ public class ResolveElasticsearchStep
             unpackDirectory = unpackToElasticsearchDirectory(artifact, config);
 
             setupElasticsearchConf(config);
-            keepExistingDataCheck(config);
         }
         catch (ArtifactException | IOException e)
         {
@@ -113,16 +108,5 @@ public class ResolveElasticsearchStep
         File upackDirectory = new File(tempDir, UUID.randomUUID().toString());
         upackDirectory.mkdirs();
         return upackDirectory;
-    }
-
-    private void keepExistingDataCheck(InstanceConfiguration config) throws IOException {
-        File baseDir = new File(config.getBaseDir());
-        File dataDir = FilesystemUtil.getDataDirectory(baseDir);
-        File logsDir = FilesystemUtil.getLogsDirectory(baseDir);
-
-        if (Boolean.FALSE.equals(config.getClusterConfiguration().isKeepExistingData())) {
-            FileUtils.deleteDirectory(dataDir);
-            FileUtils.deleteDirectory(logsDir);
-        }
     }
 }
