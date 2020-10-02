@@ -109,5 +109,4 @@ public class ResolveElasticsearchStep
         upackDirectory.mkdirs();
         return upackDirectory;
     }
-
 }
