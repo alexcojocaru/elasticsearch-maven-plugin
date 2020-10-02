@@ -148,7 +148,7 @@ public abstract class AbstractElasticsearchMojo
     /**
      * Whether to keep existing data (data and logs directories).
      */
-    @Parameter(property="es.keepExistingData", defaultValue = "false")
+    @Parameter(property="es.keepExistingData", defaultValue = "true")
     protected boolean keepExistingData;
 
     /**

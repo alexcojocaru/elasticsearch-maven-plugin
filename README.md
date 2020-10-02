@@ -82,8 +82,9 @@ The Elasticsearch behaviour and properties can be configured through the followi
 *   **pathInitScript** [defaultValue=""]
     > the path of the initialization scripts (see the [Initialization scripts](#initScripts) section for details)
 
-*   **keepExistingData** [defaultValue=false] - work in progress
-    > whether to keep the data and log directories if they already exist
+*   **keepExistingData** [defaultValue=true]
+    > whether to keep the data and log directories, if they already exist; since the behavior,
+before this flag was implemented, was to keep the existing data, the default is true
 
 *   **timeout** [defaultValue=30]
     > how long to wait (in seconds) for each Elasticsearch instance to start up
