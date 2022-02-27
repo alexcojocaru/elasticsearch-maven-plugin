@@ -69,21 +69,23 @@ public class ElasticsearchArtifact
 
         private String getArtifactId(String flavour, String version)
         {
-            if (VersionUtil.isBetween_5_0_0_and_6_2_x(version)) // no flavour for ES under 6.3.0
+            if (VersionUtil.isBetween_6_3_0_and_7_10_x(version))
             {
+                if (StringUtils.isEmpty(flavour))
+                {
+                    return "elasticsearch-oss";
+                }
+                else if ("default".equals(flavour))
+                {
+                    return "elasticsearch";
+                }
+                else
+                {
+                    return String.format("elasticsearch-%s", flavour);
+                }
+            }
+            else {
                 return "elasticsearch";
-            }
-            else if (StringUtils.isEmpty(flavour))
-            {
-                return "elasticsearch-oss";
-            }
-            else if ("default".equals(flavour))
-            {
-                return "elasticsearch";
-            }
-            else
-            {
-                return String.format("elasticsearch-%s", flavour);
             }
         }
 

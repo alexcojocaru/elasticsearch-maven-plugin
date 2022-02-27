@@ -24,7 +24,7 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > the name of the cluster to create
 
 *   **flavour** [defaultValue="oss"]
-    > the flavour of Elasticsearch to install (`oss`, `default`); the `default` is not supported currently, due to x-pack issues; applicable only to Elasticsearch 6.3.0+
+    > only applicable to Elasticsearch versions 6.3.0 to 7.10.x (inclusive); the flavour of Elasticsearch to install (`oss`, `default`); the `default` is not supported, due to x-pack issues; this property is ignored by all versions outside that range
 
 *   **version** [defaultValue="5.0.0"]
     > the version of Elasticsearch to install

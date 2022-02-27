@@ -7,9 +7,11 @@ public class VersionUtil {
         return version.matches("[0-4]\\..*");
     }
 
-    public static boolean isBetween_5_0_0_and_6_2_x(String version)
+    public static boolean isBetween_6_3_0_and_7_10_x(String version)
     {
-        return version.matches("5\\..*") || version.matches("6\\.[0-2]\\..*");
+        return version.matches("6\\.([3-9]|(\\d){2,})\\..*")
+                || version.matches("7\\.[0-9]\\..*")
+                || version.matches("7\\.10\\..*");
     }
 
     public static boolean isEqualOrGreater_6_4_0(String version)

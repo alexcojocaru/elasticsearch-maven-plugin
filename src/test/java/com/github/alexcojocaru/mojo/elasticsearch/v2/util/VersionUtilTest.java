@@ -20,19 +20,32 @@ public class VersionUtilTest {
     }
     
     @Test
-    public void testIsBetween_5_0_0_and_6_x_x()
+    public void testIsBetween_6_3_0_and_7_10_x()
     {
-        assertTrue(VersionUtil.isBetween_5_0_0_and_6_2_x("5.0.0"));
-        assertTrue(VersionUtil.isBetween_5_0_0_and_6_2_x("5.2.1"));
-        assertTrue(VersionUtil.isBetween_5_0_0_and_6_2_x("6.0.0"));
-        assertTrue(VersionUtil.isBetween_5_0_0_and_6_2_x("6.1.0"));
-        assertTrue(VersionUtil.isBetween_5_0_0_and_6_2_x("6.2.0"));
-        assertTrue(VersionUtil.isBetween_5_0_0_and_6_2_x("6.2.19"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("5.0.0"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("5.9.0"));
 
-        assertFalse(VersionUtil.isBetween_5_0_0_and_6_2_x("6.3.0"));
-        assertFalse(VersionUtil.isBetween_5_0_0_and_6_2_x("6.4.9"));
-        assertFalse(VersionUtil.isBetween_5_0_0_and_6_2_x("7.0.0"));
-        assertFalse(VersionUtil.isBetween_5_0_0_and_6_2_x("7.1.0"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("6.0.0"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("6.1.0"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("6.2.0"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("6.2.19"));
+
+        assertTrue(VersionUtil.isBetween_6_3_0_and_7_10_x("6.3.0"));
+        assertTrue(VersionUtil.isBetween_6_3_0_and_7_10_x("6.4.9"));
+        assertTrue(VersionUtil.isBetween_6_3_0_and_7_10_x("7.0.0"));
+        assertTrue(VersionUtil.isBetween_6_3_0_and_7_10_x("7.1.0"));
+        assertTrue(VersionUtil.isBetween_6_3_0_and_7_10_x("7.9.0"));
+        assertTrue(VersionUtil.isBetween_6_3_0_and_7_10_x("7.10.0"));
+        assertTrue(VersionUtil.isBetween_6_3_0_and_7_10_x("7.10.2"));
+        assertTrue(VersionUtil.isBetween_6_3_0_and_7_10_x("7.10.3"));
+
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("7.11.0"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("7.11.3"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("7.15.3"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("7.19.3"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("7.20.3"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("7.27.0"));
+        assertFalse(VersionUtil.isBetween_6_3_0_and_7_10_x("8.1.0"));
     }
 
     @Test

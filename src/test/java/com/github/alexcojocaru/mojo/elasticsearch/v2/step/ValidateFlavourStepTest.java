@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactResolver;
 
 /**
@@ -27,38 +26,16 @@ public class ValidateFlavourStepTest
      * Test the flavour check with correct version
      */
     @Test
-    public void testCheckFlavourWithCorrectFlavour()
+    public void testCheckFlavour()
     {
         new ValidateFlavourStep().execute(buildConfig("5.1.1", ""));
-        new ValidateFlavourStep().execute(buildConfig("6.1.1", ""));
-        new ValidateFlavourStep().execute(buildConfig("6.2.3", ""));
-
-        new ValidateFlavourStep().execute(buildConfig("6.3.0", ""));
-        new ValidateFlavourStep().execute(buildConfig("6.3.0", "oss"));
+        new ValidateFlavourStep().execute(buildConfig("8.0.0", ""));
 
         new ValidateFlavourStep().execute(buildConfig("6.5.0", ""));
         new ValidateFlavourStep().execute(buildConfig("6.5.0", "flavour"));
 
         new ValidateFlavourStep().execute(buildConfig("7.0.0", ""));
         new ValidateFlavourStep().execute(buildConfig("7.0.0", "something"));
-    }
-
-    @Test(expected = ElasticsearchSetupException.class)
-    public void testCheckFlavourFor511()
-    {
-        new ValidateFlavourStep().execute(buildConfig("5.1.1", "oss"));
-    }
-
-    @Test(expected = ElasticsearchSetupException.class)
-    public void testCheckFlavourFor611()
-    {
-        new ValidateFlavourStep().execute(buildConfig("6.1.1", "oss"));
-    }
-
-    @Test(expected = ElasticsearchSetupException.class)
-    public void testCheckFlavourFor623()
-    {
-        new ValidateFlavourStep().execute(buildConfig("6.2.3", "oss"));
     }
     
     private ClusterConfiguration buildConfig(String version, String flavour)
