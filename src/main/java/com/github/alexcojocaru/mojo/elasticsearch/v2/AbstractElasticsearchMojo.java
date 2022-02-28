@@ -154,7 +154,7 @@ public abstract class AbstractElasticsearchMojo
     /**
      * How long to wait (in seconds) for the Elasticsearch cluster to start up.
      */
-    @Parameter(property="es.timeout", defaultValue = "30")
+    @Parameter(property="es.timeout", defaultValue = "60")
     protected int timeout;
 
     /**

@@ -16,31 +16,31 @@ import org.zeroturnaround.zip.ZipUtil;
 
 public class ArchiveUtil {
 
-	public static void autodetectAndExtract(File archiveFile, File targetDir) throws IOException {
-		String filename = archiveFile.toString().toLowerCase(Locale.ROOT);
-		if (filename.endsWith(".zip"))
-		{
-			extractZip(archiveFile, targetDir);
-		}
-		else if (filename.endsWith(".tar.gz"))
-		{
-			extractTarGz(archiveFile, targetDir);
-		}
-		else {
-			throw new IOException("Unsupported archive format for " + archiveFile);
-		}
-	}
+    public static void autodetectAndExtract(File archiveFile, File targetDir) throws IOException {
+        String filename = archiveFile.toString().toLowerCase(Locale.ROOT);
+        if (filename.endsWith(".zip"))
+        {
+            extractZip(archiveFile, targetDir);
+        }
+        else if (filename.endsWith(".tar.gz"))
+        {
+            extractTarGz(archiveFile, targetDir);
+        }
+        else {
+            throw new IOException("Unsupported archive format for " + archiveFile);
+        }
+    }
 
-	public static void extractZip(File archiveFile, File targetDir) {
-		ZipUtil.unpack(archiveFile, targetDir);
-	}
+    public static void extractZip(File archiveFile, File targetDir) {
+        ZipUtil.unpack(archiveFile, targetDir);
+    }
 
-	public static void extractTarGz(File archiveFile, File targetDir) {
-		TarGZipUnArchiver unArchiver = new TarGZipUnArchiver(archiveFile);
-		unArchiver.setDestDirectory(targetDir);
-		// We don't want logging, but this is necessary to avoid an NPE
-		unArchiver.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_DISABLED, "console"));
-		unArchiver.extract();
-	}
+    public static void extractTarGz(File archiveFile, File targetDir) {
+        TarGZipUnArchiver unArchiver = new TarGZipUnArchiver(archiveFile);
+        unArchiver.setDestDirectory(targetDir);
+        // We don't want logging, but this is necessary to avoid an NPE
+        unArchiver.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_DISABLED, "console"));
+        unArchiver.extract();
+    }
 
 }

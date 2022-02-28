@@ -41,7 +41,8 @@ public abstract class ItBase
         }
         catch (IOException e)
         {
-            throw new RuntimeException("Cannot load httpPort from test.properties", e);
+            throw new RuntimeException("Cannot load properties from test.properties", e);
+
         }
     }
     

@@ -6,6 +6,9 @@ They are terminated using the **stop** goal and, for extra peace of mind, using 
 
 Each instance is installed in _${project.build.directory}/elasticsearch${instanceIndex}_.
 
+This plugin is known to work with Elasticsearch versions 5.0.0 to 8.0.0 .
+For versions 8+, the [xpack security](https://www.elastic.co/guide/en/elasticsearch/reference/8.0/security-settings.html#general-security-settings) is disabled -
+there is no need for HTTPS or basic authentication to send requests to the Elasticsearch server.
 For Elasticsearch version 1.x.x and 2.x.x support, see version 1.x and 2.x of this plugin.
 
 Because the plugin uses the new [Eclipse based Aether framework](https://www.eclipse.org/aether/), it only works with Maven 3.1.0 and above.
@@ -86,8 +89,8 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > whether to keep the data and log directories, if they already exist; since the behavior,
 before this flag was implemented, was to keep the existing data, the default is true
 
-*   **timeout** [defaultValue=30]
-    > how long to wait (in seconds) for each Elasticsearch instance to start up
+*   **timeout** [defaultValue=60]
+    > how long to wait (in seconds) for each Elasticsearch instance to start up; since Elasticsearch 8 takes much longer than the previous versions, the default was changed from 30 to 60 seconds
 
 *   **clientSocketTimeout** [defaultValue=5000]
     > the default socket timeout (in milliseconds) for requests sent to the Elasticsearch server

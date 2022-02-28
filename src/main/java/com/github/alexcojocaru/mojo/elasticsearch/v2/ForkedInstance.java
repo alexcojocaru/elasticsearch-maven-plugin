@@ -10,6 +10,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceSetupSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceStepSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.util.FilesystemUtil;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.util.ProcessUtil;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
 
 /**
  * Start an ES instance and hold the reference to the ES {@link Process}.
@@ -65,23 +66,37 @@ public class ForkedInstance
         cmd.addArgument("pid", false);
 
         cmd.addArgument(
-        		"-Ecluster.name=" + config.getClusterConfiguration().getClusterName(),
-        		false);
+                "-Ecluster.name=" + config.getClusterConfiguration().getClusterName(),
+                false);
+
         cmd.addArgument("-Ehttp.port=" + config.getHttpPort(), false);
-        cmd.addArgument("-Etransport.tcp.port=" + config.getTransportPort(), false);
+
+        String transportPortName = VersionUtil
+                .isEqualOrGreater_8_0_0(config.getClusterConfiguration().getVersion())
+                        ? "transport.port"
+                        : "transport.tcp.port";
+        cmd.addArgument("-E" + transportPortName + "=" + config.getTransportPort(), false);
+
 
         // If there are multiple nodes, I need to tell each about the other,
         // in order to form a cluster.
         List<String> hosts = config.getClusterConfiguration().getInstanceConfigurationList()
-        		.stream()
-        		.filter(config -> config != this.config)
-        		.map(config -> "127.0.0.1:" + config.getTransportPort())
-        		.collect(Collectors.toList());
-		if (hosts.isEmpty() == false)
-		{
-			String hostsString = StringUtils.join(hosts, ',');
-			cmd.addArgument("-Ediscovery.zen.ping.unicast.hosts=" + hostsString, false);
-		}
+                .stream()
+                .map(config -> "127.0.0.1:" + config.getTransportPort())
+                .collect(Collectors.toList());
+        if (hosts.isEmpty() == false)
+        {
+            String hostsString = StringUtils.join(hosts, ',');
+            if (VersionUtil.isEqualOrGreater_8_0_0(config.getClusterConfiguration().getVersion()))
+            {
+                cmd.addArgument("-Ediscovery.seed_hosts=" + hostsString, false);
+                cmd.addArgument("-Ecluster.initial_master_nodes=" + hostsString, false);
+            }
+            else
+            {
+                cmd.addArgument("-Ediscovery.zen.ping.unicast.hosts=" + hostsString, false);
+            }
+        }
 
         if (config.getClusterConfiguration().isAutoCreateIndex() == false)
         {
@@ -93,6 +108,11 @@ public class ForkedInstance
         if (config.getSettings() != null)
         {
             config.getSettings().forEach((key, value) -> cmd.addArgument("-E" + key + '=' + value));
+        }
+
+        if (VersionUtil.isEqualOrGreater_8_0_0(config.getClusterConfiguration().getVersion()))
+        {
+            cmd.addArgument("-Expack.security.enabled=false", false);
         }
 
         return cmd;

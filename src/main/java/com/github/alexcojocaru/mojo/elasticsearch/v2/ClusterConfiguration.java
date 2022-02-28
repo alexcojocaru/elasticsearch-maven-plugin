@@ -39,7 +39,7 @@ public class ClusterConfiguration
     private boolean setAwait;
     private boolean autoCreateIndex;
 
-    public ClusterConfiguration(List<InstanceConfiguration> instanceConfigurationList,
+    private ClusterConfiguration(List<InstanceConfiguration> instanceConfigurationList,
             PluginArtifactResolver artifactResolver,
             PluginArtifactInstaller artifactInstaller,
             Log log)
@@ -163,7 +163,7 @@ public class ClusterConfiguration
         private List<InstanceConfiguration> instanceConfigurationList = new ArrayList<>();
         private PluginArtifactResolver artifactResolver;
         private PluginArtifactInstaller artifactInstaller;
-        private  Log log;
+        private Log log;
 
         private String flavour;
         private String version;

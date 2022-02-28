@@ -16,8 +16,8 @@ public class WaitToStartClusterStep
     public void execute(ClusterConfiguration config)
     {
         // the instances have already started;
-        // waiting just 10 seconds for them to form the cluster
-        int timeout = 10;
+        // waiting 30 seconds for them to form the cluster (ES 8+ is slow)
+        int timeout = 30;
 
         try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withInstanceConfiguration(config.getInstanceConfigurationList().get(0))
