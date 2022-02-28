@@ -1,6 +1,7 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.util;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -143,7 +145,24 @@ public class ProcessUtil
      */
     public static List<String> executeScript(InstanceConfiguration config, CommandLine command)
     {
-        return executeScript(config, command, null, null, false);
+        return executeScript(config, command, Optional.empty(), null, null, false);
+    }
+    
+    /**
+     * Run the given command as a process within the supplied instance config context
+     * and wait until it finalizes. An ElasticsearchSetupException is thrown if the exit code
+     * is not 0.
+     * @param config - the instance config
+     * @param commandInput - the input string to send to the given command (not null)
+     * @param command - the command to execute
+     * @return the output (as separate lines)
+     */
+    public static List<String> executeScript(
+            InstanceConfiguration config,
+            CommandLine command,
+            String commandInput)
+    {
+        return executeScript(config, command, Optional.of(commandInput), null, null, false);
     }
     
     /**
@@ -160,7 +179,7 @@ public class ProcessUtil
             CommandLine command,
             boolean disableLogging)
     {
-        return executeScript(config, command, null, null, disableLogging);
+        return executeScript(config, command, Optional.empty(), null, null, disableLogging);
     }
     
     /**
@@ -178,7 +197,8 @@ public class ProcessUtil
             Map<String, String> environment,
             ProcessDestroyer processDestroyer)
     {
-        return executeScript(config, command, environment, processDestroyer, false);
+        return executeScript(
+                config, command, Optional.empty(), environment, processDestroyer, false);
     }
     
     /**
@@ -187,13 +207,16 @@ public class ProcessUtil
      * is not 0.
      * @param config - the instance config
      * @param command - the command to execute
+     * @param commandInput - the optional input string to send to the given command
      * @param environment - a map of environment variables; can be null
      * @param processDestroyer - a destroyer handler for the spawned process; can be null 
      * @param disableLogging - whether to disable the logging of the command or not
      * @return the output (not trimmed of whitespaces) of the given command, as separate lines
      */
-    public static List<String> executeScript(InstanceConfiguration config,
+    public static List<String> executeScript(
+            InstanceConfiguration config,
             CommandLine command,
+            Optional<String> commandInput,
             Map<String, String> environment,
             ProcessDestroyer processDestroyer,
             boolean disableLogging)
@@ -207,22 +230,27 @@ public class ProcessUtil
         DefaultExecutor executor = new DefaultExecutor();
         executor.setWorkingDirectory(baseDir);
         executor.setProcessDestroyer(processDestroyer); // allows null
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(
+                commandInput.map(String::getBytes).orElse(new byte[] { }));
         
         // set up a tap on the output stream, to collect to output and return it from this method
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ByteArrayOutputStream errorStream = new ByteArrayOutputStream();
         executor.setStreamHandler(new PumpStreamHandler(
                 disableLogging ? outputStream : new TeeOutputStream(System.out, outputStream),
-                disableLogging ? errorStream : new TeeOutputStream(System.err, errorStream)));
+                disableLogging ? errorStream : new TeeOutputStream(System.err, errorStream),
+                inputStream));
 
         try
         {
             log.debug(String.format("Using environment: %s", completeEnvironment));
             
             String commandMessage = String.format(
-                    "Elasticsearch[%d]: Executing command '%s' in directory '%s'",
+                    "Elasticsearch[%d]: Executing command '%s' with input '%s' in directory '%s'",
                     instanceId,
                     command.toString(),
+                    commandInput.orElse(""),
                     baseDir);
             if (disableLogging)
             {

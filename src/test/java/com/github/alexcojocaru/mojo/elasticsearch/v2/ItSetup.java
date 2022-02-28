@@ -53,6 +53,28 @@ public class ItSetup
     }
 
     /**
+     * Generate a map of properties to be passed to the plugin
+     * 
+     * @param count the number of ES instances
+     * @param bootstrapPassword the bootstrap password
+     * @throws IOException
+     */
+    public Map<String, String> generateProperties(int count, String bootstrapPassword) throws IOException
+    {
+        String clusterName = RandomStringUtils.randomAlphanumeric(8);
+        Map<ElasticsearchPort, Integer> esPorts = NetUtil.findOpenPortsForElasticsearch(count);
+
+        Map<String, String> props = new LinkedHashMap<>();
+        props.put("es.instanceCount", String.valueOf(count));
+        props.put("es.bootstrapPassword", bootstrapPassword);
+        props.put("es.clusterName", clusterName);
+        props.put("es.httpPort", esPorts.get(ElasticsearchPort.HTTP).toString());
+        props.put("es.transportPort", esPorts.get(ElasticsearchPort.TRANSPORT).toString());
+
+        return props;
+    }
+
+    /**
      * Write the given map to a properties file.
      */
     public void saveProperties(String filename, Map<String, String> props)

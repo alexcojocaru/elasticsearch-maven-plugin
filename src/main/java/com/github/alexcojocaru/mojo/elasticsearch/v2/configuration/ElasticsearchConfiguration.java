@@ -22,6 +22,8 @@ public interface ElasticsearchConfiguration extends ElasticsearchBaseConfigurati
     
     String getPathConf();
     
+    String getBootstrapPassword();
+    
     String getPathData();
     
     String getPathLogs();

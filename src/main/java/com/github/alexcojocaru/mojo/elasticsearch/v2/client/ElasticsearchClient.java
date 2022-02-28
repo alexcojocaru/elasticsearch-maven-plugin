@@ -5,6 +5,9 @@ import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Optional;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.http.HttpEntity;
@@ -29,6 +32,7 @@ import org.apache.maven.plugin.logging.Log;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
 
 /**
  * A REST client for Elasticsearch.
@@ -44,6 +48,7 @@ public class ElasticsearchClient implements Closeable
     private final Log log;
     private final String hostname;
     private final int port;
+    private final Optional<String> authenticationHeader;
 
 
     private ElasticsearchClient(
@@ -52,7 +57,8 @@ public class ElasticsearchClient implements Closeable
             HttpClient httpClient,
             PoolingHttpClientConnectionManager connectionManager,
             String hostname,
-            int port)
+            int port,
+            Optional<String> authenticationHeader)
     {
         this.log = log;
         this.mapper = mapper;
@@ -61,6 +67,8 @@ public class ElasticsearchClient implements Closeable
         
         this.hostname = hostname;
         this.port = port;
+        
+        this.authenticationHeader = authenticationHeader;
     }
 
 
@@ -73,10 +81,11 @@ public class ElasticsearchClient implements Closeable
 
     public <T> T get(String path, Class<T> clazz) throws ElasticsearchClientException
     {
-        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        String uri = String.format("https://%s:%d%s", hostname, port, path);
         log.debug(String.format("Sending GET request to %s", uri));
 
         HttpGet request = new HttpGet(uri);
+        authenticationHeader.ifPresent(header -> request.setHeader(HttpHeaders.AUTHORIZATION, header));
         request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
 
         String content = executeRequest(request);
@@ -87,10 +96,11 @@ public class ElasticsearchClient implements Closeable
 
     public <T> T get(String path, String entity, Class<T> clazz) throws ElasticsearchClientException
     {
-        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        String uri = String.format("https://%s:%d%s", hostname, port, path);
         log.debug(String.format("Sending GET request to %s with entity '%s'", uri, entity));
 
         HttpGetWithEntity request = new HttpGetWithEntity(uri);
+        authenticationHeader.ifPresent(header -> request.setHeader(HttpHeaders.AUTHORIZATION, header));
         request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
         request.setEntity(new StringEntity(entity, ContentType.APPLICATION_JSON));
 
@@ -102,10 +112,11 @@ public class ElasticsearchClient implements Closeable
 
     public void put(String path, String entity) throws ElasticsearchClientException
     {
-        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        String uri = String.format("https://%s:%d%s", hostname, port, path);
         log.info(String.format("Sending PUT request to %s with entity '%s'", uri, entity));
 
         HttpPut request = new HttpPut(uri);
+        authenticationHeader.ifPresent(header -> request.setHeader(HttpHeaders.AUTHORIZATION, header));
         request.setEntity(new StringEntity(entity, ContentType.APPLICATION_JSON));
         executeRequest(request);
     }
@@ -113,10 +124,11 @@ public class ElasticsearchClient implements Closeable
     public <T> T post(String path, String entity, Class<T> clazz)
             throws ElasticsearchClientException
     {
-        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        String uri = String.format("https://%s:%d%s", hostname, port, path);
         log.debug(String.format("Sending POST request to %s with entity '%s'", uri, entity));
 
         HttpPost request = new HttpPost(uri);
+        authenticationHeader.ifPresent(header -> request.setHeader(HttpHeaders.AUTHORIZATION, header));
         request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
         request.setEntity(new StringEntity(entity, ContentType.APPLICATION_JSON));
 
@@ -128,10 +140,11 @@ public class ElasticsearchClient implements Closeable
 
     public void delete(String path) throws ElasticsearchClientException
     {
-        String uri = String.format("http://%s:%d%s", hostname, port, path);
+        String uri = String.format("https://%s:%d%s", hostname, port, path);
         log.debug(String.format("Sending DELETE request to %s", uri));
 
         HttpDelete request = new HttpDelete(uri);
+        authenticationHeader.ifPresent(header -> request.setHeader(HttpHeaders.AUTHORIZATION, header));
         executeRequest(request);
     }
 
@@ -211,6 +224,7 @@ public class ElasticsearchClient implements Closeable
         private String hostname;
         private int port;
         private int socketTimeout;
+        private Optional<ElasticsearchCredentials> credentials;
         
         public Builder withLog(Log log)
         {
@@ -236,11 +250,25 @@ public class ElasticsearchClient implements Closeable
             return this;
         }
         
+        public Builder withCredentials(ElasticsearchCredentials credentials)
+        {
+            this.credentials = Optional.ofNullable(credentials);
+            return this;
+        }
+        
         public Builder withInstanceConfiguration(InstanceConfiguration config)
         {
             this.log = config.getClusterConfiguration().getLog();
             this.socketTimeout = config.getClusterConfiguration().getClientSocketTimeout();
             this.port = config.getHttpPort();
+            
+            if (VersionUtil.isEqualOrGreater_8_0_0(config.getClusterConfiguration().getVersion())) {
+                credentials = Optional.of(
+                        new ElasticsearchCredentials.Builder()
+                                .withPassword(config.getClusterConfiguration().getBootstrapPassword())
+                                .build());
+            }
+
             return this;
         }
         
@@ -249,13 +277,27 @@ public class ElasticsearchClient implements Closeable
             PoolingHttpClientConnectionManager connectionManager = buildHttpClientManager(
                     socketTimeout);
 
+            Optional<String> authenticationHeader;
+            if (credentials != null && credentials.isPresent())
+            {
+                // the username and password are expected to be alphanumeric
+                String auth = credentials.get().getUsername() + ":" + credentials.get().getPassword();
+                String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.ISO_8859_1));
+                authenticationHeader = Optional.of("Basic " + new String(encodedAuth));
+            }
+            else
+            {
+                authenticationHeader = Optional.empty();
+            }
+
             return new ElasticsearchClient(
                     log,
                     buildObjectMapper(),
                     buildHttpClient(connectionManager),
                     connectionManager,
                     hostname,
-                    port);
+                    port,
+                    authenticationHeader);
         }
         
         private ObjectMapper buildObjectMapper()

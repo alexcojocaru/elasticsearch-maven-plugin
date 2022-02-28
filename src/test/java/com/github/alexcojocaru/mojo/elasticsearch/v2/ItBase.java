@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.mockito.Mock;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCredentials;
 
 /**
  * @author Alex Cojocaru
@@ -21,7 +22,10 @@ public abstract class ItBase
     protected static int httpPort;
     protected static String clusterName;
     protected static int instanceCount;
+    protected static String bootstrapPassword;
     
+    protected static ElasticsearchCredentials elasticsearchCredentials;
+
     protected ElasticsearchClient client;
     
     @Mock
@@ -38,11 +42,18 @@ public abstract class ItBase
             httpPort = Integer.parseInt(props.getProperty("es.httpPort"));
             clusterName = props.getProperty("es.clusterName");
             instanceCount = Integer.parseInt(props.getProperty("es.instanceCount"));
+            bootstrapPassword = props.getProperty("es.bootstrapPassword");
         }
         catch (IOException e)
         {
-            throw new RuntimeException("Cannot load httpPort from test.properties", e);
+            throw new RuntimeException("Cannot load properties from test.properties", e);
         }
+        
+        elasticsearchCredentials = bootstrapPassword == null
+                ? null
+                : new ElasticsearchCredentials.Builder()
+                        .withPassword(bootstrapPassword)
+                        .build();
     }
     
     @Before
@@ -53,6 +64,7 @@ public abstract class ItBase
                 .withHostname("localhost")
                 .withPort(httpPort)
                 .withSocketTimeout(5000)
+                .withCredentials(elasticsearchCredentials)
                 .build();
     }
     @After

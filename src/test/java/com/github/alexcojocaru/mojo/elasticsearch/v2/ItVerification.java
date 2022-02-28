@@ -3,6 +3,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCredentials;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.Monitor;
 
 /**
@@ -59,7 +60,22 @@ public class ItVerification
      * @param clusterName
      * @throws IllegalStateException
      */
-    public void verifyInstanceRunning(String clusterName, int httpPort) throws IllegalStateException
+    public void verifyInstanceRunning(String clusterName, int httpPort)
+            throws IllegalStateException
+    {
+        verifyInstanceRunning(clusterName, httpPort, null);
+    }
+
+    /**
+     * Verify that the ES instance in the Elasticsearch base directory is running
+     * 
+     * @param httpPort
+     * @param clusterName
+     * @param bootstrapPassword ; can be null
+     * @throws IllegalStateException
+     */
+    public void verifyInstanceRunning(String clusterName, int httpPort, String bootstrapPassword)
+            throws IllegalStateException
     {
         String path = esBaseDir.getAbsolutePath();
         if (Monitor.isProcessRunning(path) == false)
@@ -68,7 +84,10 @@ public class ItVerification
                     "The ES process in %s is not running", path));
         }
         
-        if (Monitor.isInstanceRunning(clusterName, httpPort) == false)
+        ElasticsearchCredentials credentials = bootstrapPassword == null
+                ? null
+                : new ElasticsearchCredentials.Builder().withPassword(bootstrapPassword) .build();
+        if (Monitor.isInstanceRunning(clusterName, httpPort, credentials) == false)
         {
             throw new IllegalStateException(String.format(
                     "ES did not respond as expected to GET / request on port %d", httpPort));
@@ -84,6 +103,19 @@ public class ItVerification
     public void verifyInstanceNotRunning(String clusterName, int httpPort)
             throws IllegalStateException
     {
+        verifyInstanceNotRunning(clusterName, httpPort, null);
+    }
+
+    /**
+     * Verify that the ES instance in the Elasticsearch base directory is not running
+     * 
+     * @param httpPort
+     * @param bootstrapPassword ; can be null
+     * @throws IllegalStateException
+     */
+    public void verifyInstanceNotRunning(String clusterName, int httpPort, String bootstrapPassword)
+            throws IllegalStateException
+    {
         String path = esBaseDir.getAbsolutePath();
         if (Monitor.isProcessRunning(path))
         {
@@ -91,7 +123,10 @@ public class ItVerification
                     "The ES process in %s appears to be running", path));
         }
         
-        if (Monitor.isInstanceRunning(clusterName, httpPort))
+        ElasticsearchCredentials credentials = bootstrapPassword == null
+                ? null
+                : new ElasticsearchCredentials.Builder().withPassword(bootstrapPassword) .build();
+        if (Monitor.isInstanceRunning(clusterName, httpPort, credentials))
         {
             throw new IllegalStateException(String.format(
                     "ES responded with valid response to GET / request on port %d", httpPort));

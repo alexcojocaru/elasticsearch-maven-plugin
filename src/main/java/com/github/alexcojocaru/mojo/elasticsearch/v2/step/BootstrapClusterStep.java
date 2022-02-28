@@ -1,17 +1,5 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClientException;
-import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCommand;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.Validate;
-import org.apache.maven.plugin.logging.Log;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,6 +8,19 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.maven.plugin.logging.Log;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.ClusterConfiguration;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.ElasticsearchSetupException;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClientException;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCommand;
 
 /**
  * Bootstrap the ES cluster with the provided initialization script, if provided.

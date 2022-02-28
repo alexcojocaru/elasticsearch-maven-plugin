@@ -107,6 +107,13 @@ public abstract class AbstractElasticsearchMojo
     protected String pathConf;
 
     /**
+     * The password to be set for the default 'elastic' user,
+     * needed for making HTTPS requests to the cluster.
+     */
+    @Parameter(property="es.bootstrapPassword", defaultValue = "password")
+    protected String bootstrapPassword;
+
+    /**
      * The path to the data directory.
      */
     @Parameter(property="es.pathData")
@@ -256,6 +263,14 @@ public abstract class AbstractElasticsearchMojo
     {
         this.pathConf = pathData;
     }
+    
+    public String getBootstrapPassword() {
+        return bootstrapPassword;
+    }
+    
+    public void setBootstrapPassword(String bootstrapPassword) {
+        this.bootstrapPassword = bootstrapPassword;
+    }
 
     public String getPathData()
     {
@@ -370,6 +385,7 @@ public abstract class AbstractElasticsearchMojo
                 .withDownloadUrlPassword(downloadUrlPassword)
                 .withClusterName(clusterName)
                 .withPathConf(pathConf)
+                .withBootstrapPassword(bootstrapPassword)
                 .withElasticsearchPlugins(plugins)
                 .withPathInitScripts(getPathInitScript())
                 .withKeepExistingData(keepExistingData)

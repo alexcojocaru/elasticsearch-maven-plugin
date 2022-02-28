@@ -10,6 +10,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceSetupSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceStepSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.util.FilesystemUtil;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.util.ProcessUtil;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
 
 /**
  * Start an ES instance and hold the reference to the ES {@link Process}.
@@ -67,8 +68,13 @@ public class ForkedInstance
         cmd.addArgument(
         		"-Ecluster.name=" + config.getClusterConfiguration().getClusterName(),
         		false);
+
         cmd.addArgument("-Ehttp.port=" + config.getHttpPort(), false);
-        cmd.addArgument("-Etransport.tcp.port=" + config.getTransportPort(), false);
+
+        String transportPortName = VersionUtil.isEqualOrGreater_8_0_0(config.getClusterConfiguration().getVersion())
+                ? "transport.port"
+                : "transport.tcp.port";
+        cmd.addArgument("-E" + transportPortName + "=" + config.getTransportPort(), false);
 
         // If there are multiple nodes, I need to tell each about the other,
         // in order to form a cluster.
@@ -80,8 +86,20 @@ public class ForkedInstance
 		if (hosts.isEmpty() == false)
 		{
 			String hostsString = StringUtils.join(hosts, ',');
-			cmd.addArgument("-Ediscovery.zen.ping.unicast.hosts=" + hostsString, false);
+			cmd.addArgument("-Ediscovery.seed_hosts=" + hostsString, false);
 		}
+
+        /*
+         * TODO
+         *
+Configure other nodes to join this cluster:
+- On this node:
+  ⁃ Create an enrollment token with `bin/elasticsearch-create-enrollment-token -s node`.
+  ⁃ Uncomment the transport.host setting at the end of config/elasticsearch.yml.
+  ⁃ Restart Elasticsearch.
+- On other nodes:
+  ⁃ Start Elasticsearch with `bin/elasticsearch --enrollment-token <token>`, using the enrollment token that you generated.
+         */
 
         if (config.getClusterConfiguration().isAutoCreateIndex() == false)
         {

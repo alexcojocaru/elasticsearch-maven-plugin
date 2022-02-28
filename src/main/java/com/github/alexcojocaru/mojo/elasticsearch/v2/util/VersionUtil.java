@@ -25,4 +25,9 @@ public class VersionUtil {
         return version.matches("([7-9]|(\\d){2,})\\..*");
     }
 
+    public static boolean isEqualOrGreater_8_0_0(String version)
+    {
+        return version.matches("([8-9]|(\\d){2,})\\..*");
+    }
+
 }

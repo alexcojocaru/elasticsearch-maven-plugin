@@ -89,9 +89,13 @@ public class Monitor
      * This is an expensive method, for it initializes a new ES client.
      * @param clusterName the ES cluster name
      * @param httpPort the HTTP port to connect to ES
+     * @param credentials credentials to use for HTTPS requests to ES; can be null
      * @return true if the instance is running, false otherwise
      */
-    public static boolean isInstanceRunning(String clusterName, int httpPort)
+    public static boolean isInstanceRunning(
+            String clusterName,
+            int httpPort,
+            ElasticsearchCredentials credentials)
     {
         Log log = Mockito.mock(Log.class);
 
@@ -100,6 +104,7 @@ public class Monitor
                 .withHostname("localhost")
                 .withPort(httpPort)
                 .withSocketTimeout(5000)
+                .withCredentials(credentials)
                 .build())
         {
             return new Monitor(client, log).isInstanceRunning(clusterName);
@@ -171,9 +176,14 @@ public class Monitor
      * @param clusterName the ES cluster name
      * @param instanceCount the number of ES nodes in the cluster
      * @param httpPort the HTTP port to connect to ES
+     * @param credentials credentials to use for HTTPS requests to ES; can be null
      * @return true if the cluster is running, false otherwise
      */
-    public static boolean isClusterRunning(String clusterName, int instanceCount, int httpPort)
+    public static boolean isClusterRunning(
+            String clusterName,
+            int instanceCount,
+            int httpPort,
+            ElasticsearchCredentials credentials)
     {
         Log log = Mockito.mock(Log.class);
 
@@ -182,6 +192,7 @@ public class Monitor
                 .withHostname("localhost")
                 .withPort(httpPort)
                 .withSocketTimeout(5000)
+                .withCredentials(credentials)
                 .build())
         {
             return isClusterRunning(clusterName, instanceCount, client);

@@ -83,4 +83,17 @@ public class VersionUtilTest {
         assertFalse(VersionUtil.isEqualOrGreater_7_0_0("4.11.1"));
     }
 
+    @Test
+    public void testIsEqualOrGreater_8_0_0()
+    {
+        assertTrue(VersionUtil.isEqualOrGreater_8_0_0("8.0.0"));
+        assertTrue(VersionUtil.isEqualOrGreater_8_0_0("8.2.7"));
+        assertTrue(VersionUtil.isEqualOrGreater_8_0_0("9.0.0"));
+        assertTrue(VersionUtil.isEqualOrGreater_8_0_0("11.2.1"));
+
+        assertFalse(VersionUtil.isEqualOrGreater_8_0_0("6.11.3"));
+        assertFalse(VersionUtil.isEqualOrGreater_8_0_0("7.1.1"));
+        assertFalse(VersionUtil.isEqualOrGreater_8_0_0("4.11.1"));
+    }
+
 }

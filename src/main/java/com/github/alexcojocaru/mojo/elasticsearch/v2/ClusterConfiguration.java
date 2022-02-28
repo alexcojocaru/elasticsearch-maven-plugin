@@ -31,6 +31,7 @@ public class ClusterConfiguration
     private String downloadUrlPassword;
     private String clusterName;
     private String pathConf;
+    private String bootstrapPassword;
     private List<PluginConfiguration> plugins;
     private List<String> pathInitScripts;
     private boolean keepExistingData;
@@ -39,7 +40,7 @@ public class ClusterConfiguration
     private boolean setAwait;
     private boolean autoCreateIndex;
 
-    public ClusterConfiguration(List<InstanceConfiguration> instanceConfigurationList,
+    private ClusterConfiguration(List<InstanceConfiguration> instanceConfigurationList,
             PluginArtifactResolver artifactResolver,
             PluginArtifactInstaller artifactInstaller,
             Log log)
@@ -103,6 +104,11 @@ public class ClusterConfiguration
         return pathConf;
     }
 
+    public String getBootstrapPassword()
+    {
+        return bootstrapPassword;
+    }
+
     public List<PluginConfiguration> getPlugins()
     {
         return plugins;
@@ -147,6 +153,7 @@ public class ClusterConfiguration
                 .append("downloadUrlPassword", Optional.ofNullable(downloadUrlPassword).map(p -> "****").orElse(null))
                 .append("clusterName", clusterName)
                 .append("pathConfigFile", pathConf)
+                .append("bootstrapPassword", bootstrapPassword)
                 .append("plugins", plugins)
                 .append("pathInitScripts", pathInitScripts)
                 .append("keepExistingData", keepExistingData)
@@ -163,7 +170,7 @@ public class ClusterConfiguration
         private List<InstanceConfiguration> instanceConfigurationList = new ArrayList<>();
         private PluginArtifactResolver artifactResolver;
         private PluginArtifactInstaller artifactInstaller;
-        private  Log log;
+        private Log log;
 
         private String flavour;
         private String version;
@@ -172,6 +179,7 @@ public class ClusterConfiguration
         private String downloadUrlPassword;
         private String clusterName;
         private String pathConf;
+        private String bootstrapPassword;
         private List<PluginConfiguration> plugins;
         private List<String> pathInitScripts;
         private boolean keepExistingData;
@@ -246,6 +254,11 @@ public class ClusterConfiguration
             this.pathConf = pathConf;
             return this;
         }
+        
+        public Builder withBootstrapPassword(String bootstrapPassword) {
+            this.bootstrapPassword = bootstrapPassword;
+            return this;
+        }
 
         public Builder withElasticsearchPlugins(List<PluginConfiguration> plugins)
         {
@@ -301,6 +314,7 @@ public class ClusterConfiguration
             config.downloadUrlPassword = downloadUrlPassword;
             config.clusterName = clusterName;
             config.pathConf = pathConf;
+            config.bootstrapPassword = bootstrapPassword;
             config.plugins = plugins;
             config.pathInitScripts = pathInitScripts;
             config.keepExistingData = keepExistingData;

@@ -55,7 +55,7 @@
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<version>@project.version@</version>
 				<configuration>
-				    <!-- the instance count (i.e. 2) is set in setup.groovy -->
+					<version>8.0.0</version>
 				</configuration>
 				<executions>
 					<execution>

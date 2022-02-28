@@ -228,7 +228,9 @@ The plugin tag takes 2 parameters:
 
 ## <a name="instanceSettings"></a>Instance settings
 
-Instance settings are applied to each corresponding elasticsearch instance (via [-E on the commandline](https://www.elastic.co/guide/en/elasticsearch/reference/6.1/windows.html#msi-installer-command-line-configuration))
+[Instance settings](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html#node-roles)
+are applied to each corresponding elasticsearch instance
+(via [-E on the CLI](https://www.elastic.co/guide/en/elasticsearch/reference/current/targz.html#targz-configuring))
 during startup. If the list is smaller then `instanceCount` no extra settings
 are applied to the remaining instances. If it's larger, the extra items are ignored.
 
@@ -244,11 +246,11 @@ Example:
         <instanceSettings>
             <properties>
                 <node.name>First</node.name>
-                <node.attr.data_type>ingest</node.attr.data_type>
+                <node.roles>ingest</node.roles>
             </properties>
             <properties>
                 <node.name>Second</node.name>
-                <node.attr.data_type>search</node.attr.data_type>
+                <node.roles>data</node.roles>
             </properties>
         </instanceSettings>
         ...

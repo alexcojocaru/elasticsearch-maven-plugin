@@ -70,6 +70,7 @@ public class BootstrapClusterStepTest
     public void setup()
     {
         when(config.getLog()).thenReturn(log);
+        when(config.getVersion()).thenReturn("8.0.0");
         
         when(instanceConfig.getClusterConfiguration()).thenReturn(config);
         when(config.getInstanceConfigurationList()).thenReturn(Arrays.asList(instanceConfig));

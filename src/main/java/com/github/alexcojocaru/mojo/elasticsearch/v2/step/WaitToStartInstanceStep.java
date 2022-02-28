@@ -2,6 +2,7 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2.step;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchCredentials;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.Monitor;
 
 /**
