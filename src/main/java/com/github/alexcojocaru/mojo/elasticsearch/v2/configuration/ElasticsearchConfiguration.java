@@ -32,7 +32,9 @@ public interface ElasticsearchConfiguration extends ElasticsearchBaseConfigurati
     
     boolean isKeepExistingData();
     
-    int getTimeout();
+    int getInstanceStartupTimeout();
+
+    int getClusterStartupTimeout();
     
     boolean isSetAwait();
     

@@ -15,7 +15,7 @@ public class WaitToStartInstanceStep
     @Override
     public void execute(InstanceConfiguration config)
     {
-        int timeout = config.getClusterConfiguration().getTimeout();
+        int timeout = config.getStartupTimeout();
 
         try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withInstanceConfiguration(config)

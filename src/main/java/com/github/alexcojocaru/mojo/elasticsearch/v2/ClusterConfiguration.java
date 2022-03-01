@@ -34,7 +34,7 @@ public class ClusterConfiguration
     private List<PluginConfiguration> plugins;
     private List<String> pathInitScripts;
     private boolean keepExistingData;
-    private int timeout;
+    private int startupTimeout;
     private int clientSocketTimeout;
     private boolean setAwait;
     private boolean autoCreateIndex;
@@ -118,9 +118,9 @@ public class ClusterConfiguration
         return keepExistingData;
     }
 
-    public int getTimeout()
+    public int getStartupTimeout()
     {
-        return timeout;
+        return startupTimeout;
     }
 
     public int getClientSocketTimeout() {
@@ -150,7 +150,7 @@ public class ClusterConfiguration
                 .append("plugins", plugins)
                 .append("pathInitScripts", pathInitScripts)
                 .append("keepExistingData", keepExistingData)
-                .append("timeout", timeout)
+                .append("startupTimeout", startupTimeout)
                 .append("clientSocketTimeout", clientSocketTimeout)
                 .append("setAwait", setAwait)
                 .append("autoCreateIndex", autoCreateIndex)
@@ -175,7 +175,7 @@ public class ClusterConfiguration
         private List<PluginConfiguration> plugins;
         private List<String> pathInitScripts;
         private boolean keepExistingData;
-        private int timeout;
+        private int startupTimeout;
         private int clientSocketTimeout;
         private boolean setAwait;
         private boolean autoCreateIndex;
@@ -265,9 +265,9 @@ public class ClusterConfiguration
             return this;
         }
 
-        public Builder withTimeout(int timeout)
+        public Builder withStartupTimeout(int startupTimeout)
         {
-            this.timeout = timeout;
+            this.startupTimeout = startupTimeout;
             return this;
         }
 
@@ -304,7 +304,7 @@ public class ClusterConfiguration
             config.plugins = plugins;
             config.pathInitScripts = pathInitScripts;
             config.keepExistingData = keepExistingData;
-            config.timeout = timeout;
+            config.startupTimeout = startupTimeout;
             config.clientSocketTimeout = clientSocketTimeout;
             config.setAwait = setAwait;
             config.autoCreateIndex = autoCreateIndex;

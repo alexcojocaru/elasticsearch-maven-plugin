@@ -152,10 +152,16 @@ public abstract class AbstractElasticsearchMojo
     protected boolean keepExistingData;
 
     /**
-     * How long to wait (in seconds) for the Elasticsearch cluster to start up.
+     * How long to wait (in seconds) for each Elasticsearch instance to start up.
      */
-    @Parameter(property="es.timeout", defaultValue = "60")
-    protected int timeout;
+    @Parameter(property="es.instanceStartupTimeout", defaultValue = "120")
+    protected int instanceStartupTimeout;
+
+    /**
+     * How long to wait (in seconds) for the Elasticsearch cluster to form.
+     */
+    @Parameter(property="es.clusterStartupTimeout", defaultValue = "30")
+    protected int clusterStartupTimeout;
 
     /**
      * The default socket timeout (in milliseconds) for requests sent to the Elasticsearch server.
@@ -316,14 +322,24 @@ public abstract class AbstractElasticsearchMojo
         this.keepExistingData = keepExistingData;
     }
 
-    public int getTimeout()
+    public int getInstanceStartupTimeout()
     {
-        return timeout;
+        return instanceStartupTimeout;
     }
 
-    public void setTimeout(int timeout)
+    public void setInstanceStartupTimeout(int instanceStartupTimeout)
     {
-        this.timeout = timeout;
+        this.instanceStartupTimeout = instanceStartupTimeout;
+    }
+
+    public int getClusterStartupTimeout()
+    {
+        return clusterStartupTimeout;
+    }
+
+    public void setClusterStartupTimeout(int clusterStartupTimeout)
+    {
+        this.clusterStartupTimeout = clusterStartupTimeout;
     }
 
     public int getClientSocketTimeout() {
@@ -373,7 +389,7 @@ public abstract class AbstractElasticsearchMojo
                 .withElasticsearchPlugins(plugins)
                 .withPathInitScripts(getPathInitScript())
                 .withKeepExistingData(keepExistingData)
-                .withTimeout(timeout)
+                .withStartupTimeout(clusterStartupTimeout)
                 .withSetAwait(setAwait)
                 .withAutoCreateIndex(autoCreateIndex);
 
@@ -389,6 +405,7 @@ public abstract class AbstractElasticsearchMojo
                     .withPathLogs(pathLogs)
                     .withEnvironmentVariables(environmentVariables)
                     .withSettings(settings)
+                    .withStartupTimeout(instanceStartupTimeout)
                     .build());
         }
 

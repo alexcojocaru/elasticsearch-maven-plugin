@@ -23,6 +23,7 @@ public class InstanceConfiguration
     private String pathLogs;
     private Map<String, String> environmentVariables;
     private Properties settings;
+    private int startupTimeout;
 
 
     public ClusterConfiguration getClusterConfiguration()
@@ -74,6 +75,11 @@ public class InstanceConfiguration
         return settings;
     }
 
+    public int getStartupTimeout()
+    {
+        return startupTimeout;
+    }
+
     public String toString()
     {
         return new ToStringBuilder(this)
@@ -84,6 +90,7 @@ public class InstanceConfiguration
                 .append("pathData", pathData)
                 .append("pathLogs", pathLogs)
                 .append("settings", settings)
+                .append("startupTimeout", startupTimeout)
                 .toString();
     }
 
@@ -98,6 +105,7 @@ public class InstanceConfiguration
         private String pathLogs;
         private Map<String, String> environmentVariables;
         private Properties settings;
+        private int startupTimeout;
         
 
         public Builder withClusterConfiguration(ClusterConfiguration clusterConfiguration)
@@ -152,6 +160,12 @@ public class InstanceConfiguration
             return this;
         }
 
+        public Builder withStartupTimeout(int startupTimeout)
+        {
+            this.startupTimeout = startupTimeout;
+            return this;
+        }
+
         public InstanceConfiguration build()
         {
             InstanceConfiguration config = new InstanceConfiguration();
@@ -165,6 +179,7 @@ public class InstanceConfiguration
             config.pathLogs = pathLogs;
             config.environmentVariables = environmentVariables == null ? Collections.emptyMap() : environmentVariables;
             config.settings = settings;
+            config.startupTimeout = startupTimeout;
 
             return config;
         }

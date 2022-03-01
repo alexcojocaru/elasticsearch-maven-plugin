@@ -15,10 +15,6 @@ public class WaitToStartClusterStep
     @Override
     public void execute(ClusterConfiguration config)
     {
-        // the instances have already started;
-        // waiting 30 seconds for them to form the cluster (ES 8+ is slow)
-        int timeout = 30;
-
         try (ElasticsearchClient client = new ElasticsearchClient.Builder()
                 .withInstanceConfiguration(config.getInstanceConfigurationList().get(0))
                 .withHostname("localhost")
@@ -28,7 +24,7 @@ public class WaitToStartClusterStep
             monitor.waitToStartCluster(
                     config.getClusterName(),
                     config.getInstanceConfigurationList().size(),
-                    timeout);
+                    config.getStartupTimeout());
         }
     }
 }

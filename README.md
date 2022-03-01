@@ -89,8 +89,11 @@ The Elasticsearch behaviour and properties can be configured through the followi
     > whether to keep the data and log directories, if they already exist; since the behavior,
 before this flag was implemented, was to keep the existing data, the default is true
 
-*   **timeout** [defaultValue=60]
-    > how long to wait (in seconds) for each Elasticsearch instance to start up; since Elasticsearch 8 takes much longer than the previous versions, the default was changed from 30 to 60 seconds
+*   **instanceStartupTimeout** [defaultValue=120]
+    > how long to wait (in seconds) for each Elasticsearch instance to start up; since Elasticsearch 8 takes significantly longer than the previous versions to start up, the default was changed from 30 to 120 seconds
+
+*   **clusterStartupTimeout** [defaultValue=30]
+    > how long to wait (in seconds) for all instances to form a cluster; this is in addition to the instance startup timeout
 
 *   **clientSocketTimeout** [defaultValue=5000]
     > the default socket timeout (in milliseconds) for requests sent to the Elasticsearch server
@@ -367,7 +370,7 @@ in the IDE's run configuration or on the shell environment where maven/Elasticse
 This has the same root cause as the OSX specific error described above, and can be fixed using the same workaround.
 
 
-#### Node is killed when running in TravisCI
+#### Node is killed when running in TravisCI (not applicable; travis-ci.com is not free)
 When running your build job in [TravisCI](https://travis-ci.org/), it can happen that your node is being killed without any notice.
 To fix that you may have to modify the `.travis.yml` file as follows:
 
