@@ -1,4 +1,4 @@
-# Elasticsearch Maven Plugin [![Build Status](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin.png?branch=master)](https://travis-ci.org/alexcojocaru/elasticsearch-maven-plugin)
+# Elasticsearch Maven Plugin [![Java CI with Maven](https://github.com/alexcojocaru/elasticsearch-maven-plugin/actions/workflows/maven.yml/badge.svg)](https://github.com/alexcojocaru/elasticsearch-maven-plugin/actions/workflows/maven.yml)
 
 A Maven 3.1+ plugin to run instances of Elasticsearch version 5+ during the integration test phase of a build.
 Instances are started in forked processes using the **runforked** goal.
