@@ -1,0 +1,12 @@
+# create the index
+# the index name is hardcoded in LoadElasticsearchDataMojoTest
+PUT:load_test_other_index:{ "settings" : { "number_of_shards" : 1, "number_of_replicas" : 0 } }
+
+# create the mapping
+PUT:load_test_other_index/_mapping:{ "properties" : { "name" : { "type" : "keyword" }, "lastModified" : { "type" : "date" } } }
+
+# index a document
+PUT:load_test_other_index/_doc/1:{ "name" : "otherAlex" }
+
+# refresh the index
+POST:load_test_other_index/_refresh:

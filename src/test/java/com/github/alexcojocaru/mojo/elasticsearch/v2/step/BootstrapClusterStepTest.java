@@ -217,11 +217,9 @@ public class BootstrapClusterStepTest
         
         // verify the second argument (ie. the second request in the json)
         Map<String, Object> command2 = captor.getAllValues().get(1);
-        assertEquals(3, command2.size());
+        assertEquals(2, command2.size());
         assertEquals("POST", command2.get("method"));
         assertEquals("load_test_index/_refresh", command2.get("path"));
-        assertTrue(command2.get("payload") instanceof Map);
-        assertEquals(0, ((Map<String, String>)command2.get("payload")).size());
 
         verify(step).executeInitCommand(client, log, esCommand1);
         verify(step).executeInitCommand(client, log, esCommand2);
@@ -319,7 +317,7 @@ public class BootstrapClusterStepTest
             .parseStringCommand("DELETE:load_test_index/test_type/2:");
         doReturn(esCommands[3])
             .when(step)
-            .parseStringCommand("POST:load_test_index/_refresh:{}");
+            .parseStringCommand("POST:load_test_index/_refresh:");
         
         // there are another 8 comments and empty lines, mock all with the same mock skip command
         ElasticsearchCommand emptyCommand = mock(ElasticsearchCommand.class);

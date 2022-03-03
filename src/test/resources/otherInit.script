@@ -9,4 +9,4 @@ PUT:load_test_other_index/test_type/1:{ "name" : "otherAlex" }
 DELETE:load_test_other_index/test_type/2:
 
 # refresh the index
-POST:load_test_other_index/_refresh:{}
+POST:load_test_other_index/_refresh:

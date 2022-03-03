@@ -13,7 +13,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -55,7 +55,28 @@
 				<artifactId>elasticsearch-maven-plugin</artifactId>
 				<version>@project.version@</version>
 				<configuration>
-					<version>8.0.0</version>
+					<version>8.0.1</version>
+					<environmentVariables>
+						<NODE_NAME_ENVIRONMENT_VARIABLE>name-defined-in-pom</NODE_NAME_ENVIRONMENT_VARIABLE>
+					</environmentVariables>
+					<instanceSettings>
+						<properties>
+							<node.roles>master,data</node.roles>
+						</properties>
+					</instanceSettings>
+					<plugins>
+						<plugin>
+							<uri>file://${project.basedir}/src/test/resources/mapper-size-8.0.1.zip</uri>
+							<!-- dummy opts, just to verify that the installation doesn't fail -->
+							<esJavaOpts>-DtestProperty=test-value</esJavaOpts>
+						</plugin>
+						<plugin>
+                            <uri>https://artifacts.elastic.co/downloads/elasticsearch-plugins/ingest-attachment/ingest-attachment-8.0.1.zip</uri>
+						</plugin>
+						<plugin>
+							<uri>analysis-phonetic</uri>
+						</plugin>
+					</plugins>
 				</configuration>
 				<executions>
 					<execution>

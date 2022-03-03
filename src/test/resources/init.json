@@ -7,7 +7,6 @@
 
     {
         "method": "POST",
-        "path" :"load_test_index/_refresh",
-        "payload": {}
+        "path" :"load_test_index/_refresh"
     }
 ]

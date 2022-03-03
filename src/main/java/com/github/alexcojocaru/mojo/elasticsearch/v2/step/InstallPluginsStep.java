@@ -53,7 +53,7 @@ public class InstallPluginsStep
                     .addArgument("--batch")
                     .addArgument(plugin.getUri());
             
-            ProcessUtil.executeScript(config, cmd, environment, null);
+            ProcessUtil.executeScript(config, cmd, environment);
         }
     }
 }

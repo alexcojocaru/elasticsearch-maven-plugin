@@ -298,7 +298,7 @@ Each request definition has three properties:
     > will be appended to the protocol, hostname and port parts when the full URL is constructed
 
 * the **payload**
-    > it should not be defined for *DELETE* requests; some Elasticsearch requests do not require a payload (eg. POST *index/_refresh*), in which case define the payload as `{}`
+    > it should not be defined for *DELETE* requests; some Elasticsearch requests do not require a payload (eg. POST *index/_refresh* in Elasticsearch version 7 or less), in which case define the payload as `{}`; some Elasticsearch requests do not allow a payload (eg. POST *index/_refresh* in Elasticsearch version 8), in which case do not define the **payload** property
 
 
 **Example** (see the *src/main/test/resources/init.json* file for a more complete example):

@@ -58,7 +58,7 @@ public class RemovePluginsStep
             CommandLine cmd = ProcessUtil.buildCommandLine("bin/elasticsearch-plugin")
                     .addArgument("list");
             
-            List<String> output = ProcessUtil.executeScript(config, cmd);
+            List<String> output = ProcessUtil.executeScript(config, cmd, config.getEnvironmentVariables());
             // remove empty entries and trim
             List<String> pluginNames = output.stream()
                     .map(String::trim)
@@ -73,7 +73,7 @@ public class RemovePluginsStep
                         .addArgument("remove")
                         .addArgument(pluginName);
                 
-                ProcessUtil.executeScript(config, removeCmd, config.getEnvironmentVariables(), null);
+                ProcessUtil.executeScript(config, removeCmd, config.getEnvironmentVariables());
             }
         }
         else

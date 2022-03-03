@@ -180,7 +180,23 @@ public class ProcessUtil
             boolean disableLogging)
     {
         return executeScript(config, command, Optional.empty(), null, null, disableLogging);
-
+    }
+    
+    /**
+     * Run the given command as a process within the supplied instance config context
+     * and wait until it finalizes. An ElasticsearchSetupException is thrown if the exit code
+     * is not 0.
+     * @param config - the instance config
+     * @param command - the command to execute
+     * @param environment - a map of environment variables; can be null
+     * @return the output (not trimmed of whitespaces) of the given command, as separate lines
+     */
+    public static List<String> executeScript(InstanceConfiguration config,
+            CommandLine command,
+            Map<String, String> environment)
+    {
+        return executeScript(
+                config, command, Optional.empty(), environment, null, false);
     }
     
     /**
@@ -200,7 +216,6 @@ public class ProcessUtil
     {
         return executeScript(
                 config, command, Optional.empty(), environment, processDestroyer, false);
-
     }
     
     /**

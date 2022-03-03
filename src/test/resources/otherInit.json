@@ -8,6 +8,6 @@
     {
         "method": "POST",
         "path" :"load_test_other_index/_refresh",
-        "payload": {}
+        "payload": null
     }
 ]
