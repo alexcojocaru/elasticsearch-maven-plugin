@@ -51,7 +51,7 @@ public class InstallPluginsStep
             CommandLine cmd = ProcessUtil.buildCommandLine("bin/elasticsearch-plugin")
                     .addArgument("install")
                     .addArgument("--batch")
-                    .addArgument(plugin.getUri());
+                    .addArgument(FilesystemUtil.fixFileUrl(plugin.getUri()), true);
             
             ProcessUtil.executeScript(config, cmd, environment);
         }

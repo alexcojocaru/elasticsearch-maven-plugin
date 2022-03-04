@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,6 +23,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.InstanceConfiguration;
  */
 public final class FilesystemUtil
 {
+    private final static Pattern WINDOWS_FILE_URL_PATTERN = Pattern.compile("(file://)([^:]+:[/\\\\].+)");
 
     private FilesystemUtil()
     {
@@ -106,5 +109,32 @@ public final class FilesystemUtil
                 .addArgument("1s:.*:#!/usr/bin/env bash:", false)
                 .addArgument(String.format("bin/%s", scriptName));
         ProcessUtil.executeScript(config, command);
+    }
+    
+    /**
+     * Fix broken Windows file URLs, e.g. "file://C:/dir/file" -> "file:///C:/dir/file".
+     * For all other [file] URLs, this is a no op and return the given url.
+     * <p></p>
+     * This is useful with file URLs constructed using the "file://{absolute_file_path}" pattern,
+     * which returns the correct "file:///dir/file" like URL on *nix system,
+     * but which returns the incorrect "file://C:/dir/file" like URL on Windows.
+     * <p></p>
+     * @return
+     */
+    public static String fixFileUrl(String fileUrl)
+    {
+        if (fileUrl == null) {
+            return fileUrl;
+        }
+        
+        Matcher matcher = WINDOWS_FILE_URL_PATTERN.matcher(fileUrl);
+        if (matcher.matches())
+        {
+            return matcher.group(1) + "/" + matcher.group(2);
+        }
+        else
+        {
+            return fileUrl;
+        }
     }
 }
