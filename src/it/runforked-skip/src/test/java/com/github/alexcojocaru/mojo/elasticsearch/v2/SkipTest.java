@@ -19,7 +19,7 @@ public class SkipTest extends ItBase
     @Test
     public void testClusterNotRunning()
     {
-        boolean isRunning = Monitor.isClusterRunning(clusterName, instanceCount, client);
+        boolean isRunning = Monitor.isClusterRunning(log, clusterName, instanceCount, client);
         Assert.assertFalse("The ES cluster should not be running", isRunning);
     }
     

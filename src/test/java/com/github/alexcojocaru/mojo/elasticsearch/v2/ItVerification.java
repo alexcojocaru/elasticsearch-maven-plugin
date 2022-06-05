@@ -3,6 +3,11 @@ package com.github.alexcojocaru.mojo.elasticsearch.v2;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import org.apache.maven.monitor.logging.DefaultLog;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
+
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.Monitor;
 
 /**
@@ -16,11 +21,15 @@ public class ItVerification
      * The base directory of Elasticsearch (ie. the directory where ES was installed).
      */
     private final File esBaseDir;
+    private final Log log;
     
 
     public ItVerification(File esBaseDir)
     {
         this.esBaseDir = esBaseDir;
+
+        int logLevel = Logger.LEVEL_INFO;
+        this.log = new DefaultLog(new ConsoleLogger(logLevel, "console"));
     }
     
 
@@ -62,13 +71,13 @@ public class ItVerification
     public void verifyInstanceRunning(String clusterName, int httpPort) throws IllegalStateException
     {
         String path = esBaseDir.getAbsolutePath();
-        if (Monitor.isProcessRunning(path) == false)
+        if (Monitor.isProcessRunning(log, path) == false)
         {
             throw new IllegalStateException(String.format(
                     "The ES process in %s is not running", path));
         }
         
-        if (Monitor.isInstanceRunning(clusterName, httpPort) == false)
+        if (Monitor.isInstanceRunning(log, clusterName, httpPort) == false)
         {
             throw new IllegalStateException(String.format(
                     "ES did not respond as expected to GET / request on port %d", httpPort));
@@ -85,13 +94,13 @@ public class ItVerification
             throws IllegalStateException
     {
         String path = esBaseDir.getAbsolutePath();
-        if (Monitor.isProcessRunning(path))
+        if (Monitor.isProcessRunning(log, path))
         {
             throw new IllegalStateException(String.format(
                     "The ES process in %s appears to be running", path));
         }
         
-        if (Monitor.isInstanceRunning(clusterName, httpPort))
+        if (Monitor.isInstanceRunning(log, clusterName, httpPort))
         {
             throw new IllegalStateException(String.format(
                     "ES responded with valid response to GET / request on port %d", httpPort));

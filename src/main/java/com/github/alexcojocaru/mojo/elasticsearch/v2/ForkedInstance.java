@@ -82,6 +82,7 @@ public class ForkedInstance
         // in order to form a cluster.
         List<String> hosts = config.getClusterConfiguration().getInstanceConfigurationList()
                 .stream()
+                .filter(config -> config != this.config)
                 .map(config -> "127.0.0.1:" + config.getTransportPort())
                 .collect(Collectors.toList());
         if (hosts.isEmpty() == false)

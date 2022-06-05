@@ -4,11 +4,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.maven.monitor.logging.DefaultLog;
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.mockito.Mock;
 
 import com.github.alexcojocaru.mojo.elasticsearch.v2.client.ElasticsearchClient;
 
@@ -21,11 +23,9 @@ public abstract class ItBase
     protected static int httpPort;
     protected static String clusterName;
     protected static int instanceCount;
+    protected static Log log;
     
     protected ElasticsearchClient client;
-    
-    @Mock
-    private Log log;
     
 
     @BeforeClass
@@ -38,6 +38,11 @@ public abstract class ItBase
             httpPort = Integer.parseInt(props.getProperty("es.httpPort"));
             clusterName = props.getProperty("es.clusterName");
             instanceCount = Integer.parseInt(props.getProperty("es.instanceCount"));
+
+            int logLevel = "INFO".equalsIgnoreCase(props.getProperty("es.logLevel", "INFO"))
+                    ? Logger.LEVEL_INFO
+                    : Logger.LEVEL_DEBUG;
+            log = new DefaultLog(new ConsoleLogger(logLevel, "console"));
         }
         catch (IOException e)
         {

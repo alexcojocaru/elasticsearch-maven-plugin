@@ -19,7 +19,7 @@ public class MultiInstanceTest extends ItBase
     @Test
     public void testClusterRunningOnPrimaryInstance()
     {
-        boolean isRunning = Monitor.isClusterRunning(clusterName, instanceCount, client);
+        boolean isRunning = Monitor.isClusterRunning(log, clusterName, instanceCount, client);
         Assert.assertTrue("The ES cluster should be running on the primary instance", isRunning);
     }
     
@@ -28,7 +28,7 @@ public class MultiInstanceTest extends ItBase
     {
         int secondaryHttpPort = httpPort + 1;
         
-        boolean isRunning = Monitor.isClusterRunning(clusterName, instanceCount, secondaryHttpPort);
+        boolean isRunning = Monitor.isClusterRunning(log, clusterName, instanceCount, secondaryHttpPort);
         Assert.assertTrue("The ES cluster should be running on the secondary instance", isRunning);
     }
     

@@ -23,7 +23,7 @@ public class DownloadUrlTest extends ItBase
     @Test
     public void testClusterRunning()
     {
-        boolean isRunning = Monitor.isClusterRunning(clusterName, instanceCount, client);
+        boolean isRunning = Monitor.isClusterRunning(log, clusterName, instanceCount, client);
         Assert.assertTrue("The ES cluster should be running", isRunning);
     }
 
