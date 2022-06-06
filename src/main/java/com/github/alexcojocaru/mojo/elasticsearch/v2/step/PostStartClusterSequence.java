@@ -12,6 +12,7 @@ public class PostStartClusterSequence
     public PostStartClusterSequence()
     {
         add(new WaitToStartClusterStep());
+        add(new DisableIndexReplicationStep());
         add(new BootstrapClusterStep());
         add(new BlockProcessExecutionStep());
     }

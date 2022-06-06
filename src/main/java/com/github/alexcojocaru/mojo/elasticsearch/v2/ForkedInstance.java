@@ -1,6 +1,5 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.exec.CommandLine;
@@ -64,6 +63,10 @@ public class ForkedInstance
         // which creates issues on Windows.
         cmd.addArgument("-p", false);
         cmd.addArgument("pid", false);
+        
+        // Any settings that can be specified in the config file can also be specified
+        // on the command line, using the -E syntax
+        // https://www.elastic.co/guide/en/elasticsearch/reference/current/targz.html#targz-configuring
 
         cmd.addArgument(
                 "-Ecluster.name=" + config.getClusterConfiguration().getClusterName(),
@@ -76,26 +79,34 @@ public class ForkedInstance
                         ? "transport.port"
                         : "transport.tcp.port";
         cmd.addArgument("-E" + transportPortName + "=" + config.getTransportPort(), false);
-
-
-        // If there are multiple nodes, I need to tell each about the other,
-        // in order to form a cluster.
-        List<String> hosts = config.getClusterConfiguration().getInstanceConfigurationList()
-                .stream()
-                .filter(config -> config != this.config)
-                .map(config -> "127.0.0.1:" + config.getTransportPort())
-                .collect(Collectors.toList());
-        if (hosts.isEmpty() == false)
+        
+        // https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-settings.html
+        if (VersionUtil.isEqualOrGreater_7_0_0(config.getClusterConfiguration().getVersion()))
         {
-            String hostsString = StringUtils.join(hosts, ',');
-            if (VersionUtil.isEqualOrGreater_8_0_0(config.getClusterConfiguration().getVersion()))
-            {
-                cmd.addArgument("-Ediscovery.seed_hosts=" + hostsString, false);
-                cmd.addArgument("-Ecluster.initial_master_nodes=" + hostsString, false);
+            if (config.getClusterConfiguration().getInstanceConfigurationList().size() > 1) {
+                // default discovery.type is 'multi-node'
+                // I need to tell each node about the other, in order to form a cluster.
+                String hosts = config.getClusterConfiguration().getInstanceConfigurationList()
+                        .stream()
+                        .map(config -> "127.0.0.1:" + config.getTransportPort())
+                        .collect(Collectors.joining(","));
+                // https://www.elastic.co/guide/en/elasticsearch/reference/current/important-settings.html#initial_master_nodes
+                cmd.addArgument("-Ediscovery.seed_hosts=" + hosts, false);
+                cmd.addArgument("-Ecluster.initial_master_nodes=" + hosts, false);
+            } else {
+                cmd.addArgument("-Ediscovery.type=single-node", false);
             }
-            else
-            {
-                cmd.addArgument("-Ediscovery.zen.ping.unicast.hosts=" + hostsString, false);
+        }
+        else
+        {
+            String hosts = config.getClusterConfiguration().getInstanceConfigurationList()
+                    .stream()
+                    .filter(instanceConfig -> this.config != instanceConfig)
+                    .map(config -> "127.0.0.1:" + config.getTransportPort())
+                    .collect(Collectors.joining(","));
+            if (StringUtils.isNotEmpty(hosts)) {
+                // https://www.elastic.co/guide/en/elasticsearch/reference/6.8/discovery-settings.html
+                cmd.addArgument("-Ediscovery.zen.ping.unicast.hosts=" + hosts, false);
             }
         }
 

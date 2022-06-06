@@ -39,6 +39,7 @@ public abstract class ItBase
             clusterName = props.getProperty("es.clusterName");
             instanceCount = Integer.parseInt(props.getProperty("es.instanceCount"));
 
+            // only support for DEBUG and INFO log levels during integration testing
             int logLevel = "INFO".equalsIgnoreCase(props.getProperty("es.logLevel", "INFO"))
                     ? Logger.LEVEL_INFO
                     : Logger.LEVEL_DEBUG;

@@ -138,6 +138,15 @@ public class Monitor
         log.info("The Elasticsearch cluster has started");
     }
 
+    /**
+     * Verify that the cluster name and the number of nodes in the cluster,
+     * as reported by the ES node, is as expected.
+     * @param log
+     * @param clusterName the ES cluster name
+     * @param instanceCount the number of ES nodes in the cluster
+     * @Param client Elasticsearch client
+     * @return true if the cluster is running, false otherwise
+     */
     public static boolean isClusterRunning(
             Log log,
             String clusterName,
@@ -145,6 +154,32 @@ public class Monitor
             ElasticsearchClient client)
     {
         return new Monitor(client, log).isClusterRunning(clusterName, instanceCount);
+    }
+    
+    /**
+     * Verify that the cluster name and the number of nodes in the cluster,
+     * as reported by the ES node, is as expected.
+     * @param log
+     * @param clusterName the ES cluster name
+     * @param instanceCount the number of ES nodes in the cluster
+     * @param httpPort the HTTP port to connect to ES
+     * @return true if the cluster is running, false otherwise
+     */
+    public static boolean isClusterRunning(
+            Log log,
+            String clusterName,
+            int instanceCount,
+            int httpPort)
+    {
+        try (ElasticsearchClient client = new ElasticsearchClient.Builder()
+                .withLog(log)
+                .withHostname("localhost")
+                .withPort(httpPort)
+                .withSocketTimeout(5000)
+                .build())
+        {
+            return new Monitor(client, log).isClusterRunning(clusterName, instanceCount);
+        }
     }
 
     /**
