@@ -8,7 +8,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
 
 /**
  * Disable the replication of indexes / shards if the cluster has a single node.
- * <p></p>
+ * <br><br>
  * By default, index shards are replicated to at least one additional node.
  * On single-node clusters, since there are no nodes to replicate them to,
  * these shards will be 'unassigned', hence the cluster status will be 'yellow'.

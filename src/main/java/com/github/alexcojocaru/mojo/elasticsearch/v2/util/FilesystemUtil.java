@@ -114,12 +114,13 @@ public final class FilesystemUtil
     /**
      * Fix broken Windows file URLs, e.g. "file://C:/dir/file" to "file:///C:/dir/file".
      * For all other [file] URLs, this is a no op and return the given url.
-     * <p></p>
+     * <br><br>
      * This is useful with file URLs constructed using the "file://{absolute_file_path}" pattern,
      * which returns the correct "file:///dir/file" like URL on *nix system,
      * but which returns the incorrect "file://C:/dir/file" like URL on Windows.
-     * <p></p>
-     * @return
+     * <br><br>
+     * @param fileUrl file URL
+     * @return file URL
      */
     public static String fixFileUrl(String fileUrl)
     {

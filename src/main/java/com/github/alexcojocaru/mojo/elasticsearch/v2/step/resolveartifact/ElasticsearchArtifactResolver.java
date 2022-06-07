@@ -12,7 +12,7 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.util.FilesystemUtil;
 
 /**
  * Resolver for the Elasticsearch artifact.
- * <p></p>
+ * <br><br>
  * This class is not thread safe.
  *
  * @author Alex Cojocaru

@@ -93,7 +93,7 @@ public class Monitor
      * Check whether the cluster with the given name exists in the ES running on the given port.
      * <br><br>
      * This is an expensive method, for it initializes a new ES client.
-     * @param log
+     * @param log log
      * @param clusterName the ES cluster name
      * @param httpPort the HTTP port to connect to ES
      * @return true if the instance is running, false otherwise
@@ -141,10 +141,10 @@ public class Monitor
     /**
      * Verify that the cluster name and the number of nodes in the cluster,
      * as reported by the ES node, is as expected.
-     * @param log
+     * @param log log
      * @param clusterName the ES cluster name
      * @param instanceCount the number of ES nodes in the cluster
-     * @Param client Elasticsearch client
+     * @param client Elasticsearch client
      * @return true if the cluster is running, false otherwise
      */
     public static boolean isClusterRunning(
@@ -159,7 +159,7 @@ public class Monitor
     /**
      * Verify that the cluster name and the number of nodes in the cluster,
      * as reported by the ES node, is as expected.
-     * @param log
+     * @param log log
      * @param clusterName the ES cluster name
      * @param instanceCount the number of ES nodes in the cluster
      * @param httpPort the HTTP port to connect to ES
