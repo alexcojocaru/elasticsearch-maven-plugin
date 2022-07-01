@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.zeroturnaround</groupId>
             <artifactId>zt-zip</artifactId>
-            <version>1.13</version>
+            <version>1.10</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
