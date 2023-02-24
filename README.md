@@ -6,13 +6,16 @@ They are terminated using the **stop** goal and, for extra peace of mind, using 
 
 Each instance is installed in _${project.build.directory}/elasticsearch${instanceIndex}_.
 
-This plugin is known to work with Elasticsearch versions 5.0.0 to 8.0.0 .
+This plugin is known to work with Elasticsearch versions 5 to 8.
 For versions 8+, the [xpack security](https://www.elastic.co/guide/en/elasticsearch/reference/8.0/security-settings.html#general-security-settings) is disabled -
 there is no need for HTTPS or basic authentication to send requests to the Elasticsearch server.
 For Elasticsearch version 1.x.x and 2.x.x support, see version 1.x and 2.x of this plugin.
 
-Because the plugin uses the new [Eclipse based Aether framework](https://www.eclipse.org/aether/), it only works with Maven 3.1.0 and above.
-See [this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/28) for details.
+_NB: There was a license conflict with one of the project files, which was fixed in version 6.28 of the plugin.
+See [this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/151) for details._
+
+_NB: Because the plugin uses the new [Eclipse based Aether framework](https://www.eclipse.org/aether/), it only works with Maven 3.1.0 and above.
+See [this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/28) for details._
 
 ## Usage
 The Elasticsearch behaviour and properties can be configured through the following plugin configuration parameters:
@@ -118,7 +121,7 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
         THE PLUGIN VERSION; FOR THE LIST OF AVAILABLE VERSIONS, SEE
         https://github.com/alexcojocaru/elasticsearch-maven-plugin/releases
     -->
-    <version>6.13</version>
+    <version>6.28</version>
     <configuration>
         <!-- THE ELASTICSEARCH VERSION; REPLACE WITH THE VERSION YOU NEED -->
         <version>7.2.0</version>
@@ -163,7 +166,7 @@ The way to define environment variables is as follows:
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>6.0</version>
+    <version>6.28</version>
     <configuration>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
@@ -194,7 +197,7 @@ The way to enable plugins is as follows:
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>6.0</version>
+    <version>6.28</version>
     <configuration>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
@@ -243,7 +246,7 @@ Example:
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>6.1</version>
+    <version>6.28</version>
     <configuration>
         ...
         <instanceCount>2</instanceCount>
@@ -437,7 +440,7 @@ Then just tell the elasticsearch-maven-plugin to use the local URI.
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>5.7</version>
+    <version>6.28</version>
     <configuration>
         <version>5.4.2</version>
         <plugins>

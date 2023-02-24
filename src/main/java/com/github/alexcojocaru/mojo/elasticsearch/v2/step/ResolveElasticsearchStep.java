@@ -80,7 +80,7 @@ public class ResolveElasticsearchStep
             throws IOException
     {
         File unpackDirectory = getUnpackDirectory();
-        ArchiveUtil.autodetectAndExtract(artifact, unpackDirectory);
+        ArchiveUtil.extract(artifact, unpackDirectory);
         File baseDir = new File(config.getBaseDir());
         moveToElasticsearchDirectory(unpackDirectory, baseDir);
 

@@ -127,14 +127,9 @@
             <version>2.12.6.1</version>
         </dependency>
         <dependency>
-            <groupId>org.zeroturnaround</groupId>
-            <artifactId>zt-zip</artifactId>
-            <version>1.13</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-archiver</artifactId>
-            <version>3.6.0</version>
+            <groupId>org.rauschig</groupId>
+            <artifactId>jarchivelib</artifactId>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
