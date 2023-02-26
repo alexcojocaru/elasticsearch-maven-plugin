@@ -11,19 +11,21 @@ public class ArchiveUtil
 
     public static void extract(File archiveFile, File targetDir)
     {
-        String filename = archiveFile.getName().toLowerCase(Locale.ROOT);
+        String filename = archiveFile.getPath().toLowerCase(Locale.ROOT);
         if (filename.endsWith(".zip"))
         {
             ZipUtil.unpack(archiveFile, targetDir);
         }
         else if (filename.endsWith(".tar.gz"))
         {
-            new TarGZipUnArchiver().extract(archiveFile.getPath(), targetDir);
+            TarGZipUnArchiver unArchiver = new TarGZipUnArchiver();
+            unArchiver.setDestDirectory(targetDir);
+            unArchiver.extract(archiveFile.getPath(), targetDir); // the 2nd arg is not used :-o
         }
         else
         {
             throw new IllegalArgumentException(
-                    "Unknown archive type for file: " + archiveFile.getPath());
+                    "Unknown archive type for file name: " + archiveFile.getName());
         }
     }
 
