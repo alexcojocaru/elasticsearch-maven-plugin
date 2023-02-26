@@ -1,35 +1,30 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2.util;
 
 import java.io.File;
+import java.util.Locale;
 
-import org.codehaus.plexus.archiver.AbstractUnArchiver;
 import org.codehaus.plexus.archiver.tar.TarGZipUnArchiver;
-import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
+import org.zeroturnaround.zip.ZipUtil;
 
 public class ArchiveUtil
 {
 
     public static void extract(File archiveFile, File targetDir)
     {
-        AbstractUnArchiver unArchiver;
-
-        String filename = archiveFile.getName().toLowerCase();
+        String filename = archiveFile.getName().toLowerCase(Locale.ROOT);
         if (filename.endsWith(".zip"))
         {
-            unArchiver = new ZipUnArchiver(archiveFile);
+            ZipUtil.unpack(archiveFile, targetDir);
         }
         else if (filename.endsWith(".tar.gz"))
         {
-            unArchiver = new TarGZipUnArchiver(archiveFile);
+            new TarGZipUnArchiver().extract(archiveFile.getPath(), targetDir);
         }
         else
         {
             throw new IllegalArgumentException(
                     "Unknown archive type for file: " + archiveFile.getPath());
         }
-
-        unArchiver.setDestDirectory(targetDir);
-        unArchiver.extract();
     }
 
 }
