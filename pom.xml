@@ -216,11 +216,11 @@
                     <addTestClassPath>true</addTestClassPath>
                     <debug>false</debug>
                     <!--
-                        running the ITs in parallel fails some ITs,
-                        with errors around resolving dependencies (always junit);
-                        some ITs pass though
+                        Running the ITs in parallel on Windows results in failures, e.g.
+                        - multiple ES instances binding to the same port
+                        - multiple mvn processes saving the same ES artifact in the local repo
                     -->
-                    <parallelThreads>4</parallelThreads>
+                    <parallelThreads>1</parallelThreads>
                     <streamLogs>true</streamLogs>
                     <!-- copy tests from here -->
                     <projectsDirectory>src/it</projectsDirectory>
@@ -233,7 +233,13 @@
                     <preBuildHookScript>setup</preBuildHookScript>
                     <postBuildHookScript>verify</postBuildHookScript>
                     <!-- configure the maven process to run each test -->
-                    <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                    <!--
+                        The mvn invoker plugin doc suggests using a local repo,
+                        in order to avoid polluting the main repo with broken artifacts.
+                        Given how many artifacts the ITs need (including the beefy ES packages),
+                        let's use the main mvn repo.
+                    -->
+                    <!-- <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath> -->
                     <settingsFile>src/it/settings.xml</settingsFile>
                     <!--
                         the doc on the invoker plugin says testProperty is deprecated,
