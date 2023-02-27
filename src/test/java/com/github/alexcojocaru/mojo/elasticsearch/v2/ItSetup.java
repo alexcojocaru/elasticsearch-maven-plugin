@@ -20,12 +20,11 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.NetUtil.ElasticsearchPort;
 public class ItSetup
 {
     /**
-     * The base direction of the test execution (ie. the project directory)
+     * The base direction of the test execution (i.e. the project directory)
      */
     private final File baseDir;
     
     /**
-     * @param executionBaseDir
      */
     public ItSetup(File baseDir)
     {
