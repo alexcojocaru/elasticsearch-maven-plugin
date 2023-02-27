@@ -35,7 +35,7 @@ public class NetUtil
      * check that 1501 and 1502 are open;
      * find a random open port => 1510;
      * check that 1511 and 1512 are open;
-     * return (1500, 1510) 
+     * return {HTTP:1500, TRANSPORT:1510}
      * 
      * @param instanceCount how many ES instances to find open ports for
      * @return a map with values for the http.port and tcp.port key
@@ -53,23 +53,6 @@ public class NetUtil
         ports.put(ElasticsearchPort.TRANSPORT, port + instanceCount);
 
         return ports;
-
-//        List<ServerSocket> httpPortSockets = new ArrayList<>();
-//        List<ServerSocket> transportPortSockets = new ArrayList<>();
-//
-//        try
-//        {
-//            openSockets(instanceCount, httpPortSockets);
-//            openSockets(instanceCount, transportPortSockets);
-//
-//            ports.put(ElasticsearchPort.HTTP, httpPortSockets.get(0).getLocalPort());
-//            ports.put(ElasticsearchPort.TRANSPORT, transportPortSockets.get(0).getLocalPort());
-//        }
-//        finally
-//        {
-//            httpPortSockets.stream().filter(Objects::nonNull).forEach(ServerSocket::close);
-//            transportPortSockets.stream().filter(Objects::nonNull).forEach(ServerSocket::close);
-//        }
     }
 
     private static int findAvailablePorts(int count) throws IOException
@@ -116,24 +99,4 @@ public class NetUtil
             return true;
         }
     }
-
-    //    /**
-//     * Open a socket on a random port and then a series of subsequent sockets,
-//     * and add them all to the given socket list.
-//     * @param count
-//     * @param socketList
-//     */
-//    private static void openSockets(int count, List<ServerSocket> socketList) throws IOException
-//    {
-//        // find an open port for the first instance
-//        ServerSocket initialSocket = new ServerSocket(0);
-//        socketList.add(initialSocket);
-//
-//        // verify that the subsequent ports (for the remaining instances) are open
-//        for (int i = 1; i < count; i++)
-//        {
-//            ServerSocket subsequentSocket = new ServerSocket(initialSocket.getLocalPort() + i);
-//            socketList.add(subsequentSocket);
-//        }
-//    }
 }
