@@ -53,7 +53,7 @@
         <!-- since ES 5+ requires Java 8, use that on the plugin too -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.version>3.2.5</maven.version>
+        <maven.version>3.8.1</maven.version>
         <aether.version>1.1.0</aether.version>
         <integrationTest>*</integrationTest>
         <!--
