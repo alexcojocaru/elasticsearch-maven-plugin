@@ -89,6 +89,10 @@ public class ElasticsearchArtifact
             }
         }
 
+        public static void main(String args[]) {
+            System.out.println(SystemUtils.OS_ARCH);
+        }
+
         private String getArtifactClassifier(String version)
         {
             if (VersionUtil.isEqualOrGreater_7_0_0(version))
@@ -97,13 +101,35 @@ public class ElasticsearchArtifact
                 {
                     return "windows-x86_64";
                 }
-                else if (SystemUtils.IS_OS_MAC)
+
+                String arch = SystemUtils.OS_ARCH;
+                if (arch == null)
                 {
-                    return "darwin-x86_64";
+                    throw new IllegalStateException(
+                            "Cannot determine the OS arch, thus cannot build the artifact name to "
+                                    + "download. As a workaround, you can use the 'downloadUrl' "
+                                    + "plugin property.");
+                }
+
+                if (SystemUtils.IS_OS_MAC)
+                {
+                    return "darwin-" + arch.toLowerCase();
                 }
                 else if (SystemUtils.IS_OS_LINUX)
                 {
-                    return "linux-x86_64";
+                    if (arch.equalsIgnoreCase("amd64") || arch.equalsIgnoreCase("x86_64"))
+                    {
+                        return "linux-x86_64";
+                    }
+                    else if (arch.equalsIgnoreCase("aarch64"))
+                    {
+                        return "linux-aarch64";
+                    }
+                    else
+                    {
+                        throw new IllegalStateException(
+                                "Unknown linux OS architecture name '" + arch + "'");
+                    }
                 }
                 else {
                     throw new IllegalStateException("Unknown OS, cannot determine the Elasticsearch classifier.");
