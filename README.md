@@ -1,6 +1,6 @@
 # Elasticsearch Maven Plugin [![Java CI with Maven](https://github.com/alexcojocaru/elasticsearch-maven-plugin/actions/workflows/maven.yml/badge.svg)](https://github.com/alexcojocaru/elasticsearch-maven-plugin/actions/workflows/maven.yml)
 
-A Maven 3.1+ plugin to run instances of Elasticsearch version 5+ during the integration test phase of a build.
+A Maven plugin to run instances of Elasticsearch version 5+ during the integration test phase of a build.
 Instances are started in forked processes using the **runforked** goal.
 They are terminated using the **stop** goal and, for extra peace of mind, using a JVM shutdown hook.
 
@@ -14,8 +14,7 @@ For Elasticsearch version 1.x.x and 2.x.x support, see version 1.x and 2.x of th
 _NB: There was a license conflict with one of the project files, which was fixed in version 6.26 of the plugin.
 See [this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/151) for details._
 
-_NB: Because the plugin uses the new [Eclipse based Aether framework](https://www.eclipse.org/aether/), it only works with Maven 3.1.0 and above.
-See [this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/28) for details._
+_NB: Because the plugin uses the new [Apache Maven Artifact Resolver](https://maven.apache.org/resolver/), it only works with Maven 3.9.x and above._
 
 ## Usage
 The Elasticsearch behaviour and properties can be configured through the following plugin configuration parameters:
@@ -121,7 +120,7 @@ To use the plugin, include the following in your _pom.xml_ file and modify the c
         THE PLUGIN VERSION; FOR THE LIST OF AVAILABLE VERSIONS, SEE
         https://github.com/alexcojocaru/elasticsearch-maven-plugin/releases
     -->
-    <version>6.26</version>
+    <version>6.27</version>
     <configuration>
         <!-- THE ELASTICSEARCH VERSION; REPLACE WITH THE VERSION YOU NEED -->
         <version>7.2.0</version>
@@ -166,7 +165,7 @@ The way to define environment variables is as follows:
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>6.26</version>
+    <version>6.27</version>
     <configuration>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
@@ -197,7 +196,7 @@ The way to enable plugins is as follows:
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>6.26</version>
+    <version>6.27</version>
     <configuration>
         <clusterName>test</clusterName>
         <transportPort>9300</transportPort>
@@ -246,7 +245,7 @@ Example:
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>6.26</version>
+    <version>6.27</version>
     <configuration>
         ...
         <instanceCount>2</instanceCount>
@@ -440,7 +439,7 @@ Then just tell the elasticsearch-maven-plugin to use the local URI.
 <plugin>
     <groupId>com.github.alexcojocaru</groupId>
     <artifactId>elasticsearch-maven-plugin</artifactId>
-    <version>6.26</version>
+    <version>6.27</version>
     <configuration>
         <version>5.4.2</version>
         <plugins>

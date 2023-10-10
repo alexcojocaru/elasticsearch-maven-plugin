@@ -1,5 +1,9 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -31,10 +35,10 @@ public class ElasticsearchArtifact
 
     public String buildBundleFilename()
     {
-        return Joiner
-                .on("-")
-                .skipNulls()
-                .join(getArtifactId(), getVersion(), getClassifier() /* May be null */)
+        return Arrays.asList(getArtifactId(), getVersion(), getClassifier())
+                .stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining("-"))
                 + "." + getType();
     }
 

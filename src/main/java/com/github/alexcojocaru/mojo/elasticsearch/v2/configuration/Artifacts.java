@@ -15,9 +15,12 @@
  */
 package com.github.alexcojocaru.mojo.elasticsearch.v2.configuration;
 
+import java.util.Objects;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.github.alexcojocaru.mojo.elasticsearch.v2.AbstractArtifact;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 /**
  * Copied from the t7mp project.
@@ -42,9 +45,12 @@ public final class Artifacts
 
     public static AbstractArtifact fromCoordinates(String coordinates)
     {
-        Iterable<String> splitted =
-                Splitter.on(':').omitEmptyStrings().trimResults().split(coordinates);
-        String[] strings = Iterables.toArray(splitted, String.class);
+        String[] strings = Pattern
+                .compile(":")
+                .splitAsStream(StringUtils.trimToEmpty(coordinates))
+                .map(StringUtils::trimToNull)
+                .filter(Objects::nonNull)
+                .toArray(String[]::new);
         if (strings.length < THREE || strings.length > FIVE)
         {
             throw new InvalidCoordinatesException(coordinates);

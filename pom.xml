@@ -53,8 +53,8 @@
         <!-- since ES 5+ requires Java 8, use that on the plugin too -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.version>3.2.5</maven.version>
-        <aether.version>1.1.0</aether.version>
+        <maven.version>3.9.5</maven.version>
+        <maven.resolver.version>1.9.16</maven.resolver.version>
         <integrationTest>*</integrationTest>
         <!--
             this is set by Travis to true in the pre-run
@@ -91,9 +91,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.aether</groupId>
-            <artifactId>aether-api</artifactId>
-            <version>${aether.version}</version>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-api</artifactId>
+            <version>${maven.resolver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-spi</artifactId>
+            <version>${maven.resolver.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -110,11 +116,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>31.0.1-jre</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -134,7 +135,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-archiver</artifactId>
-            <version>4.6.1</version>
+            <version>4.8.0</version>
         </dependency>
         <dependency>
             <groupId>org.awaitility</groupId>
@@ -158,12 +159,6 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
-            <version>${maven.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-aether-provider</artifactId>
             <version>${maven.version}</version>
             <scope>test</scope>
         </dependency>
