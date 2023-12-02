@@ -183,6 +183,52 @@ The way to define environment variables is as follows:
 </plugin>
 ```
 
+## <a name="jdkToolchain"></a>JDK Toolchain
+
+An alternative method of running Elasticsearch with a different JDK than the one used to run Maven is 
+to utilize [Maven JDK toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html).
+
+```xml
+<plugin>
+    <groupId>com.github.alexcojocaru</groupId>
+    <artifactId>elasticsearch-maven-plugin</artifactId>
+    <version>6.27</version>
+    <configuration>
+        <clusterName>test</clusterName>
+        <transportPort>9300</transportPort>
+        <httpPort>9200</httpPort>
+        ...
+        <jdkToolchain>
+            <version>11</version>
+            <vendor>sun</vendor>
+        </jdkToolchain>
+        ...
+    </configuration>
+    <executions>
+        ...
+    </executions>
+</plugin>
+```
+
+toolchains.xml
+
+```xml
+<toolchains>
+    ...
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <version>11</version>
+            <vendor>sun</vendor>
+        </provides>
+        <configuration>
+            <jdkHome>/path/to/jdk11</jdkHome>
+        </configuration>
+    </toolchain>
+    ...
+</toolchains>
+```
+
 ## <a name="plugins"></a>Plugins
 A list of Elasticsearch plugins can be provided to the elasticsearch-maven-plugin.
 They will be installed into [each Elasticsearch instance](https://www.elastic.co/guide/en/elasticsearch/plugins/5.2/intro.html)
