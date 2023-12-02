@@ -1,5 +1,7 @@
 package com.github.alexcojocaru.mojo.elasticsearch.v2;
 
+import static java.util.Collections.unmodifiableMap;
+
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ChainedArtifactResolver;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.ElasticsearchConfiguration;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifactInstaller;
@@ -7,8 +9,12 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.configuration.PluginArtifac
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.ToolchainManager;
+import org.apache.maven.toolchain.java.JavaToolchainImpl;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -182,6 +188,14 @@ public abstract class AbstractElasticsearchMojo
     @Parameter(property="es.autoCreateIndex", defaultValue = "true")
     protected boolean autoCreateIndex;
 
+    @Component
+    private ToolchainManager toolchainManager;
+
+    @Parameter(defaultValue="${session}", required = true, readonly = true)
+    private MavenSession session;
+
+    @Parameter
+    private Map<String, String> jdkToolchain;
 
     public RepositorySystem getRepositorySystem()
     {
@@ -374,6 +388,8 @@ public abstract class AbstractElasticsearchMojo
     @Override
     public ClusterConfiguration buildClusterConfiguration()
     {
+        Map<String, String> preparedEnvironmentVariables = prepareEnvironmentVariables(session, toolchainManager, jdkToolchain, environmentVariables);
+
         Preconditions.checkState((downloadUrlUsername == null) == (downloadUrlPassword == null), "both username and password must be supplied");
         ClusterConfiguration.Builder clusterConfigBuilder = new ClusterConfiguration.Builder()
                 .withArtifactResolver(buildArtifactResolver())
@@ -403,7 +419,7 @@ public abstract class AbstractElasticsearchMojo
                     .withTransportPort(transportPort + i)
                     .withPathData(pathData)
                     .withPathLogs(pathLogs)
-                    .withEnvironmentVariables(environmentVariables)
+                    .withEnvironmentVariables(preparedEnvironmentVariables)
                     .withSettings(settings)
                     .withStartupTimeout(instanceStartupTimeout)
                     .build());
@@ -429,5 +445,33 @@ public abstract class AbstractElasticsearchMojo
     public  PluginArtifactInstaller buildArtifactInstaller()
     {
         return new MyArtifactInstaller(repositorySystem, repositorySession, getLog());
+    }
+
+    // Visible for testing
+    Map<String, String> prepareEnvironmentVariables(
+            MavenSession session,
+            ToolchainManager toolchainManager,
+            Map<String, String> jdkToolchain,
+            Map<String, String> environmentVariables)
+    {
+        if (jdkToolchain != null && environmentVariables.containsKey("JAVA_HOME"))
+        {
+            throw new IllegalArgumentException("Both jdkToolchain and JAVA_HOME have been specified. Please only set one.");
+        }
+        if (jdkToolchain != null)
+        {
+            List<Toolchain> toolchains = toolchainManager.getToolchains(session, "jdk", jdkToolchain);
+            if (toolchains.isEmpty())
+            {
+                throw new IllegalArgumentException("The specified jdkToolchain was not found: " + jdkToolchain);
+            }
+            JavaToolchainImpl toolchain = (JavaToolchainImpl) toolchains.get(0);
+            String javaHome = toolchain.getJavaHome();
+
+            Map<String, String> finalEnvironmentVariables = new HashMap<>(environmentVariables);
+            finalEnvironmentVariables.put("JAVA_HOME", javaHome);
+            return unmodifiableMap(finalEnvironmentVariables);
+        }
+        return environmentVariables;
     }
 }
