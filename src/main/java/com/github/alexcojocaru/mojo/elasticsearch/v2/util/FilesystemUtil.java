@@ -110,7 +110,7 @@ public final class FilesystemUtil
                 .addArgument(String.format("bin/%s", scriptName));
         ProcessUtil.executeScript(config, command);
     }
-    
+
     /**
      * Fix broken Windows file URLs, e.g. "file://C:/dir/file" to "file:///C:/dir/file".
      * For all other [file] URLs, this is a no op and return the given url.

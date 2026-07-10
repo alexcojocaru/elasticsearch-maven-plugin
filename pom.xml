@@ -61,6 +61,7 @@
             https://docs.travis-ci.com/user/languages/java/#projects-using-maven
         -->
         <skipTests>false</skipTests>
+        <skipDockerTests>false</skipDockerTests>
     </properties>
 
     <dependencies>
@@ -270,6 +271,40 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.43.4</version>
+                <executions>
+                    <execution>
+                        <id>docker-root-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>start</goal>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>elasticsearch-maven-plugin-root-test</name>
+                            <build>
+                                <dockerFile>${project.basedir}/src/it/runforked-docker-root-test/Dockerfile</dockerFile>
+                                <contextDir>${project.basedir}</contextDir>
+                            </build>
+                            <run>
+                                <wait>
+                                    <log>BUILD SUCCESS</log>
+                                    <time>300000</time>
+                                </wait>
+                            </run>
+                        </image>
+                    </images>
+                    <skip>${skipDockerTests}</skip>
+                </configuration>
             </plugin>
             <!--
                  http://central.sonatype.org/pages/apache-maven.html

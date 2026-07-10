@@ -38,6 +38,7 @@ public class ClusterConfiguration
     private int clientSocketTimeout;
     private boolean setAwait;
     private boolean autoCreateIndex;
+    private boolean autoHandleRootUser;
 
     private ClusterConfiguration(List<InstanceConfiguration> instanceConfigurationList,
             PluginArtifactResolver artifactResolver,
@@ -137,6 +138,11 @@ public class ClusterConfiguration
         return autoCreateIndex;
     }
 
+    public boolean isAutoHandleRootUser()
+    {
+        return autoHandleRootUser;
+    }
+
     public String toString()
     {
         return new ToStringBuilder(this)
@@ -154,6 +160,7 @@ public class ClusterConfiguration
                 .append("clientSocketTimeout", clientSocketTimeout)
                 .append("setAwait", setAwait)
                 .append("autoCreateIndex", autoCreateIndex)
+                .append("autoHandleRootUser", autoHandleRootUser)
                 .append("instanceConfigurationList", StringUtils.join(instanceConfigurationList, ','))
                 .toString();
     }
@@ -179,6 +186,7 @@ public class ClusterConfiguration
         private int clientSocketTimeout;
         private boolean setAwait;
         private boolean autoCreateIndex;
+        private boolean autoHandleRootUser;
 
 
         public Builder addInstanceConfiguration(InstanceConfiguration config)
@@ -289,6 +297,12 @@ public class ClusterConfiguration
             return this;
         }
 
+        public Builder withAutoHandleRootUser(boolean autoHandleRootUser)
+        {
+            this.autoHandleRootUser = autoHandleRootUser;
+            return this;
+        }
+
         public ClusterConfiguration build()
         {
             ClusterConfiguration config = new ClusterConfiguration(
@@ -308,6 +322,7 @@ public class ClusterConfiguration
             config.clientSocketTimeout = clientSocketTimeout;
             config.setAwait = setAwait;
             config.autoCreateIndex = autoCreateIndex;
+            config.autoHandleRootUser = autoHandleRootUser;
 
             config.getInstanceConfigurationList().forEach(c -> c.setClusterConfiguration(config));
 

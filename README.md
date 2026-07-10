@@ -106,6 +106,9 @@ before this flag was implemented, was to keep the existing data, the default is 
 *   **autoCreateIndex** [defaultValue=true]
     > configuration of automatic index creation represented by _action.auto\_create\_index_ setting
 
+*   **autoHandleRootUser** [defaultValue=false]
+    > enable automatic root user handling for Docker/CI environments; when enabled and running as root, the plugin will automatically create a non-root user (`esuser`) and run Elasticsearch as that user; this is necessary because Elasticsearch cannot run as the root user; disabled by default for security reasons - must be explicitly enabled; only supported on Linux and macOS (see the [Running as Root](#running-as-root) section for details)
+
 *   **logLevel** [defaultValue=INFO]
     > the log level to be used by the console logger; the valid values are defined in AbstractElasticsearchBaseMojo.getMavenLogLevel() and they are: DEBUG, INFO, WARN, ERROR, FATAL, DISABLED.
 
@@ -429,10 +432,40 @@ before_script:
 ```
 
 
-#### Error: java.lang.RuntimeException: can not run elasticsearch as root (in Docker)
+#### <a name="running-as-root"></a>Error: java.lang.RuntimeException: can not run elasticsearch as root (in Docker)
 When running the build in Docker, depending on the Docker image, the current user in the container
-maybe be the root user and, because of this, Elasticsearch will fail to start.
-The fix is to use a Docker image which does not use the root user. See 
+may be the root user and, because of this, Elasticsearch will fail to start.
+
+**Solution 1** (Recommended for Docker/CI): Enable automatic root user handling by setting `autoHandleRootUser=true`.
+The plugin will automatically create a non-root user and run Elasticsearch as that user.
+
+```xml
+<plugin>
+    <groupId>com.github.alexcojocaru</groupId>
+    <artifactId>elasticsearch-maven-plugin</artifactId>
+    <version>6.30</version>
+    <configuration>
+        <version>8.0.0</version>
+        <autoHandleRootUser>true</autoHandleRootUser>
+    </configuration>
+</plugin>
+```
+
+Or via command line:
+```bash
+mvn verify -Des.autoHandleRootUser=true
+```
+
+When enabled, the plugin will:
+- Detect if running as root
+- Create a non-root system user (`esuser`)
+- Grant necessary permissions to Elasticsearch directories
+- Execute Elasticsearch as the non-root user
+- Clean up the user and permissions on shutdown
+
+Supported platforms: Linux and macOS
+
+**Solution 2**: Use a Docker image which does not use the root user. See
 [this discussion](https://github.com/alexcojocaru/elasticsearch-maven-plugin/issues/72)
 for details.
 

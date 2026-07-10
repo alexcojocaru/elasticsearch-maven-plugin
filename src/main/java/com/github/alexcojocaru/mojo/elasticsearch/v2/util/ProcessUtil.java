@@ -241,7 +241,7 @@ public class ProcessUtil
         Log log = config.getClusterConfiguration().getLog();
         int instanceId = config.getId();
         File baseDir = new File(config.getBaseDir()); 
-        
+
         Map<String, String> completeEnvironment = createEnvironment(environment);
 
         DefaultExecutor executor = new DefaultExecutor();

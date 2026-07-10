@@ -188,6 +188,15 @@ public abstract class AbstractElasticsearchMojo
     @Parameter(property="es.autoCreateIndex", defaultValue = "true")
     protected boolean autoCreateIndex;
 
+    /**
+     * Enable automatic root user handling. When true, the plugin will automatically
+     * create a non-root user (esuser) and run Elasticsearch as that user when the
+     * Maven build is executed as root. This is useful for Docker/CI environments.
+     * Default is false - must be explicitly enabled for security reasons.
+     */
+    @Parameter(property="es.autoHandleRootUser", defaultValue = "false")
+    protected boolean autoHandleRootUser;
+
     @Component
     private ToolchainManager toolchainManager;
 
@@ -407,7 +416,8 @@ public abstract class AbstractElasticsearchMojo
                 .withKeepExistingData(keepExistingData)
                 .withStartupTimeout(clusterStartupTimeout)
                 .withSetAwait(setAwait)
-                .withAutoCreateIndex(autoCreateIndex);
+                .withAutoCreateIndex(autoCreateIndex)
+                .withAutoHandleRootUser(autoHandleRootUser);
 
         for (int i = 0; i < instanceCount; i++)
         {

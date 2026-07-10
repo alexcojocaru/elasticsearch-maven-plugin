@@ -10,6 +10,8 @@ import com.github.alexcojocaru.mojo.elasticsearch.v2.step.InstanceStepSequence;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.util.FilesystemUtil;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.util.ProcessUtil;
 import com.github.alexcojocaru.mojo.elasticsearch.v2.util.VersionUtil;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.root.CommandWrapStrategy;
+import com.github.alexcojocaru.mojo.elasticsearch.v2.util.root.RootUserFixUtil;
 
 /**
  * Start an ES instance and hold the reference to the ES {@link Process}.
@@ -35,13 +37,15 @@ public class ForkedInstance
     @Override
     public void run()
     {
+        boolean esUserCreated = config.getClusterConfiguration().isAutoHandleRootUser()
+                && RootUserFixUtil.fixRootUserIfNeeded(config);
         FilesystemUtil.setScriptPermission(config, "elasticsearch");
 
         final ForkedElasticsearchProcessDestroyer processDestroyer = new ForkedElasticsearchProcessDestroyer(config);
         Runtime.getRuntime().addShutdownHook(new Thread(processDestroyer));
 
         ProcessUtil.executeScript(config,
-                getStartScriptCommand(),
+                getStartScriptCommand(esUserCreated),
                 config.getEnvironmentVariables(),
                 processDestroyer);
     }
@@ -52,7 +56,7 @@ public class ForkedInstance
         return sequence;
     }
 
-    protected CommandLine getStartScriptCommand()
+    protected CommandLine getStartScriptCommand(boolean esUserCreated)
     {
         CommandLine cmd = ProcessUtil.buildCommandLine("bin/elasticsearch");
 
@@ -119,12 +123,17 @@ public class ForkedInstance
 
         if (config.getSettings() != null)
         {
-            config.getSettings().forEach((key, value) -> cmd.addArgument("-E" + key + '=' + value));
+            config.getSettings().entrySet().stream().map((entry) -> "-E" + entry.getKey() + '=' + entry.getValue()).forEach(cmd::addArgument);
         }
 
         if (VersionUtil.isEqualOrGreater_8_0_0(config.getClusterConfiguration().getVersion()))
         {
             cmd.addArgument("-Expack.security.enabled=false", false);
+        }
+
+        if (esUserCreated) {
+            CommandWrapStrategy wrapStrategy = RootUserFixUtil.getCommandWrapStrategy();
+            cmd = wrapStrategy.wrapCommand(cmd, RootUserFixUtil.ES_USER_NAME);
         }
 
         return cmd;
